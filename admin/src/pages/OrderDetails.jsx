@@ -177,48 +177,109 @@ const OrderDetails = () => {
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
                         <div className="flex items-center justify-between mb-2">
                             <h3 className="text-sm font-bold text-gray-800 flex items-center">
-                                <FileText size={20} className="mr-2 text-indigo-500" /> Aperçus des Documents
+                                <FileText size={20} className="mr-2 text-indigo-500" /> Documents Client
                             </h3>
                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded">
-                                Modèles Clients
+                                Génération PDF
                             </span>
                         </div>
                         <p className="text-[11px] text-gray-500 font-medium italic mb-6">
-                            Générez ces prototypes pour vérifier les termes et signatures configurés dans vos paramètres généraux.
+                            Générez les documents officiels pour cette commande synchronisés avec les paramètres du garage.
                         </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="p-6 border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-indigo-100 transition-colors bg-gray-50/50 group">
-                                <div className="p-3 bg-white rounded-xl shadow-sm text-indigo-500 group-hover:scale-110 transition-transform">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {/* Bon de Commande */}
+                            <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-blue-100 transition-colors bg-white shadow-sm group">
+                                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+                                    <FileText size={24} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 text-sm">Bon de commande</h4>
+                                </div>
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            await generateOrderPDF(order, settings);
+                                            toast.success("Bon de commande téléchargé");
+                                        } catch (error) {
+                                            console.error("PDF Error:", error);
+                                            toast.error("Erreur lors de la génération");
+                                        }
+                                    }}
+                                    className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-all shadow-sm flex items-center justify-center gap-2"
+                                >
+                                    <FileText size={16} className="text-blue-500" />
+                                    Aperçu
+                                </button>
+                            </div>
+
+                            {/* Contrat de Vente */}
+                            <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-indigo-100 transition-colors bg-white shadow-sm group">
+                                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-110 transition-transform">
                                     <FileText size={24} />
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900 text-sm">Contrat de Vente</h4>
-                                    <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Aperçu Prototype</p>
                                 </div>
                                 <button
-                                    onClick={() => generateContractPDF(order, settings)}
-                                    className="w-full py-2.5 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                    onClick={async () => {
+                                        try {
+                                            await generateContractPDF(order, settings);
+                                            toast.success("Contrat de vente téléchargé");
+                                        } catch (error) {
+                                            console.error("PDF Error:", error);
+                                            toast.error("Erreur lors de la génération");
+                                        }
+                                    }}
+                                    className="w-full py-2.5 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 flex items-center justify-center gap-2"
                                 >
-                                    Vérifier le contrat
+                                    <FileText size={16} className="opacity-80" />
+                                    Duplicata
                                 </button>
                             </div>
 
-                            <div className="p-6 border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-green-100 transition-colors bg-gray-50/50 group">
-                                <div className="p-3 bg-white rounded-xl shadow-sm text-green-500 group-hover:scale-110 transition-transform">
-                                    <FileText size={24} />
+                            {/* Facture d'Achat (Conditionnelle) */}
+                            {(order?.status === 'delivered' || order?.status === 'completed' || order?.status === 'logistics' || order?.status === 'transit' || order?.status === 'concierge') ? (
+                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-green-100 transition-colors bg-white shadow-sm group">
+                                    <div className="p-3 bg-green-50 text-green-600 rounded-xl group-hover:scale-110 transition-transform">
+                                        <FileText size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 text-sm">Facture d'Achat</h4>
+                                    </div>
+                                    <button
+                                        onClick={async () => {
+                                            try {
+                                                await generateInvoicePDF(order, settings);
+                                                toast.success("Facture téléchargée");
+                                            } catch (error) {
+                                                console.error("PDF Error:", error);
+                                                toast.error("Erreur lors de la génération");
+                                            }
+                                        }}
+                                        className="w-full py-2.5 bg-green-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-green-700 transition-all shadow-md shadow-green-100 flex items-center justify-center gap-2"
+                                    >
+                                        <FileText size={16} className="opacity-80" />
+                                        Duplicata
+                                    </button>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-900 text-sm">Facture d'Achat</h4>
-                                    <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Aperçu Prototype</p>
+                            ) : (
+                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 bg-gray-50/50 opacity-60">
+                                    <div className="p-3 bg-gray-100 text-gray-400 rounded-xl">
+                                        <FileText size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-500 text-sm">Facture d'Achat</h4>
+                                        <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Disponible après paiement</p>
+                                    </div>
+                                    <button
+                                        disabled
+                                        className="w-full py-2.5 bg-gray-100 text-gray-400 rounded-lg text-xs font-bold uppercase tracking-widest cursor-not-allowed"
+                                    >
+                                        Bloqué
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => generateInvoicePDF(order, settings)}
-                                    className="w-full py-2.5 bg-green-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-green-700 transition-all shadow-md shadow-green-100"
-                                >
-                                    Vérifier la facture
-                                </button>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>

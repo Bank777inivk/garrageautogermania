@@ -172,9 +172,9 @@ const OrderDetails = () => {
                         </button>
                     )}
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             try {
-                                generateOrderPDF(order, settings);
+                                await generateOrderPDF(order, settings);
                                 toast.success("Bon de commande téléchargé");
                             } catch (error) {
                                 console.error("PDF Error:", error);
@@ -184,12 +184,12 @@ const OrderDetails = () => {
                         className="flex items-center justify-center gap-3 px-6 py-4 bg-white text-slate-900 border border-slate-200 rounded-2xl hover:bg-slate-50 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
                     >
                         <FileText size={18} className="text-red-700 group-hover/btn:scale-110 transition-transform" />
-                        Bon
+                        Bon de commande
                     </button>
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             try {
-                                generateContractPDF(order, settings);
+                                await generateContractPDF(order, settings);
                                 toast.success("Contrat de vente téléchargé");
                             } catch (error) {
                                 console.error("PDF Error:", error);
@@ -199,13 +199,13 @@ const OrderDetails = () => {
                         className="flex items-center justify-center gap-3 px-6 py-4 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-2xl hover:bg-indigo-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
                     >
                         <FileCheck size={18} className="group-hover/btn:scale-110 transition-transform" />
-                        Contrat
+                        Contrat de vente
                     </button>
                     {(order.status === 'delivered' || order.status === 'completed' || order.status === 'logistics' || order.status === 'transit' || order.status === 'concierge') && (
                         <button
-                            onClick={() => {
+                            onClick={async () => {
                                 try {
-                                    generateInvoicePDF(order, settings);
+                                    await generateInvoicePDF(order, settings);
                                     toast.success("Facture téléchargée");
                                 } catch (error) {
                                     console.error("PDF Error:", error);

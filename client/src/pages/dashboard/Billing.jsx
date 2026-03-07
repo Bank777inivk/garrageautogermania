@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@shared/store/useAuthStore';
 import { db } from '@shared/firebase/config';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { FileText, Download, AlertCircle, CheckCircle, Clock, CreditCard } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
@@ -141,9 +141,9 @@ const Billing = () => {
                     Régler maintenant
                   </button>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       try {
-                        generateOrderPDF(order, settings);
+                        await generateOrderPDF(order, settings);
                         toast.success("Bon de commande téléchargé");
                       } catch (error) {
                         console.error("PDF Error:", error);
@@ -153,7 +153,7 @@ const Billing = () => {
                     className="flex-1 md:flex-none px-6 py-3 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-900 font-black text-[9px] uppercase tracking-widest flex items-center justify-center transition-all shadow-sm gap-2"
                   >
                     <Download size={12} className="text-slate-400" />
-                    Bon Commande
+                    Bon de commande
                   </button>
                 </div>
               </div>
@@ -198,9 +198,9 @@ const Billing = () => {
                       <td className="p-5 font-black text-slate-900 text-base">{order.total?.toLocaleString()}€</td>
                       <td className="p-5 text-right">
                         <button
-                          onClick={() => {
+                          onClick={async () => {
                             try {
-                              generateInvoicePDF(order, settings);
+                              await generateInvoicePDF(order, settings);
                               toast.success("Facture téléchargée");
                             } catch (error) {
                               console.error("PDF Error:", error);
