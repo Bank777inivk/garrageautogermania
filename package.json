@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:client": "cross-env APP=client npx vite",
-    "dev:admin": "cross-env APP=admin npx vite",
+    "dev:client": "npx cross-env APP=client npx vite",
+    "dev:admin": "npx cross-env APP=admin npx vite",
     "build": "npm run build:client",
-    "build:client": "cross-env APP=client npx vite build",
-    "build:admin": "cross-env APP=admin npx vite build",
+    "build:client": "npx cross-env APP=client npx vite build",
+    "build:admin": "npx cross-env APP=admin npx vite build",
     "preview:client": "cross-env APP=client vite preview",
     "preview:admin": "cross-env APP=admin vite preview",
     "lint": "eslint ."
@@ -42,7 +42,8 @@
     "swiper": "^12.1.2",
     "yet-another-react-lightbox": "^3.21.7",
     "zod": "^4.3.6",
-    "zustand": "^5.0.11"
+    "zustand": "^5.0.11",
+    "cross-env": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -51,7 +52,6 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.27",
-    "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
