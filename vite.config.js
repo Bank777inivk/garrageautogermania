@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: 'dist', // Output to client/dist
+      outDir: resolve(__dirname, 'dist'), // Output to repo root /dist
       emptyOutDir: true,
       rollupOptions: {
         input: resolve(appRoot, 'index.html'),
