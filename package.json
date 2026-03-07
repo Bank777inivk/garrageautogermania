@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:client": "cross-env APP=client vite",
-    "dev:admin": "cross-env APP=admin vite",
+    "dev:client": "cross-env APP=client npx vite",
+    "dev:admin": "cross-env APP=admin npx vite",
     "build": "npm run build:client",
-    "build:client": "cross-env APP=client vite build",
-    "build:admin": "cross-env APP=admin vite build",
+    "build:client": "cross-env APP=client npx vite build",
+    "build:admin": "cross-env APP=admin npx vite build",
     "preview:client": "cross-env APP=client vite preview",
     "preview:admin": "cross-env APP=admin vite preview",
     "lint": "eslint ."
