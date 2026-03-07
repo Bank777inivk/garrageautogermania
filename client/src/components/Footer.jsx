@@ -23,7 +23,7 @@ const Footer = () => {
           <div className="col-span-2 lg:col-span-1 flex flex-col items-center sm:items-start mb-4 lg:mb-0">
             <Link to="/" className="inline-block mb-6 group transition-transform hover:scale-105">
               <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Garrage Pro"
                 className="h-12 md:h-14 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
               />

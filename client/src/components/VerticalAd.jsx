@@ -10,8 +10,8 @@ const VerticalAd = () => {
 
     const cars = [
         "https://freepngimg.com/save/31533-bmw-transparent-image/1050x524", // BMW White 
-        "https://www.pngmart.com/files/10/Mercedes-Benz-G-Class-PNG-Transparent-Image.png", // G-Class White
-        "https://www.pngall.com/wp-content/uploads/12/Audi-RS6-PNG-Clipart.png" // Audi RS6 White
+        "https://www.webpmart.com/files/10/Mercedes-Benz-G-Class-PNG-Transparent-Image.webp", // G-Class White
+        "https://www.webpall.com/wp-content/uploads/12/Audi-RS6-PNG-Clipart.webp" // Audi RS6 White
     ];
 
     useEffect(() => {

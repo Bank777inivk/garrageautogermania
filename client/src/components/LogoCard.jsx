@@ -5,7 +5,7 @@ const LogoCard = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 group">
             <div className="relative overflow-hidden h-64 flex items-center justify-center bg-slate-50">
                 <img
-                    src="/logo 6.png"
+                    src="/logo 6.webp"
                     alt="Garrage Pro"
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />

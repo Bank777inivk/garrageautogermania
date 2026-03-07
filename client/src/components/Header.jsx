@@ -112,7 +112,7 @@ const Header = () => {
             {/* Logo - Enlarged and Imposing */}
             <Link to="/" className="flex items-center group">
               <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="Garrage Pro"
                 className="h-16 md:h-28 w-auto object-contain transition-transform group-hover:scale-105"
               />

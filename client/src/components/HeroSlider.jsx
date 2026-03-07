@@ -8,21 +8,21 @@ import BrandSelect from '@shared/components/BrandSelect';
 const slides = [
   {
     id: 1,
-    image: '/mercedes.png',
+    image: '/mercedes.webp',
     title: 'hero.title1',
     subtitle: 'hero.subtitle1',
     badge: 'hero.badge'
   },
   {
     id: 2,
-    image: '/bmw.png',
+    image: '/bmw.webp',
     title: 'hero.title2',
     subtitle: 'hero.subtitle2',
     badge: 'hero.badgeNew'
   },
   {
     id: 3,
-    image: '/audi.png',
+    image: '/audi.webp',
     title: 'hero.title3',
     subtitle: 'hero.subtitle3',
     badge: 'hero.badgeEco'

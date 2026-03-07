@@ -30,7 +30,7 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
         <Link to="/" onClick={onItemClick} className="flex flex-col items-center justify-center group">
           <div className="bg-white p-4 rounded-2xl shadow-xl shadow-black/20 group-hover:scale-105 transition-all duration-500">
             <img
-              src="/logo.png"
+              src="/logo.webp"
               alt="Garrage Pro"
               className="h-16 w-auto object-contain"
             />

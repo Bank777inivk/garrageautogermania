@@ -55,7 +55,7 @@ const Home = () => {
               {/* Image Pub Générée */}
               <div className="relative group overflow-hidden cursor-pointer" onClick={() => navigate('/catalogue')}>
                 <img
-                  src="/premium_car_ad_v2_1772795850000_1772805918746.png"
+                  src="/premium_car_ad_v2_1772795850000_1772805918746.webp"
                   alt="Premium Ad"
                   className="w-full h-auto object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />

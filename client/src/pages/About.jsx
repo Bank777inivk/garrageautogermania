@@ -96,7 +96,7 @@ const About = () => {
       <section className="relative h-[50vh] md:h-[55vh] flex items-center justify-center overflow-hidden border-b border-gray-100">
         <div className="absolute inset-0 z-0">
           <img
-            src="/about-hero.png"
+            src="/about-hero.webp"
             alt="Luxury Car Showroom"
             className="w-full h-full object-cover"
           />
@@ -137,7 +137,7 @@ const About = () => {
               <div className="relative">
                 <div className="overflow-hidden rounded-xl shadow-lg border border-gray-100">
                   <img
-                    src="/mercedes.png"
+                    src="/mercedes.webp"
                     alt="Notre Expertise"
                     className="w-full h-auto"
                   />
