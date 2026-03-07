@@ -1,152 +1,217 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { loadLocalImage } from './loadLocalImage';
 
-export const generateOrderPDF = (order, settings = null) => {
+export const generateOrderPDF = async (order, settings = null) => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
 
+  // Load default stamp and signature from /public if not set
+  const stampUrl = settings?.documents?.stampUrl || null;
+  const signatureUrl = settings?.documents?.signatureUrl || null;
+  const defaultStamp = await loadLocalImage('/garrage_stamp_pro_1772904455871.png');
+  const defaultSignature = await loadLocalImage('/garrage_signature_gerant_1772905088803.png');
+  const finalStamp = stampUrl || defaultStamp;
+  const finalSignature = signatureUrl || defaultSignature;
+
   // Use settings or defaults
-  const companyName = settings?.companyName || "AUTO IMPORT PRO";
-  const address = settings?.address || "123 Avenue des Champs-Élysées";
-  const city = settings?.city || "75008 Paris, France";
-  const email = settings?.email || "contact@autoimport-pro.com";
+  const companyName = settings?.companyName || "GARRAGE AUTO GERMANIA";
+  const address = settings?.addressDetails?.street || settings?.address || "123 Avenue de l'Automobile";
+  const city = `${settings?.addressDetails?.zip || ''} ${settings?.addressDetails?.city || ''}${settings?.addressDetails?.country ? ', ' + settings?.addressDetails?.country : ''}`.trim() || "75000 Paris, France";
+  const email = settings?.email || "contact@garrageautogermania.com";
   const phone = settings?.phone || "+33 1 23 45 67 89";
-  const iban = settings?.iban || "DE56 1001 1001 2176 5100 26";
-  const bic = settings?.bic || "NTSBDEB1XXX";
-  const bankHolder = settings?.bankHolder || "Jennifer Suß";
-  const siret = settings?.siret || "123 456 789 00010";
-  const tva = settings?.tva || "FR 12 345 678 901";
+
+  const rib = settings?.rib || {};
+  const iban = rib.iban || settings?.iban || "FR76...";
+  const bic = rib.bic || settings?.bic || "BNPP...";
+  const bankHolder = rib.titulaire || settings?.bankHolder || "GARRAGE AUTO GERMANIA";
+  const bankName = rib.bankName || "BNP Paribas";
+
+  const siret = settings?.siret || "N/A";
+  const tva = settings?.tva || "N/A";
 
   // Colors
   const primaryColor = [220, 38, 38]; // Red-600
   const grayColor = [107, 114, 128]; // Gray-500
   const blackColor = [17, 24, 39]; // Gray-900
 
-  // Header
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...primaryColor);
-  doc.text(companyName, 20, 20);
+  // Helper for white background on logo
+  const getWhiteBgLogoUrl = (url) => {
+    if (!url || !url.includes('cloudinary.com')) return url;
+    return url.replace('/upload/', '/upload/b_rgb:FFFFFF,f_jpg,c_pad/');
+  };
 
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...grayColor);
-  doc.text("Spécialiste de l'importation automobile", 20, 26);
+  const formatPrice = (price) => {
+    if (price === undefined || price === null) return '0 €';
+    const num = Math.round(Number(price));
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " €";
+  };
+
+  // Header: Logo or Company Name
+  if (settings?.logoUrl) {
+    try {
+      const logoUrl = getWhiteBgLogoUrl(settings.logoUrl);
+      // Draw white background rectangle
+      doc.setFillColor(255, 255, 255);
+      doc.rect(20, 10, 50, 25, 'F');
+
+      // Add logo: forced to JPEG for white background consistency
+      doc.addImage(logoUrl, 'JPEG', 20, 10, 50, 25);
+    } catch (e) {
+      console.error("Order logo error:", e);
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text(companyName, 20, 20);
+    }
+  } else {
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text(companyName, 20, 20);
+  }
 
   // Company Info (Right side)
-  doc.setFontSize(9);
+  doc.setFontSize(8.5);
   doc.setTextColor(...blackColor);
   doc.text(address, pageWidth - 20, 20, { align: "right" });
-  doc.text(city, pageWidth - 20, 25, { align: "right" });
-  doc.text(email, pageWidth - 20, 30, { align: "right" });
-  doc.text(phone, pageWidth - 20, 35, { align: "right" });
+  doc.text(city, pageWidth - 20, 24, { align: "right" });
+  doc.text(email, pageWidth - 20, 28, { align: "right" });
+  doc.text(phone, pageWidth - 20, 32, { align: "right" });
 
-  // Title
+  // Title (Further reduced for perfect spacing)
   doc.setDrawColor(...grayColor);
-  doc.line(20, 45, pageWidth - 20, 45);
+  doc.line(20, 40, pageWidth - 20, 40);
 
-  doc.setFontSize(16);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(...blackColor);
-  doc.text(`BON DE COMMANDE N° ${order.orderNumber}`, 20, 60);
+  doc.text(`BON DE COMMANDE N° ${order.orderNumber}`, 20, 50);
 
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   const orderDate = order.createdAt?.seconds
     ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR')
     : new Date().toLocaleDateString('fr-FR');
-  doc.text(`Date : ${orderDate}`, 20, 66);
+  doc.text(`Date : ${orderDate}`, 20, 58);
 
   // Client Info
   doc.setFillColor(243, 244, 246); // Gray-100
-  doc.rect(20, 75, pageWidth / 2 - 25, 40, 'F');
-
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text("INFORMATIONS CLIENT", 25, 82);
+  doc.rect(20, 68, pageWidth / 2 - 25, 35, 'F');
 
   doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text("INFORMATIONS CLIENT", 25, 74);
+
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${order.customer?.firstName} ${order.customer?.lastName}`, 25, 90);
-  doc.text(`${order.customer?.address}`, 25, 95);
-  doc.text(`${order.customer?.zipCode} ${order.customer?.city}`, 25, 100);
-  doc.text(`${order.customer?.country}`, 25, 110);
-  doc.text(`Tél : ${order.customer?.phone}`, 25, 110);
+  doc.text(`${order.customer?.firstName} ${order.customer?.lastName}`, 25, 80);
+  doc.text(`${order.customer?.address}`, 25, 85);
+  doc.text(`${order.customer?.zipCode} ${order.customer?.city}`, 25, 90);
+  // Tél fix (remove duplicate 110 line if any)
+  doc.text(`Tél : ${order.customer?.phone || 'N/A'}`, 25, 95);
 
   // Vehicle Info
   const item = order.items && order.items[0] ? order.items[0] : {};
+  const formattedRef = item.id && item.id.length > 8 ? item.id.substring(0, 8).toUpperCase() : (item.id || 'N/A');
+  const formattedUnitPrice = formatPrice(item.price || 0);
 
   doc.setFillColor(243, 244, 246);
-  doc.rect(pageWidth / 2 + 5, 75, pageWidth / 2 - 25, 40, 'F');
-
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  doc.text("VÉHICULE COMMANDÉ", pageWidth / 2 + 10, 82);
+  doc.rect(pageWidth / 2 + 5, 68, pageWidth / 2 - 25, 35, 'F');
 
   doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text("VÉHICULE COMMANDÉ", pageWidth / 2 + 10, 74);
+
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${item.brand} ${item.model}`, pageWidth / 2 + 10, 90);
-  doc.text(`Référence : ${item.id}`, pageWidth / 2 + 10, 95);
-  doc.text(`Prix unitaire : ${Number(item.price).toLocaleString()} €`, pageWidth / 2 + 10, 100);
+  doc.text(`${item.brand} ${item.model}`, pageWidth / 2 + 10, 80);
+  doc.text(`Référence : ${formattedRef}`, pageWidth / 2 + 10, 85);
+  doc.text(`Prix unitaire : ${formattedUnitPrice}`, pageWidth / 2 + 10, 90);
 
   // Order Details Table
-  const tableTop = 130;
+  const tableTop = 115;
 
   doc.setDrawColor(229, 231, 235);
   doc.line(20, tableTop, pageWidth - 20, tableTop);
 
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text("Désignation", 25, tableTop + 8);
-  doc.text("Total", pageWidth - 25, tableTop + 8, { align: "right" });
+  doc.text("Désignation", 25, tableTop + 7);
+  doc.text("Total", pageWidth - 25, tableTop + 7, { align: "right" });
 
-  doc.line(20, tableTop + 12, pageWidth - 20, tableTop + 12);
+  doc.line(20, tableTop + 10, pageWidth - 20, tableTop + 10);
 
+  doc.setFontSize(8.5);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${item.brand} ${item.model}`, 25, tableTop + 20);
-  doc.text(`${Number(item.price).toLocaleString()} €`, pageWidth - 25, tableTop + 20, { align: "right" });
+  doc.text(`${item.brand} ${item.model}`, 25, tableTop + 16);
+  doc.text(formattedUnitPrice, pageWidth - 25, tableTop + 16, { align: "right" });
 
-  doc.text("Frais de dossier & Expédition", 25, tableTop + 30);
-  doc.text(`${order.shipping === 0 ? 'Offerts' : order.shipping + ' €'}`, pageWidth - 25, tableTop + 30, { align: "right" });
+  doc.text("Frais de dossier & Expédition", 25, tableTop + 24);
+  const shippingText = order.shipping === 0 ? 'Offerts' : formatPrice(order.shipping || 0);
+  doc.text(shippingText, pageWidth - 25, tableTop + 24, { align: "right" });
 
-  doc.line(20, tableTop + 40, pageWidth - 20, tableTop + 40);
+  doc.line(20, tableTop + 32, pageWidth - 20, tableTop + 32);
 
   // Total
-  doc.setFontSize(12);
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  doc.text("TOTAL À PAYER", pageWidth - 80, tableTop + 50);
+  doc.text("TOTAL À PAYER", pageWidth - 80, tableTop + 40);
   doc.setTextColor(...primaryColor);
-  doc.text(`${order.total?.toLocaleString()} €`, pageWidth - 25, tableTop + 50, { align: "right" });
+  doc.text(formatPrice(order.total || 0), pageWidth - 25, tableTop + 40, { align: "right" });
   doc.setTextColor(...blackColor);
 
   // Bank Details
-  const bankTop = 200;
-  doc.setFontSize(11);
+  const bankTop = 180;
+  doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.text("COORDONNÉES BANCAIRES", 20, bankTop);
 
-  doc.setFontSize(10);
+  doc.setFontSize(8.5);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Titulaire : ${bankHolder}`, 20, bankTop + 8);
-  doc.text(`IBAN : ${iban}`, 20, bankTop + 14);
-  doc.text(`BIC : ${bic}`, 20, bankTop + 20);
-  doc.text(`Référence à indiquer : ${order.orderNumber}`, 20, bankTop + 26);
+  doc.text(`Banque : ${bankName}`, 20, bankTop + 8);
+  doc.text(`Titulaire : ${bankHolder}`, 20, bankTop + 14);
+  doc.text(`IBAN : ${iban}`, 20, bankTop + 20);
+  doc.text(`BIC : ${bic}`, 20, bankTop + 26);
+
+  doc.setFont('helvetica', 'bold');
+  doc.text(`Référence à indiquer : ${order.orderNumber}`, 20, bankTop + 34);
 
   // Signatures
-  const signTop = 240;
-  doc.setFontSize(10);
-  doc.text("Signature du Client", 40, signTop);
-  doc.text(`Pour ${companyName}`, pageWidth - 70, signTop);
+  const signTop = 225;
+  const managerName = settings?.documents?.managerName || '';
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text("Le Client", 40, signTop);
+  doc.text(`Pour ${companyName}`, pageWidth - 80, signTop);
 
-  // Seal/Signature images could be added here if we have them as base64
-  if (settings?.signatureUrl) {
-    // Note: This would require loading image first
+  doc.setDrawColor(200, 200, 200);
+  doc.line(20, signTop + 4, 80, signTop + 4);
+  doc.line(pageWidth - 80, signTop + 4, pageWidth - 20, signTop + 4);
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'italic');
+  doc.text("(Signature précédée de la mention 'Lu et approuvé')", 20, signTop + 10);
+  if (managerName) {
+    doc.setFont('helvetica', 'normal');
+    doc.text(managerName, pageWidth - 80, signTop + 10);
   }
 
-  doc.setDrawColor(...grayColor);
-  doc.line(20, signTop + 5, 80, signTop + 5);
-  doc.line(pageWidth - 80, signTop + 5, pageWidth - 20, signTop + 5);
+  // Stamp & Signature (default local or Cloudinary)
+  if (finalStamp) {
+    try { doc.addImage(finalStamp, 'PNG', pageWidth - 78, signTop + 12, 50, 50); }
+    catch (e) { console.error("Stamp error:", e); }
+  }
+  if (finalSignature) {
+    try {
+      doc.addImage(finalSignature, 'PNG', pageWidth - 80, signTop + 24, 55, 28);
+    }
+    catch (e) { console.error("Signature error:", e); }
+  }
 
-  doc.text("Lu et approuvé", 40, signTop + 35);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text("Bon pour accord", 40, signTop + 25);
 
   // Footer
   doc.setFontSize(8);

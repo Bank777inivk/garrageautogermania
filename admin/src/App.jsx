@@ -14,6 +14,7 @@ import Orders from './pages/Orders';
 import OrderDetails from './pages/OrderDetails';
 import Promotions from './pages/Promotions';
 import Banners from './pages/Banners';
+import DocumentExternalPreview from './components/DocumentExternalPreview';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             {/* Autres routes admin protégées ici */}
           </Route>
+          <Route path="settings/preview" element={<DocumentExternalPreview />} />
         </Route>
 
         {/* Redirection par défaut */}

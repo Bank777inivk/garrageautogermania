@@ -17,7 +17,7 @@ const drawHeader = (doc, settings, title) => {
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(...grayColor);
-    doc.text("Specialiste de l'importation de vehicules premium", 20, 31);
+
 
     // Right: Document Title
     doc.setFontSize(28);

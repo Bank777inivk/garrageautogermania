@@ -22,7 +22,8 @@ import {
     MapPin,
     Compass,
     Users,
-    Phone
+    Phone,
+    Download // Added Download icon
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '@shared/store/useAuthStore';
@@ -71,9 +72,9 @@ const OrderDetails = () => {
                     setVehicleDetails(details);
                 }
 
-                // Fetch Settings
+                // Fetch Settings (already correctly set to 'settings/documents')
                 if (!settings) {
-                    const settingsRef = doc(db, 'settings', 'global');
+                    const settingsRef = doc(db, 'settings', 'documents');
                     const settingsSnap = await getDoc(settingsRef);
                     if (settingsSnap.exists()) {
                         setSettings(settingsSnap.data());
@@ -87,7 +88,7 @@ const OrderDetails = () => {
         });
 
         return () => unsubscribe();
-    }, [orderId, user, navigate, vehicleDetails]);
+    }, [orderId, user, navigate, vehicleDetails, settings]); // Added settings to dependency array to prevent re-fetching if already present
 
     if (loading) {
         return (

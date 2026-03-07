@@ -6,11 +6,13 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { FileText, Download, AlertCircle, CheckCircle, Clock, CreditCard } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
+import { generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
 
 const Billing = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuthStore();
   const [orders, setOrders] = useState([]);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,6 +48,19 @@ const Billing = () => {
       console.error("Error monitoring billing data:", error);
       setLoading(false);
     });
+
+    const fetchSettings = async () => {
+      try {
+        const settingsRef = doc(db, 'settings', 'documents');
+        const settingsSnap = await getDoc(settingsRef);
+        if (settingsSnap.exists()) {
+          setSettings(settingsSnap.data());
+        }
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+      }
+    };
+    fetchSettings();
 
     return () => unsubscribe();
   }, [user]);
@@ -128,7 +143,7 @@ const Billing = () => {
                   <button
                     onClick={() => {
                       try {
-                        generateOrderPDF(order);
+                        generateOrderPDF(order, settings);
                         toast.success("Bon de commande téléchargé");
                       } catch (error) {
                         console.error("PDF Error:", error);
@@ -182,7 +197,18 @@ const Billing = () => {
                       </td>
                       <td className="p-5 font-black text-slate-900 text-base">{order.total?.toLocaleString()}€</td>
                       <td className="p-5 text-right">
-                        <button className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-900 px-4 py-2 rounded-lg font-black text-[8px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm">
+                        <button
+                          onClick={() => {
+                            try {
+                              generateInvoicePDF(order, settings);
+                              toast.success("Facture téléchargée");
+                            } catch (error) {
+                              console.error("PDF Error:", error);
+                              toast.error("Erreur lors de la génération de la facture");
+                            }
+                          }}
+                          className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-900 px-4 py-2 rounded-lg font-black text-[8px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                        >
                           <Download size={12} />
                           Facture PDF
                         </button>

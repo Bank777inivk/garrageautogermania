@@ -11,6 +11,7 @@ const OrderSuccess = () => {
   const { orderId } = useParams();
   const { t } = useTranslation();
   const [order, setOrder] = useState(null);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,6 +32,19 @@ const OrderSuccess = () => {
     if (orderId) {
       fetchOrder();
     }
+
+    const fetchSettings = async () => {
+      try {
+        const settingsRef = doc(db, 'settings', 'documents');
+        const settingsSnap = await getDoc(settingsRef);
+        if (settingsSnap.exists()) {
+          setSettings(settingsSnap.data());
+        }
+      } catch (error) {
+        console.error("Error fetching settings:", error);
+      }
+    };
+    fetchSettings();
   }, [orderId]);
 
   if (loading) {
@@ -208,7 +222,7 @@ const OrderSuccess = () => {
           <button
             onClick={() => {
               try {
-                generateOrderPDF(order);
+                generateOrderPDF(order, settings);
                 toast.success("Bon de commande téléchargé");
               } catch (error) {
                 console.error("PDF Error:", error);
