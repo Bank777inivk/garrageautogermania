@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:client": "cross-env APP=client vite",
-    "dev:admin": "cross-env APP=admin vite",
-    "build": "APP=client vite build",
-    "build:client": "APP=client vite build",
-    "build:admin": "APP=admin vite build",
-    "preview:client": "cross-env APP=client vite preview",
-    "preview:admin": "cross-env APP=admin vite preview",
+    "dev:client": "npx cross-env APP=client npx vite",
+    "dev:admin": "npx cross-env APP=admin npx vite",
+    "build": "npx cross-env APP=client npx vite build",
+    "build:client": "npx cross-env APP=client npx vite build",
+    "build:admin": "npx cross-env APP=admin npx vite build",
+    "preview:client": "npx cross-env APP=client npx vite preview",
+    "preview:admin": "npx cross-env APP=admin npx vite preview",
     "lint": "eslint ."
   },
   "dependencies": {
