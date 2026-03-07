@@ -7,8 +7,8 @@
     "dev:client": "cross-env APP=client vite",
     "dev:admin": "cross-env APP=admin vite",
     "build": "npm run build:client",
-    "build:client": "cross-env APP=client vite build",
-    "build:admin": "cross-env APP=admin vite build",
+    "build:client": "APP=client vite build",
+    "build:admin": "APP=admin vite build",
     "preview:client": "cross-env APP=client vite preview",
     "preview:admin": "cross-env APP=admin vite preview",
     "lint": "eslint ."
