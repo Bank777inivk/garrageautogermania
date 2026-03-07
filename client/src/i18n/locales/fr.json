@@ -1,0 +1,20 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "catalogue": "Catalogue",
+    "about": "À propos",
+    "contact": "Contact",
+    "tracking": "Suivi Livraison"
+  },
+  "tracking": {
+    "title": "Suivi de Livraison",
+    "subtitle": "Contrôlez le statut de votre commande en temps réel",
+    "placeholder": "Numéro de référence (ex: 123456)",
+    "search": "Rechercher",
+    "notFound": "Aucune commande trouvée avec ce numéro de référence.",
+    "error": "Une erreur est survenue lors de la recherche.",
+    "loading": "Recherche en cours...",
+    "back": "Retour à la recherche"
+  },
+  "welcome": "Bienvenue sur AutoImport Pro"
+}

@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "home": "Home",
+    "catalogue": "Catalogue",
+    "about": "About",
+    "contact": "Contact",
+    "tracking": "Order Tracking"
+  },
+  "tracking": {
+    "title": "Order Tracking",
+    "subtitle": "Track your order status in real time",
+    "placeholder": "Reference number (e.g., 123456)",
+    "search": "Search",
+    "notFound": "No order found with this reference number.",
+    "error": "An error occurred during the search.",
+    "loading": "Searching...",
+    "back": "Back to search"
+  },
+  "welcome": "Welcome to AutoImport Pro",
+  "loading": "Loading...",
+  "status": {
+    "pending": "Pending"
+  }
+}

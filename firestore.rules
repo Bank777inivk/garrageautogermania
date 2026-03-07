@@ -1,0 +1,109 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Fonction helper pour vérifier si l'utilisateur est connecté
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Fonction helper pour vérifier si l'utilisateur est un admin
+    // MODIFIÉ : On vérifie si l'email de l'utilisateur existe dans la collection 'admins'
+    function isAdmin() {
+      return isAuthenticated() && (
+        // Super Admin (hardcodé pour éviter de se bloquer soi-même)
+        request.auth.token.email == 'noellinemous@gmail.com' || 
+        // Admin dynamique (vérifie si un document avec l'email existe dans la collection 'admins')
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email))
+      );
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'ADMINS' (GESTION DES ADMINISTRATEURS)
+    // ============================================================================
+    match /admins/{email} {
+      // Seuls les admins existants peuvent lire ou ajouter de nouveaux admins
+      allow read, write: if isAdmin();
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'VEHICLES' (VÉHICULES)
+    // ============================================================================
+    match /vehicles/{vehicleId} {
+      // Lecture (Client & Admin) : Tout le monde peut voir les véhicules
+      allow read: if true;
+
+      // Écriture (Temporaire pour le seed : allow create if true)
+      allow create: if true; 
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'CATEGORIES' (CATÉGORIES / MARQUES)
+    // ============================================================================
+    match /categories/{categoryId} {
+      // Lecture (Client & Admin) : Tout le monde peut voir les catégories
+      allow read: if true;
+
+      // Écriture (Admin seulement)
+      allow write: if isAdmin();
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'ORDERS' (COMMANDES)
+    // ============================================================================
+    match /orders/{orderId} {
+      // Lecture d'un document unique (GET) : Autorisé pour tout le monde (pour la confirmation)
+      allow get: if true;
+      
+      // Liste des documents (LIST) : Admin, propriétaire, ou recherche publique (limitée à 1)
+      allow list: if isAdmin() || 
+                    (request.auth != null && resource.data.userId == request.auth.uid) ||
+                    (request.query.limit == 1);
+
+      // Création (Client) : Tout le monde peut créer une commande
+      allow create: if true;
+
+      // Modification/Suppression (Admin seulement)
+      allow update, delete: if isAdmin();
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'CLIENTS' (CLIENTS)
+    // ============================================================================
+    match /clients/{clientId} {
+      allow read, write: if isAdmin() || (request.auth != null && request.auth.uid == clientId);
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'PROMOTIONS'
+    // ============================================================================
+    match /promotions/{promoId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'BANNERS' (BANNIÈRES)
+    // ============================================================================
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ============================================================================
+    // RÈGLES POUR LA COLLECTION 'SETTINGS' (PARAMÈTRES GLOBAUX)
+    // ============================================================================
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Par défaut, refuser tout accès aux autres collections non définies
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
