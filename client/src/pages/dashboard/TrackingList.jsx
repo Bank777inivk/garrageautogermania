@@ -118,14 +118,14 @@ const TrackingList = () => {
                                                         'completed': 'Livré',
                                                         'confirmed': 'Confirmé',
                                                         'cancelled': 'Annulée'
-                                                    }[order.status] || order.status || 'En cours'}
+                                                    }[order.status?.toLowerCase()] || order.status || 'En cours'}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Étape</p>
                                             <p className="text-[13px] font-black text-red-700 uppercase mt-0.5 font-sans">
-                                                {['delivered', 'completed'].includes(order.status) ? 'Terminé' : 'En cours'}
+                                                {['delivered', 'completed'].includes(order.status?.toLowerCase()) ? 'Terminé' : 'En cours'}
                                             </p>
                                         </div>
                                     </div>

@@ -14,8 +14,10 @@ import {
   CreditCard,
   User,
   Zap,
-  Shield
+  Shield,
+  Heart
 } from 'lucide-react';
+import useFavoriteStore from '@shared/store/useFavoriteStore';
 import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
@@ -28,6 +30,7 @@ const Dashboard = () => {
     pendingOrders: 0,
     completedOrders: 0
   });
+  const { favorites } = useFavoriteStore();
   const [recentOrders, setRecentOrders] = useState([]);
 
   useEffect(() => {
@@ -174,6 +177,28 @@ const Dashboard = () => {
           </div>
           <p className="text-4xl sm:text-5xl font-black text-white tracking-tighter relative">{stats.completedOrders}</p>
         </div>
+
+        {/* Favorites Card - New */}
+        <Link
+          to="/dashboard/favorites"
+          className="bg-white p-8 rounded-3xl border border-slate-100 transition-all hover:border-red-600 group relative overflow-hidden shadow-2xl shadow-slate-100/50"
+        >
+          <div className="flex items-center gap-4 mb-6 relative">
+            <div className="p-3 bg-red-50 text-red-600 rounded-xl border border-red-100 group-hover:bg-red-700 group-hover:text-white transition-all">
+              <Heart size={20} fill={favorites.length > 0 ? "currentColor" : "none"} />
+            </div>
+            <div>
+              <p className="text-slate-400 font-black text-[8px] uppercase tracking-[0.2em]">Sélection</p>
+              <p className="text-slate-900 font-black text-[10px] uppercase mb-0.5">Mes Favoris</p>
+            </div>
+          </div>
+          <div className="flex items-end justify-between relative">
+            <p className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tighter">{favorites.length}</p>
+            <div className="pb-1 text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-red-700 transition-colors flex items-center gap-1">
+              Voir tout <ChevronRight size={12} />
+            </div>
+          </div>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">

@@ -6,7 +6,7 @@ import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/fire
 import { FileText, Download, AlertCircle, CheckCircle, Clock, CreditCard } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
-import { generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
+import { generatePaymentReceiptPDF } from '@shared/utils/generateAdminDocuments';
 
 const Billing = () => {
   const navigate = useNavigate();
@@ -66,7 +66,8 @@ const Billing = () => {
   }, [user]);
 
   const pendingOrders = orders.filter(o => o.status === 'pending');
-  const completedOrders = orders.filter(o => o.status === 'completed');
+  // Add all post-payment statuses to the completed/archived list
+  const completedOrders = orders.filter(o => ['logistics', 'transit', 'concierge', 'delivered', 'completed'].includes(o.status));
 
   if (authLoading || loading) {
     return (
@@ -198,19 +199,11 @@ const Billing = () => {
                       <td className="p-5 font-black text-slate-900 text-base">{order.total?.toLocaleString()}€</td>
                       <td className="p-5 text-right">
                         <button
-                          onClick={async () => {
-                            try {
-                              await generateInvoicePDF(order, settings);
-                              toast.success("Facture téléchargée");
-                            } catch (error) {
-                              console.error("PDF Error:", error);
-                              toast.error("Erreur lors de la génération de la facture");
-                            }
-                          }}
+                          onClick={() => navigate(`/dashboard/payment/${order.id}`)}
                           className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-900 px-4 py-2 rounded-lg font-black text-[8px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm"
                         >
-                          <Download size={12} />
-                          Facture PDF
+                          <FileText size={12} />
+                          Ouvrir le Reçu
                         </button>
                       </td>
                     </tr>

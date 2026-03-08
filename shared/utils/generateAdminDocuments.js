@@ -241,3 +241,117 @@ export const generateInvoicePDF = async (order, settings) => {
     drawFooter(doc, settings);
     doc.save(`Facture_${order.orderNumber}.pdf`);
 };
+
+export const generatePaymentReceiptPDF = async (order, settings) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+
+    drawHeader(doc, settings, "Reçu de Paiement");
+
+    // Receipt Meta
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`REÇU N° R-${order.orderNumber}`, 20, 45);
+    doc.text(`DATE D'ÉMISSION : ${new Date().toLocaleDateString('fr-FR')}`, pageWidth - 20, 45, { align: 'right' });
+
+    // Payment Info
+    autoTable(doc, {
+        startY: 55,
+        head: [['Description', 'Quantité', 'Montant Payé']],
+        body: order.items.map(item => [
+            `${item.brand} ${item.model}\nRéférence : ${item.id && item.id.length > 8 ? item.id.substring(0, 8).toUpperCase() : (item.id || 'N/A')}`,
+            '1',
+            formatPrice(item.price)
+        ]),
+        headStyles: { fillColor: primaryColor, textColor: [255, 255, 255] },
+        styles: { fontSize: 8, cellPadding: 4 },
+        columnStyles: { 2: { halign: 'right', fontStyle: 'bold' } },
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 10;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text("TOTAL RÉGLÉ :", pageWidth - 100, finalY + 8);
+    doc.setTextColor(...accentColor);
+    doc.text(formatPrice(order.total || 0), pageWidth - 20, finalY + 8, { align: 'right' });
+
+    doc.setTextColor(...primaryColor);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text("Ce document atteste que le montant total a été réglé en intégralité.", 20, finalY + 25);
+
+    drawFooter(doc, settings);
+    doc.save(`Recu_Paiement_${order.orderNumber}.pdf`);
+};
+
+export const generateDeliverySlipPDF = async (order, settings) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+
+    drawHeader(doc, settings, "Bordereau de Livraison");
+
+    // Delivery Meta
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`BORDEREAU N° L-${order.orderNumber}`, 20, 45);
+    doc.text(`DATE : ${new Date().toLocaleDateString('fr-FR')}`, pageWidth - 20, 45, { align: 'right' });
+
+    // Customer Info Box
+    doc.setDrawColor(200, 200, 200);
+    doc.setFillColor(249, 250, 251);
+    doc.roundedRect(20, 55, pageWidth - 40, 35, 3, 3, 'FD');
+    doc.setFontSize(10);
+    doc.setTextColor(...primaryColor);
+    doc.setFont('helvetica', 'bold');
+    doc.text("INFORMATIONS DU CLIENT", 25, 63);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(`${order.customer?.firstName || ''} ${order.customer?.lastName || ''}`, 25, 70);
+    doc.text(`${order.customer?.phone || ''}`, 25, 76);
+    doc.text(`${order.customer?.email || ''}`, 25, 82);
+
+    // Items table
+    autoTable(doc, {
+        startY: 100,
+        head: [['Véhicule / Produit Livré', 'Référence', 'Quantité']],
+        body: order.items.map(item => [
+            `${item.brand} ${item.model}`,
+            item.id ? item.id.substring(0, 8).toUpperCase() : 'N/A',
+            '1'
+        ]),
+        headStyles: { fillColor: primaryColor, textColor: [255, 255, 255] },
+        styles: { fontSize: 8, cellPadding: 4 },
+    });
+
+    const finalY = doc.lastAutoTable.finalY + 15;
+
+    // Signature Block
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Le Client (Bon pour accord et réception)", 20, finalY);
+    doc.text("Le Garage", pageWidth - 20, finalY, { align: 'right' });
+
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(20, finalY + 5, 80, finalY + 5);
+    doc.line(pageWidth - 80, finalY + 5, pageWidth - 20, finalY + 5);
+
+    // Stamp and Signature for Garage
+    try {
+        const finalStamp = settings?.documents?.stampUrl ? getWhiteBgLogoUrl(settings.documents.stampUrl) : await loadLocalImage('/garrage_stamp_pro_1772904455871.png');
+        const finalSignature = settings?.documents?.signatureUrl ? getWhiteBgLogoUrl(settings.documents.signatureUrl) : await loadLocalImage('/garrage_signature_gerant_1772905088803.png');
+
+        if (finalStamp) {
+            doc.addImage(finalStamp, 'PNG', pageWidth - 70, finalY + 10, 40, 40);
+        }
+        if (finalSignature) {
+            doc.addImage(finalSignature, 'PNG', pageWidth - 70, finalY + 20, 50, 25);
+        }
+    } catch (error) {
+        console.error("Error drawing stamp/signature on delivery slip", error);
+    }
+
+    drawFooter(doc, settings);
+    doc.save(`Bordereau_Livraison_${order.orderNumber}.pdf`);
+};

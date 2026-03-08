@@ -2,24 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 
 const VerticalAd = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [currentCar, setCurrentCar] = useState(0);
+    const { vehicles } = useClientVehicleStore();
 
-    const cars = [
-        "https://freepngimg.com/save/31533-bmw-transparent-image/1050x524", // BMW White 
-        "https://www.webpmart.com/files/10/Mercedes-Benz-G-Class-PNG-Transparent-Image.webp", // G-Class White
-        "https://www.webpall.com/wp-content/uploads/12/Audi-RS6-PNG-Clipart.webp" // Audi RS6 White
+    // Pick up to 3 vehicles that have images (real data in webp from DB)
+    const carsWithImages = vehicles
+        .filter(v => v.images && v.images.length > 0)
+        .slice(0, 3)
+        .map(v => v.images[0]);
+
+    // Fallback: use German car placeholder if no vehicles loaded yet
+    const fallback = [
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Mercedes-Benz_190_E.jpg/500px-Mercedes-Benz_190_E.jpg'
     ];
 
+    const cars = carsWithImages.length > 0 ? carsWithImages : fallback;
+
     useEffect(() => {
+        if (cars.length <= 1) return;
         const timer = setInterval(() => {
             setCurrentCar((prev) => (prev + 1) % cars.length);
         }, 4000);
         return () => clearInterval(timer);
-    }, []);
+    }, [cars.length]);
 
     return (
         <div
@@ -31,7 +41,7 @@ const VerticalAd = () => {
                 <div className="relative z-10">
                     <h3 className="text-white text-2xl font-black font-montserrat leading-tight uppercase tracking-tight mb-4">
                         <span className="bg-black/20 px-2 py-0.5 inline-block mb-1">{t('ad.benefit', 'BÉNÉFICIEZ DE')}</span><br />
-                        <span className="text-4xl">{t('ad.discount', 'JUSQU\'À 12%')}</span><br />
+                        <span className="text-4xl">{t('ad.discount', "JUSQU'À 12%")}</span><br />
                         <span className="bg-black/20 px-2 py-0.5 inline-block mt-1">{t('ad.reason', 'DE RÉDUCTION')}</span>
                     </h3>
                     <p className="text-white/90 text-xs font-bold uppercase tracking-[0.2em]">
@@ -50,7 +60,7 @@ const VerticalAd = () => {
                         key={index}
                         src={car}
                         alt="Car Promo"
-                        className={`absolute w-[120%] h-auto object-contain transition-all duration-1000 ease-in-out transform ${index === currentCar
+                        className={`absolute w-[120%] h-full object-cover transition-all duration-1000 ease-in-out transform ${index === currentCar
                             ? 'opacity-100 translate-x-0 rotate-0'
                             : 'opacity-0 translate-x-full rotate-6'
                             }`}
@@ -66,7 +76,7 @@ const VerticalAd = () => {
                 </div>
 
                 <p className="text-[9px] text-slate-400 font-bold mt-4 italic leading-tight">
-                    * {t('ad.disclaimer', 'Les conditions générales de vente standard s\'appliquent.')}
+                    * {t('ad.disclaimer', "Les conditions générales de vente standard s'appliquent.")}
                 </p>
             </div>
         </div>

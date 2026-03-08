@@ -3,28 +3,21 @@ import { Link } from 'react-router-dom';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 import useCartStore from '@shared/store/useCartStore';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Database } from 'lucide-react';
-import { seedVehicles } from '../utils/seedVehicles';
+import { ArrowRight } from 'lucide-react';
 import VehicleCard from './VehicleCard';
 
 const FeaturedVehicles = ({ gridOnly = false }) => {
   const { t } = useTranslation();
   const { featuredVehicles, loading, fetchFeaturedVehicles } = useClientVehicleStore();
   const { addToCart } = useCartStore();
-  const [seeding, setSeeding] = useState(false);
 
   useEffect(() => {
     fetchFeaturedVehicles();
   }, []);
 
-  const handleSeed = async () => {
-    setSeeding(true);
-    const success = await seedVehicles();
-    if (success) fetchFeaturedVehicles();
-    setSeeding(false);
-  };
 
-  if (loading && !seeding) {
+
+  if (loading) {
     return (
       <div className={gridOnly ? "" : "py-20 bg-gray-50"}>
         <div className={gridOnly ? "" : "container mx-auto px-4"}>
@@ -63,15 +56,7 @@ const FeaturedVehicles = ({ gridOnly = false }) => {
 
       {featuredVehicles.length === 0 ? (
         <div className="text-center py-12 text-gray-400 flex flex-col items-center gap-4">
-          <p className="text-sm">{t('home.noVehicles', 'Aucun véhicule disponible pour le moment.')}</p>
-          <button
-            onClick={handleSeed}
-            disabled={seeding}
-            className="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm rounded-lg transition-colors"
-          >
-            <Database size={15} className="mr-2" />
-            {seeding ? 'Chargement...' : 'Générer des véhicules de démo'}
-          </button>
+          <p className="text-sm font-medium italic">{t('home.noVehicles', 'Aucun véhicule disponible pour le moment.')}</p>
         </div>
       ) : (
         <>

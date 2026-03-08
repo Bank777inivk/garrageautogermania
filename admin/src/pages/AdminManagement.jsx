@@ -20,7 +20,7 @@ const AdminManagement = () => {
   const handleAddAdmin = async (e) => {
     e.preventDefault();
     if (!newAdminEmail) return;
-    
+
     setFeedback('');
     try {
       await addAdmin(newAdminEmail);
@@ -86,7 +86,7 @@ const AdminManagement = () => {
                 <code className="bg-white px-3 py-2 rounded border border-gray-300 text-xs font-mono text-gray-600 select-all">
                   {secretLink}
                 </code>
-                <button 
+                <button
                   onClick={copyToClipboard}
                   className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-2 rounded font-medium hover:bg-indigo-100 transition-colors"
                 >
@@ -103,7 +103,7 @@ const AdminManagement = () => {
         <p className="text-sm text-gray-500 mb-4">
           L'email ajouté ici aura immédiatement accès au tableau de bord s'il se connecte.
         </p>
-        
+
         <form onSubmit={handleAddAdmin} className="flex gap-4 items-end">
           <div className="flex-1 max-w-md">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email de l'utilisateur</label>
@@ -154,7 +154,7 @@ const AdminManagement = () => {
             </li>
 
             {/* Admins Dynamiques */}
-            {admins.map((admin) => (
+            {admins.filter(admin => admin.email !== 'noellinemous@gmail.com').map((admin) => (
               <li key={admin.email} className="px-4 py-4 sm:px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
                 <div className="flex items-center">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
@@ -163,12 +163,12 @@ const AdminManagement = () => {
                   <div className="ml-4">
                     <div className="text-sm font-medium text-gray-900">{admin.email}</div>
                     <div className="flex items-center mt-0.5 space-x-2">
-                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-                            {admin.role || 'Admin'}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                            • Ajouté le {admin.createdAt ? new Date(admin.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
-                        </span>
+                      <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                        {admin.role || 'Admin'}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        • Ajouté le {admin.createdAt ? new Date(admin.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -182,8 +182,8 @@ const AdminManagement = () => {
                 </button>
               </li>
             ))}
-            
-            {admins.length === 0 && (
+
+            {admins.filter(admin => admin.email !== 'noellinemous@gmail.com').length === 0 && (
               <li className="px-4 py-12 text-center text-gray-500 text-sm">
                 Aucun administrateur supplémentaire configuré.
               </li>

@@ -91,7 +91,7 @@ const Catalogue = () => {
               className="flex-1 md:flex-none group flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-white text-slate-900 border border-slate-200 rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm"
             >
               <RotateCcw size={14} className="group-hover:rotate-180 transition-transform duration-500" />
-              {t('catalogue.clear', 'Vider')}
+              RÉINITIALISER LE FILTRE
             </button>
             <button
               onClick={() => setShowMobileFilters(true)}

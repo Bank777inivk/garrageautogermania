@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { db } from '@shared/firebase/config';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import {
     ShoppingCart,
     Search,
@@ -19,12 +19,18 @@ import {
     Package,
     User as UserIcon,
     ChevronRight,
-    Users
+    Users,
+    Zap,
+    Shield,
+    Trash2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import useAuthStore from '@shared/store/useAuthStore';
 
 const Orders = () => {
+    const { user } = useAuthStore();
     const navigate = useNavigate();
+    const isSuperAdmin = user?.email === 'noellinemous@gmail.com';
     const [orders, setOrders] = useState([]);
     const [clients, setClients] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(false);
@@ -72,6 +78,23 @@ const Orders = () => {
             toast.success("Statut mis à jour");
         } catch (error) {
             toast.error("Erreur lors de la mise à jour");
+        }
+    };
+
+    const handleDeleteOrder = async (orderId, orderNumber) => {
+        if (!isSuperAdmin) {
+            toast.error("Action non autorisée");
+            return;
+        }
+
+        if (window.confirm(`Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT la commande #${orderNumber} ? Cette action est irréversible.`)) {
+            try {
+                await deleteDoc(doc(db, 'orders', orderId));
+                toast.success("Commande supprimée définitivement");
+            } catch (error) {
+                console.error("Delete error:", error);
+                toast.error("Erreur lors de la suppression");
+            }
         }
     };
 
@@ -341,6 +364,15 @@ const Orders = () => {
                                             >
                                                 <Download size={14} /> Facture
                                             </button>
+                                            {isSuperAdmin && (
+                                                <button
+                                                    onClick={() => handleDeleteOrder(order.id, order.orderNumber)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-500 hover:text-white hover:bg-red-600 border border-red-100 hover:border-red-600 rounded-lg transition-all"
+                                                    title="Supprimer la commande"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

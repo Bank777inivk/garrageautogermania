@@ -9,16 +9,20 @@ import {
     MapPin,
     CreditCard,
     Zap,
-    Shield
+    Shield,
+    FileCheck,
+    FileText
 } from 'lucide-react';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, getDoc } from 'firebase/firestore';
 import { db } from '@shared/firebase/config';
 import toast from 'react-hot-toast';
+import { generateContractPDF, generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
 
 const OrderTracking = () => {
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [settings, setSettings] = useState(null);
 
     useEffect(() => {
         if (!orderId) return;
@@ -27,6 +31,16 @@ const OrderTracking = () => {
         const unsubscribe = onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
                 setOrder({ id: docSnap.id, ...docSnap.data() });
+
+                // Fetch settings once
+                if (!settings) {
+                    const settingsRef = doc(db, 'settings', 'documents');
+                    getDoc(settingsRef).then(settingsSnap => {
+                        if (settingsSnap.exists()) {
+                            setSettings(settingsSnap.data());
+                        }
+                    });
+                }
             } else {
                 toast.error("Commande introuvable");
             }
@@ -50,7 +64,10 @@ const OrderTracking = () => {
     ];
 
     const getActiveStageIndex = () => {
-        if (!order) return 0;
+        if (!order || !order.status) return 0;
+
+        const status = order.status.toLowerCase();
+
         const statusMap = {
             'validation': 0,
             'pending': 1,
@@ -58,10 +75,11 @@ const OrderTracking = () => {
             'transit': 3,
             'concierge': 4,
             'delivered': 5,
-            'completed': 5, // legacy support
-            'confirmed': 2  // legacy support
+            'completed': 5,
+            'confirmed': 2
         };
-        const idx = statusMap[order.status];
+
+        const idx = statusMap[status];
         return typeof idx !== 'undefined' ? idx : 0;
     };
 
@@ -88,6 +106,16 @@ const OrderTracking = () => {
                         transform: scale(1.25); 
                     }
                 }
+                @keyframes extreme-pulse-emerald {
+                    0%, 100% { 
+                        box-shadow: 0 0 30px rgba(16, 185, 129, 0.7), 0 0 0 0px rgba(16, 185, 129, 0.5); 
+                        transform: scale(1.1); 
+                    }
+                    50% { 
+                        box-shadow: 0 0 120px rgba(16, 185, 129, 1), 0 0 0 40px rgba(16, 185, 129, 0); 
+                        transform: scale(1.25); 
+                    }
+                }
                 @keyframes ring-expand {
                     0% { transform: scale(1); opacity: 0.8; }
                     100% { transform: scale(3); opacity: 0; }
@@ -95,6 +123,10 @@ const OrderTracking = () => {
                 .animate-glow-pulse {
                     position: relative;
                     animation: extreme-pulse 1.2s infinite ease-in-out;
+                }
+                .animate-glow-pulse-emerald {
+                    position: relative;
+                    animation: extreme-pulse-emerald 1.2s infinite ease-in-out;
                 }
                 .animate-glow-pulse::after {
                     content: '';
@@ -130,9 +162,48 @@ const OrderTracking = () => {
                             </p>
                         </div>
                     </div>
-                    <div className="hidden md:flex items-center gap-4 bg-red-600/10 border border-red-500/20 px-8 py-3 rounded-2xl">
-                        <Zap size={20} className="text-red-500" />
-                        <span className="text-[10px] md:text-[12px] font-black uppercase tracking-widest text-red-500">Livraison Prioritaire</span>
+                    <div className="flex flex-wrap items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
+                        {order.status === 'pending' && (
+                            <>
+                                <button
+                                    onClick={async () => {
+                                        try {
+                                            await generateInvoicePDF(order, settings);
+                                            toast.success("Facture proforma téléchargée");
+                                        } catch (error) {
+                                            console.error("PDF Error:", error);
+                                            toast.error("Erreur génération facture");
+                                        }
+                                    }}
+                                    className="flex-1 md:flex-none flex items-center justify-center gap-3 px-6 py-3 bg-teal-50 text-teal-700 border border-teal-100 rounded-xl hover:bg-teal-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
+                                >
+                                    <FileText size={16} className="group-hover/btn:scale-110 transition-transform" />
+                                    Facture Proforma
+                                </button>
+                                <button
+                                    onClick={() => window.location.href = `/dashboard/payment/${order.id}`}
+                                    className="flex-1 md:flex-none flex items-center justify-center gap-3 px-6 py-3 bg-amber-400 text-slate-900 rounded-xl hover:bg-amber-500 font-black text-[10px] uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                                >
+                                    <CreditCard size={16} />
+                                    Finaliser mon achat
+                                </button>
+                            </>
+                        )}
+                        <button
+                            onClick={async () => {
+                                try {
+                                    await generateContractPDF(order, settings);
+                                    toast.success("Contrat de vente téléchargé");
+                                } catch (error) {
+                                    console.error("PDF Error:", error);
+                                    toast.error("Erreur gérération contrat");
+                                }
+                            }}
+                            className="flex-1 md:flex-none flex items-center justify-center gap-3 px-6 py-3 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl hover:bg-indigo-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
+                        >
+                            <FileCheck size={16} className="group-hover/btn:scale-110 transition-transform" />
+                            Contrat de vente
+                        </button>
                     </div>
                 </div>
 
@@ -187,6 +258,19 @@ const OrderTracking = () => {
                                     const isActive = idx <= activeIndex;
                                     const isCurrent = idx === activeIndex;
                                     const isValidation = stage.id === 'validation';
+                                    const isDelivered = stage.id === 'delivered';
+
+                                    // Colors for active/current states
+                                    let labelClass = 'bg-slate-900 text-slate-500 border border-white/5';
+                                    let iconClass = 'bg-slate-900 border-white/10 text-slate-600 group-hover:border-red-500/50 group-hover:text-red-500 group-hover:scale-110';
+
+                                    if (isCurrent) {
+                                        labelClass = isDelivered ? 'bg-emerald-600 text-white scale-110' : 'bg-red-700 text-white scale-110';
+                                        iconClass = isDelivered ? 'bg-white text-emerald-600 border-emerald-500/50 animate-glow-pulse-emerald' : 'bg-white text-red-600 border-red-500/50 animate-glow-pulse';
+                                    } else if (isActive) {
+                                        labelClass = isValidation || isDelivered ? 'bg-emerald-600 text-white' : 'bg-white text-slate-900';
+                                        iconClass = isValidation || isDelivered ? 'bg-emerald-600/10 border-emerald-500/50 text-emerald-500' : 'bg-slate-800 border-white/20 text-white';
+                                    }
 
                                     return (
                                         <div
@@ -200,17 +284,11 @@ const OrderTracking = () => {
                                             <div className={`relative flex flex-col items-center pointer-events-auto group transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-20 hover:opacity-100'}`}>
                                                 <div className="absolute bottom-20 flex flex-col items-center">
                                                     <div className="mb-4">
-                                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-xl whitespace-nowrap transition-all ${isCurrent ? 'bg-red-700 text-white scale-110' :
-                                                            isActive ? (isValidation ? 'bg-emerald-600 text-white' : 'bg-white text-slate-900') :
-                                                                'bg-slate-900 text-slate-500 border border-white/5'
-                                                            }`}>
+                                                        <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-xl whitespace-nowrap transition-all ${labelClass}`}>
                                                             {stage.label}
                                                         </span>
                                                     </div>
-                                                    <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-700 border-2 ${isCurrent ? 'bg-white text-red-600 border-red-500/50 animate-glow-pulse' :
-                                                        isActive ? (isValidation ? 'bg-emerald-600/10 border-emerald-500/50 text-emerald-500' : 'bg-slate-800 border-white/20 text-white') :
-                                                            'bg-slate-900 border-white/10 text-slate-600 group-hover:border-red-500/50 group-hover:text-red-500 group-hover:scale-110'
-                                                        }`}>
+                                                    <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-700 border-2 ${iconClass}`}>
                                                         <stage.icon size={26} className="transition-colors duration-500" />
                                                     </div>
                                                     <div className={`w-1 h-20 mt-2 bg-gradient-to-b transition-all duration-700 ${isActive ? 'from-red-500/40 to-transparent' : 'from-white/10 to-transparent'}`} />
@@ -260,24 +338,38 @@ const OrderTracking = () => {
                             const isActive = idx <= activeIndex;
                             const isCurrent = idx === activeIndex;
                             const isValidation = stage.id === 'validation';
+                            const isDelivered = stage.id === 'delivered';
+
+                            let iconMobileClass = 'bg-slate-950 border-white/5 text-slate-600';
+                            let titleMobileClass = 'text-slate-500 group-hover:text-white';
+                            let badgeMobileClass = 'bg-red-600/20 border-red-600/40 text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)]';
+
+                            if (isCurrent) {
+                                iconMobileClass = isDelivered ? 'bg-white text-emerald-600 border-emerald-600 scale-110 animate-glow-pulse-emerald' : 'bg-white text-red-600 border-red-600 scale-110 animate-glow-pulse';
+                                titleMobileClass = isDelivered ? 'text-emerald-500' : 'text-red-500';
+                                badgeMobileClass = isDelivered ? 'bg-emerald-600/20 border-emerald-600/40 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : badgeMobileClass;
+                            } else if (isActive) {
+                                iconMobileClass = isValidation || isDelivered ? 'bg-emerald-600/20 border-emerald-500 text-emerald-500' : 'bg-slate-800 border-white/20 text-white';
+                                titleMobileClass = 'text-white';
+                            }
 
                             return (
                                 <div key={idx} className={`relative flex gap-6 items-start transition-all duration-500 group cursor-pointer ${isActive ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}>
-                                    <div className={`relative z-10 w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center border-2 transition-all duration-700 ${isCurrent ? 'bg-white text-red-600 border-red-600 scale-110 animate-glow-pulse' : isActive ? (isValidation ? 'bg-emerald-600/20 border-emerald-500 text-emerald-500' : 'bg-slate-800 border-white/20 text-white') : 'bg-slate-950 border-white/5 text-slate-600'} group-hover:scale-110 group-hover:bg-red-600/20 group-hover:border-red-500/50 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] active:scale-90`}>
+                                    <div className={`relative z-10 w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center border-2 transition-all duration-700 ${iconMobileClass} group-hover:scale-110 group-hover:bg-red-600/20 group-hover:border-red-500/50 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] active:scale-90`}>
                                         <stage.icon size={20} className="transition-transform duration-500 group-hover:scale-110" />
                                         {isCurrent && (
-                                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full border-2 border-[#020617] flex items-center justify-center">
+                                            <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#020617] flex items-center justify-center ${isDelivered ? 'bg-emerald-600' : 'bg-red-600'}`}>
                                                 <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
                                             </div>
                                         )}
                                     </div>
                                     <div className="flex-grow pt-1.5 transition-all duration-500 group-hover:translate-x-2">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <h3 className={`font-black text-[11px] uppercase tracking-widest transition-colors duration-500 ${isCurrent ? 'text-red-500' : isActive ? 'text-white' : 'text-slate-500 group-hover:text-white'}`}>
+                                            <h3 className={`font-black text-[11px] uppercase tracking-widest transition-colors duration-500 ${titleMobileClass}`}>
                                                 {stage.label}
                                             </h3>
                                             {isCurrent && (
-                                                <span className="animate-pulse px-2 py-0.5 bg-red-600/20 border border-red-600/40 text-red-500 text-[8px] font-black uppercase rounded-md tracking-tighter shadow-[0_0_15px_rgba(220,38,38,0.4)]">Actuel</span>
+                                                <span className={`animate-pulse px-2 py-0.5 border text-[8px] font-black uppercase rounded-md tracking-tighter ${badgeMobileClass}`}>Actuel</span>
                                             )}
                                         </div>
                                         <p className={`text-[10px] font-medium leading-relaxed uppercase tracking-wider transition-colors duration-500 ${isActive ? 'text-slate-500 group-hover:text-slate-300' : 'text-slate-700 group-hover:text-slate-400'}`}>

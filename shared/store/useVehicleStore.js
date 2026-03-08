@@ -1,21 +1,30 @@
 import { create } from 'zustand';
 import { db } from '../firebase/config';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+
+let unsubscribe = null;
 
 const useVehicleStore = create((set) => ({
   vehicles: [],
   loading: false,
   error: null,
 
-  fetchVehicles: async () => {
+  fetchVehicles: () => {
+    // Prevent multiple listeners
+    if (unsubscribe) return;
+
     set({ loading: true, error: null });
+
     try {
-      const querySnapshot = await getDocs(collection(db, 'vehicles'));
-      const vehiclesData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      set({ vehicles: vehiclesData, loading: false });
+      unsubscribe = onSnapshot(collection(db, 'vehicles'), (snapshot) => {
+        const vehiclesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        set({ vehicles: vehiclesData, loading: false });
+      }, (error) => {
+        set({ error: error.message, loading: false });
+      });
     } catch (error) {
       set({ error: error.message, loading: false });
     }
@@ -45,7 +54,7 @@ const useVehicleStore = create((set) => ({
       const vehicleRef = doc(db, 'vehicles', id);
       await updateDoc(vehicleRef, updatedData);
       set((state) => ({
-        vehicles: state.vehicles.map(v => 
+        vehicles: state.vehicles.map(v =>
           v.id === id ? { ...v, ...updatedData } : v
         ),
         loading: false

@@ -6,7 +6,7 @@ import useVehicleStore from '@shared/store/useVehicleStore';
 import uploadToCloudinary from '@shared/cloudinary/config';
 import {
   Plus, Edit, Trash2, Search, Car, Tags, ChevronDown, ChevronRight,
-  Loader2, Image as ImageIcon, X, Upload, Star, Eye, EyeOff, Check
+  Loader2, Image as ImageIcon, X, Upload, Star, Eye, EyeOff, Check, Heart
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -102,8 +102,17 @@ const CategoryModal = ({ category, onClose, onSave }) => {
 // Main VehiclesList Component
 // =========================================================
 const VehiclesList = () => {
-  const { vehicles, fetchVehicles, deleteVehicle, loading } = useVehicleStore();
+  const { vehicles, fetchVehicles, deleteVehicle, updateVehicle, loading } = useVehicleStore();
   const navigate = useNavigate();
+
+  const toggleFeatured = async (id, currentStatus) => {
+    try {
+      await updateVehicle(id, { featured: !currentStatus });
+      toast.success(currentStatus ? 'Mis en avant retiré' : 'Véhicule mis en avant (TOP)');
+    } catch (err) {
+      toast.error("Erreur de modification");
+    }
+  };
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all'); // 'all' or category name
@@ -359,6 +368,7 @@ const VehiclesList = () => {
                         <tr className="bg-gray-50/50 border-b border-gray-100">
                           <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Véhicule</th>
                           <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
+                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Favoris</th>
                           <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Année</th>
                           <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Carburant</th>
                           <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilométrage</th>
@@ -383,22 +393,37 @@ const VehiclesList = () => {
                                   )}
                                 </div>
                                 <div>
-                                  <div className="font-bold text-gray-900 text-sm">{vehicle.model}</div>
-                                  {vehicle.version && <div className="text-[10px] text-gray-400 font-medium">{vehicle.version}</div>}
-                                  {vehicle.featured && (
-                                    <span className="inline-flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full mt-0.5">
-                                      <Star size={8} fill="currentColor" /> Mis en avant
-                                    </span>
-                                  )}
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
+                                      className={`transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-200 hover:text-amber-300'}`}
+                                      title={vehicle.featured ? "Retirer la mise en avant" : "Mettre en avant (TOP)"}
+                                    >
+                                      <Star size={16} fill={vehicle.featured ? "currentColor" : "none"} />
+                                    </button>
+                                    <div className="font-bold text-gray-900 text-sm">{vehicle.model}</div>
+                                  </div>
+                                  {vehicle.version && <div className="text-[10px] text-gray-400 font-medium ml-6">{vehicle.version}</div>}
                                 </div>
                               </div>
                             </td>
                             <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.type || '-'}</td>
+                            <td className="px-5 py-4 text-center">
+                              <div className="inline-flex flex-col items-center">
+                                <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
+                                <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
+                              </div>
+                            </td>
                             <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.year}</td>
                             <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.fuel}</td>
                             <td className="px-5 py-4 text-xs text-gray-600 font-medium">{Number(vehicle.mileage).toLocaleString()} km</td>
                             <td className="px-5 py-4">
-                              <span className="font-bold text-gray-900 text-sm">{Number(vehicle.price).toLocaleString()} €</span>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-gray-900 text-sm">{Number(vehicle.price).toLocaleString()} €</span>
+                                {vehicle.discount > 0 && (
+                                  <span className="text-[9px] font-black text-red-600 uppercase tracking-tighter">-{vehicle.discount}% PROMO</span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-5 py-4">
                               <span className="flex items-center gap-1 text-xs text-gray-500 font-medium">
@@ -445,6 +470,7 @@ const VehiclesList = () => {
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Véhicule</th>
                 <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
+                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Favoris</th>
                 <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Année</th>
                 <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Carburant</th>
                 <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilométrage</th>
@@ -468,12 +494,27 @@ const VehiclesList = () => {
                         )}
                       </div>
                       <div>
-                        <div className="font-bold text-gray-900 text-sm">{vehicle.brand} {vehicle.model}</div>
-                        {vehicle.version && <div className="text-[10px] text-gray-400 font-medium">{vehicle.version}</div>}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
+                            className={`transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-200 hover:text-amber-300'}`}
+                            title={vehicle.featured ? "Retirer la mise en avant" : "Mettre en avant (TOP)"}
+                          >
+                            <Star size={16} fill={vehicle.featured ? "currentColor" : "none"} />
+                          </button>
+                          <div className="font-bold text-gray-900 text-sm">{vehicle.brand} {vehicle.model}</div>
+                        </div>
+                        {vehicle.version && <div className="text-[10px] text-gray-400 font-medium ml-6">{vehicle.version}</div>}
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-4 text-xs text-gray-600">{vehicle.type || '-'}</td>
+                  <td className="px-5 py-4 text-center">
+                    <div className="inline-flex flex-col items-center">
+                      <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
+                      <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
+                    </div>
+                  </td>
                   <td className="px-5 py-4 text-xs text-gray-600">{vehicle.year}</td>
                   <td className="px-5 py-4 text-xs text-gray-600">{vehicle.fuel}</td>
                   <td className="px-5 py-4 text-xs text-gray-600">{Number(vehicle.mileage).toLocaleString()} km</td>

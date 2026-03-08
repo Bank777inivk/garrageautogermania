@@ -23,12 +23,13 @@ import {
     Compass,
     Users,
     Phone,
-    Download // Added Download icon
+    Download, // Added Download icon
+    Truck
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '@shared/store/useAuthStore';
 import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
-import { generateContractPDF, generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
+import { generateContractPDF, generatePaymentReceiptPDF, generateDeliverySlipPDF, generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
 import { toast } from 'react-hot-toast';
 
 const OrderDetails = () => {
@@ -163,29 +164,32 @@ const OrderDetails = () => {
                         Suivre ma commande
                     </button>
                     {order.status === 'pending' && (
-                        <button
-                            onClick={() => navigate(`/dashboard/payment/${order.id}`)}
-                            className="flex items-center justify-center gap-3 px-8 py-4 bg-amber-400 text-slate-900 rounded-2xl hover:bg-amber-500 font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-amber-400/20 active:scale-95"
-                        >
-                            <CreditCard size={18} />
-                            Finaliser mon achat
-                        </button>
+                        <>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        await generateInvoicePDF(order, settings);
+                                        toast.success("Facture proforma téléchargée");
+                                    } catch (error) {
+                                        console.error("PDF Error:", error);
+                                        toast.error("Erreur lors de la génération de la facture proforma");
+                                    }
+                                }}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-teal-50 text-teal-700 border border-teal-100 rounded-2xl hover:bg-teal-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
+                            >
+                                <FileText size={18} className="group-hover/btn:scale-110 transition-transform" />
+                                Facture Proforma
+                            </button>
+                            <button
+                                onClick={() => navigate(`/dashboard/payment/${order.id}`)}
+                                className="flex items-center justify-center gap-3 px-8 py-4 bg-amber-400 text-slate-900 rounded-2xl hover:bg-amber-500 font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-amber-400/20 active:scale-95"
+                            >
+                                <CreditCard size={18} />
+                                Finaliser mon achat
+                            </button>
+                        </>
                     )}
-                    <button
-                        onClick={async () => {
-                            try {
-                                await generateOrderPDF(order, settings);
-                                toast.success("Bon de commande téléchargé");
-                            } catch (error) {
-                                console.error("PDF Error:", error);
-                                toast.error("Erreur lors de la génération du PDF");
-                            }
-                        }}
-                        className="flex items-center justify-center gap-3 px-6 py-4 bg-white text-slate-900 border border-slate-200 rounded-2xl hover:bg-slate-50 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
-                    >
-                        <FileText size={18} className="text-red-700 group-hover/btn:scale-110 transition-transform" />
-                        Bon de commande
-                    </button>
+
                     <button
                         onClick={async () => {
                             try {
@@ -202,21 +206,30 @@ const OrderDetails = () => {
                         Contrat de vente
                     </button>
                     {(order.status === 'delivered' || order.status === 'completed' || order.status === 'logistics' || order.status === 'transit' || order.status === 'concierge') && (
-                        <button
-                            onClick={async () => {
-                                try {
-                                    await generateInvoicePDF(order, settings);
-                                    toast.success("Facture téléchargée");
-                                } catch (error) {
-                                    console.error("PDF Error:", error);
-                                    toast.error("Erreur lors de la génération de la facture");
-                                }
-                            }}
-                            className="flex items-center justify-center gap-3 px-6 py-4 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl hover:bg-emerald-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
-                        >
-                            <ShieldCheck size={18} className="group-hover/btn:scale-110 transition-transform" />
-                            Facture
-                        </button>
+                        <>
+                            <button
+                                onClick={() => navigate(`/dashboard/payment/${order.id}`)}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl hover:bg-emerald-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
+                            >
+                                <ShieldCheck size={18} className="group-hover/btn:scale-110 transition-transform" />
+                                Reçu de paiement
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        await generateDeliverySlipPDF(order, settings);
+                                        toast.success("Bordereau téléchargé");
+                                    } catch (error) {
+                                        console.error("PDF Error:", error);
+                                        toast.error("Erreur lors de la génération du bordereau");
+                                    }
+                                }}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-purple-50 text-purple-700 border border-purple-100 rounded-2xl hover:bg-purple-100 font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/btn"
+                            >
+                                <Truck size={18} className="group-hover/btn:scale-110 transition-transform" />
+                                Bordereau de livraison
+                            </button>
+                        </>
                     )}
                 </div>
             </div>
@@ -401,30 +414,90 @@ const OrderDetails = () => {
                             <div className="w-1.5 h-1.5 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.3)]" />
                             Cycle de Livraison
                         </h3>
-                        <div className="space-y-8">
-                            <div className="flex gap-5 relative group">
-                                <div className="w-px bg-slate-100 h-full absolute left-4 top-8" />
-                                <div className="w-8 h-8 rounded-xl bg-red-700 text-white flex items-center justify-center font-black text-xs flex-shrink-0 z-10 shadow-lg shadow-red-700/20">1</div>
-                                <div className="pt-0.5">
-                                    <p className="font-black text-slate-900 text-[11px] uppercase tracking-widest group-hover:text-red-600 transition-colors">Règlement</p>
-                                    <p className="text-[10px] text-slate-400 mt-2 leading-relaxed font-bold">Transfert Swift sécurisé.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-5 relative group">
-                                <div className="w-px bg-slate-100 h-full absolute left-4 top-8" />
-                                <div className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 text-slate-300 flex items-center justify-center font-black text-xs flex-shrink-0 z-10">2</div>
-                                <div className="pt-0.5">
-                                    <p className="font-black text-slate-300 text-[11px] uppercase tracking-widest group-hover:text-slate-900 transition-colors">Logistique</p>
-                                    <p className="text-[10px] text-slate-300 mt-2 leading-relaxed font-bold">Transport intercontinental.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-5 group">
-                                <div className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 text-slate-300 flex items-center justify-center font-black text-xs flex-shrink-0 z-10">3</div>
-                                <div className="pt-0.5">
-                                    <p className="font-black text-slate-300 text-[11px] uppercase tracking-widest group-hover:text-slate-900 transition-colors">Réception</p>
-                                    <p className="text-[10px] text-slate-300 mt-2 leading-relaxed font-bold">Finalisation immatriculation.</p>
-                                </div>
-                            </div>
+                        <div className="space-y-6">
+                            {[
+                                {
+                                    id: 1,
+                                    statusKey: 'validation',
+                                    label: 'Validation',
+                                    desc: 'Vérification administrative',
+                                    isCompleted: !['validation'].includes(order.status?.toLowerCase()),
+                                    isActive: order.status?.toLowerCase() === 'validation'
+                                },
+                                {
+                                    id: 2,
+                                    statusKey: 'pending',
+                                    label: 'Règlement',
+                                    desc: 'Paiement Swift sécurisé',
+                                    isCompleted: !['validation', 'pending'].includes(order.status?.toLowerCase()),
+                                    isActive: order.status?.toLowerCase() === 'pending'
+                                },
+                                {
+                                    id: 3,
+                                    statusKey: 'logistics',
+                                    label: 'Logistique',
+                                    desc: 'Préparation & Enlèvement',
+                                    isCompleted: !['validation', 'pending', 'logistics'].includes(order.status?.toLowerCase()) && !['transit', 'concierge', 'delivered', 'completed'].includes(order.status?.toLowerCase()) ? false : ['transit', 'concierge', 'delivered', 'completed'].includes(order.status?.toLowerCase()),
+                                    isActive: order.status?.toLowerCase() === 'logistics'
+                                },
+                                {
+                                    id: 4,
+                                    statusKey: 'transit',
+                                    label: 'En Route',
+                                    desc: 'Transport international',
+                                    isCompleted: ['concierge', 'delivered', 'completed'].includes(order.status?.toLowerCase()),
+                                    isActive: order.status?.toLowerCase() === 'transit'
+                                },
+                                {
+                                    id: 5,
+                                    statusKey: 'concierge',
+                                    label: 'Arrivée',
+                                    desc: 'Conciergerie & Formalités',
+                                    isCompleted: ['delivered', 'completed'].includes(order.status?.toLowerCase()),
+                                    isActive: order.status?.toLowerCase() === 'concierge'
+                                },
+                                {
+                                    id: 6,
+                                    statusKey: 'delivered',
+                                    label: 'Réception',
+                                    desc: 'Livraison & Immatriculation',
+                                    isCompleted: order.status?.toLowerCase() === 'completed',
+                                    isActive: ['delivered', 'completed'].includes(order.status?.toLowerCase())
+                                }
+                            ].map((step, idx, arr) => {
+                                // Simplified completion check for logistics to be more robust
+                                const statusOrder = ['validation', 'pending', 'logistics', 'transit', 'concierge', 'delivered', 'completed'];
+                                const currentIndex = statusOrder.indexOf(order.status?.toLowerCase() || 'validation');
+                                const stepIndex = statusOrder.indexOf(step.statusKey === 'delivered' ? 'delivered' : step.statusKey);
+
+                                const isDone = currentIndex > stepIndex || (step.statusKey === 'delivered' && order.status?.toLowerCase() === 'completed');
+                                const isCurrent = currentIndex === stepIndex || (step.statusKey === 'delivered' && order.status?.toLowerCase() === 'delivered');
+
+                                return (
+                                    <div key={step.id} className="flex gap-4 relative group">
+                                        {idx !== arr.length - 1 && (
+                                            <div className={`w-0.5 h-full absolute left-3.5 top-7 ${isDone ? 'bg-red-600' : 'bg-slate-100'}`} />
+                                        )}
+                                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-black text-[10px] flex-shrink-0 z-10 transition-all duration-500 ${(isDone || isCurrent) && step.statusKey === 'delivered' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 animate-bounce' :
+                                            isDone ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' :
+                                                isCurrent ? 'bg-red-700 text-white shadow-lg shadow-red-700/20 animate-pulse' :
+                                                    'bg-slate-50 border border-slate-100 text-slate-300'
+                                            }`}>
+                                            {isDone ? <CheckCircle size={12} /> : step.id}
+                                        </div>
+                                        <div className="pt-0.5">
+                                            <p className={`font-black text-[10px] uppercase tracking-widest transition-colors ${isCurrent || isDone ? 'text-slate-900' : 'text-slate-300'
+                                                }`}>
+                                                {step.label}
+                                            </p>
+                                            <p className={`text-[9px] mt-1 leading-tight font-bold ${isCurrent || isDone ? 'text-slate-400' : 'text-slate-200'
+                                                }`}>
+                                                {step.desc}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -482,7 +555,7 @@ const OrderDetails = () => {
 
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

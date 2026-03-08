@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Lock, ArrowRight, Loader2, ShieldCheck, ShieldX } from 'lucide-react';
 import useAuthStore from '@shared/store/useAuthStore';
+import useFavoriteStore from '@shared/store/useFavoriteStore';
 import { db } from '@shared/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
@@ -36,6 +37,10 @@ const Login = () => {
         return;
       }
 
+      // Sync favorites
+      const { syncWithUser } = useFavoriteStore.getState();
+      await syncWithUser(loggedUser.uid);
+
       toast.success("Connexion réussie !");
       navigate('/dashboard');
     } catch (error) {
@@ -47,7 +52,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center py-12 px-6 lg:px-8">
+    <div className="min-h-screen bg-white flex flex-col justify-center pt-32 pb-12 px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">

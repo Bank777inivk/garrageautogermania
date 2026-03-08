@@ -32,14 +32,16 @@ const Orders = () => {
         ...doc.data()
       }));
 
-      // Sort manually client-side
-      ordersData.sort((a, b) => {
+      // Filter for active orders (PENDING ONLY - Actions requises)
+      const activeOrders = ordersData.filter(order => order.status === 'pending');
+
+      activeOrders.sort((a, b) => {
         const dateA = a.createdAt?.seconds || 0;
         const dateB = b.createdAt?.seconds || 0;
         return dateB - dateA;
       });
 
-      setOrders(ordersData);
+      setOrders(activeOrders);
       setLoading(false);
     }, (error) => {
       console.error("Error monitoring orders:", error);

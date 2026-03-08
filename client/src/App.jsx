@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import useAuthStore from '@shared/store/useAuthStore';
 import Layout from './components/Layout';
@@ -19,10 +19,14 @@ import DashboardBilling from './pages/dashboard/Billing';
 import DashboardPayment from './pages/dashboard/Payment';
 import DashboardOrderTracking from './pages/dashboard/OrderTracking';
 import DashboardTrackingList from './pages/dashboard/TrackingList';
+import DashboardHistory from './pages/dashboard/History';
+import DashboardSupport from './pages/dashboard/Support';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import PublicTracking from './pages/PublicTracking';
+import Favorites from './pages/dashboard/Favorites';
 import './i18n';
+import ScrollToTop from './components/ScrollToTop';
 
 import DashboardLayout from './components/dashboard/DashboardLayout';
 
@@ -37,6 +41,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -48,6 +53,8 @@ function App() {
           <Route path="commande-confirmee/:orderId" element={<OrderSuccess />} />
           <Route path="connexion" element={<Login />} />
           <Route path="inscription" element={<Register />} />
+          <Route path="login" element={<Navigate to="/connexion" replace />} />
+          <Route path="register" element={<Navigate to="/inscription" replace />} />
           <Route path="a-propos" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="suivi-livraison" element={<PublicTracking />} />
@@ -61,8 +68,11 @@ function App() {
           <Route path="orders/:orderId" element={<DashboardOrderDetails />} />
           <Route path="tracking" element={<DashboardTrackingList />} />
           <Route path="billing" element={<DashboardBilling />} />
+          <Route path="history" element={<DashboardHistory />} />
+          <Route path="support" element={<DashboardSupport />} />
           <Route path="payment/:orderId" element={<DashboardPayment />} />
           <Route path="profile" element={<DashboardProfile />} />
+          <Route path="favorites" element={<Favorites />} />
         </Route>
       </Routes>
     </BrowserRouter>

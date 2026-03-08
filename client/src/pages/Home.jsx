@@ -86,7 +86,7 @@ const Home = () => {
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                   <h3 className="text-white text-xl font-black font-montserrat uppercase tracking-tight mb-2">
-                    L'Excellence <span className="text-red-600">Allemande</span> à votre portée
+                    L'Excellence <span>Allemande</span> à votre portée
                   </h3>
                   <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
                     Importation directe • Garantie Premium • Livraison France entière

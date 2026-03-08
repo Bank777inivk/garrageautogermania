@@ -101,6 +101,7 @@ const VehicleForm = () => {
     origin: 'Allemagne',
     status: 'available',
     featured: false,
+    discount: '0',
     description: '',
   });
 
@@ -129,6 +130,7 @@ const VehicleForm = () => {
             origin: data.origin || 'Allemagne',
             status: data.status || 'available',
             featured: data.featured || false,
+            discount: data.discount?.toString() || '0',
             description: data.description || '',
           });
           setImages(data.images || []);
@@ -141,7 +143,18 @@ const VehicleForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type: inputType, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: inputType === 'checkbox' ? checked : value }));
+
+    setFormData(prev => {
+      const newState = { ...prev, [name]: inputType === 'checkbox' ? checked : value };
+
+      // Auto-remove featured status if vehicle is sold or reserved
+      if (name === 'status' && (value === 'sold' || value === 'reserved')) {
+        newState.featured = false;
+      }
+
+      return newState;
+    });
+
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
@@ -206,6 +219,7 @@ const VehicleForm = () => {
       power: formData.power ? Number(formData.power) : null,
       doors: Number(formData.doors),
       seats: Number(formData.seats),
+      discount: Number(formData.discount || 0),
       features: selectedFeatures,
       images,
       image: images[0] || null, // First image as main image
@@ -328,6 +342,13 @@ const VehicleForm = () => {
               <div className="relative">
                 <input name="mileage" type="number" value={formData.mileage} onChange={handleChange} placeholder="45000" className={`${inputClass} pr-10`} />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">km</span>
+              </div>
+            </FormField>
+
+            <FormField label="Promotion (%)" error={errors.discount}>
+              <div className="relative">
+                <input name="discount" type="number" value={formData.discount} onChange={handleChange} placeholder="0" min="0" max="100" className={`${inputClass} pr-8`} />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">%</span>
               </div>
             </FormField>
           </div>

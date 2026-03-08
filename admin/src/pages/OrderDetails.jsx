@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { db } from '@shared/firebase/config';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import {
     Shield,
     Box,
@@ -20,13 +20,17 @@ import {
     Loader2,
     Mail,
     Phone,
-    Building2
+    Building2,
+    Trash2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { generateContractPDF, generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
+import useAuthStore from '@shared/store/useAuthStore';
+import { generateContractPDF, generatePaymentReceiptPDF, generateDeliverySlipPDF } from '@shared/utils/generateAdminDocuments';
 import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
 
 const OrderDetails = () => {
+    const { user } = useAuthStore();
+    const isSuperAdmin = user?.email === 'noellinemous@gmail.com';
     const { id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -42,7 +46,7 @@ const OrderDetails = () => {
                 const docSnap = await getDoc(docRef);
 
                 // Fetch Settings
-                const settingsRef = doc(db, 'settings', 'global');
+                const settingsRef = doc(db, 'settings', 'documents');
                 const settingsSnap = await getDoc(settingsRef);
 
                 if (docSnap.exists()) {
@@ -71,12 +75,62 @@ const OrderDetails = () => {
                 status: newStatus,
                 updatedAt: serverTimestamp()
             });
+
+            // Automatically update associated vehicles statuses
+            if (order && order.items && order.items.length > 0) {
+                let vehicleStatus = null;
+                // 'logistics' -> Logistique & Préparation
+                if (newStatus === 'logistics') {
+                    vehicleStatus = 'reserved';
+                }
+                // 'delivered' or 'completed' -> Livré au client
+                else if (newStatus === 'delivered' || newStatus === 'completed') {
+                    vehicleStatus = 'sold';
+                }
+
+                if (vehicleStatus) {
+                    const vehiclePromises = order.items.map(item => {
+                        if (item.id) {
+                            return updateDoc(doc(db, 'vehicles', item.id), {
+                                status: vehicleStatus,
+                                updatedAt: serverTimestamp()
+                            });
+                        }
+                        return Promise.resolve();
+                    });
+
+                    await Promise.all(vehiclePromises);
+                }
+            }
+
             setOrder(prev => ({ ...prev, status: newStatus }));
             toast.success("Statut mis à jour");
         } catch (error) {
+            console.error("Status update error:", error);
             toast.error("Erreur lors de la mise à jour");
         } finally {
             setUpdating(false);
+        }
+    };
+
+    const handleDeleteOrder = async () => {
+        if (!isSuperAdmin) {
+            toast.error("Action non autorisée");
+            return;
+        }
+
+        if (window.confirm(`ATTENTION : Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT la commande #${order.orderNumber} ? Cette action supprimera également l'accès du client à ce dossier.`)) {
+            setUpdating(true);
+            try {
+                await deleteDoc(doc(db, 'orders', id));
+                toast.success("Commande supprimée avec succès");
+                navigate('/orders');
+            } catch (error) {
+                console.error("Delete error:", error);
+                toast.error("Erreur lors de la suppression");
+            } finally {
+                setUpdating(false);
+            }
         }
     };
 
@@ -187,7 +241,7 @@ const OrderDetails = () => {
                             Générez les documents officiels pour cette commande synchronisés avec les paramètres du garage.
                         </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {/* Bon de Commande */}
                             <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-blue-100 transition-colors bg-white shadow-sm group">
                                 <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
@@ -238,20 +292,20 @@ const OrderDetails = () => {
                                 </button>
                             </div>
 
-                            {/* Facture d'Achat (Conditionnelle) */}
+                            {/* Reçu de Paiement (Conditionnel) */}
                             {(order?.status === 'delivered' || order?.status === 'completed' || order?.status === 'logistics' || order?.status === 'transit' || order?.status === 'concierge') ? (
                                 <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-green-100 transition-colors bg-white shadow-sm group">
                                     <div className="p-3 bg-green-50 text-green-600 rounded-xl group-hover:scale-110 transition-transform">
                                         <FileText size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-900 text-sm">Facture d'Achat</h4>
+                                        <h4 className="font-bold text-gray-900 text-sm">Reçu de Paiement</h4>
                                     </div>
                                     <button
                                         onClick={async () => {
                                             try {
-                                                await generateInvoicePDF(order, settings);
-                                                toast.success("Facture téléchargée");
+                                                await generatePaymentReceiptPDF(order, settings);
+                                                toast.success("Reçu téléchargé");
                                             } catch (error) {
                                                 console.error("PDF Error:", error);
                                                 toast.error("Erreur lors de la génération");
@@ -269,8 +323,51 @@ const OrderDetails = () => {
                                         <FileText size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-500 text-sm">Facture d'Achat</h4>
+                                        <h4 className="font-bold text-gray-500 text-sm">Reçu de Paiement</h4>
                                         <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Disponible après paiement</p>
+                                    </div>
+                                    <button
+                                        disabled
+                                        className="w-full py-2.5 bg-gray-100 text-gray-400 rounded-lg text-xs font-bold uppercase tracking-widest cursor-not-allowed"
+                                    >
+                                        Bloqué
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Bordereau de Livraison (Conditionnel) */}
+                            {(order?.status === 'delivered' || order?.status === 'completed' || order?.status === 'logistics' || order?.status === 'transit' || order?.status === 'concierge') ? (
+                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-purple-100 transition-colors bg-white shadow-sm group">
+                                    <div className="p-3 bg-purple-50 text-purple-600 rounded-xl group-hover:scale-110 transition-transform">
+                                        <FileText size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 text-sm">Bordereau Livraison</h4>
+                                    </div>
+                                    <button
+                                        onClick={async () => {
+                                            try {
+                                                await generateDeliverySlipPDF(order, settings);
+                                                toast.success("Bordereau téléchargé");
+                                            } catch (error) {
+                                                console.error("PDF Error:", error);
+                                                toast.error("Erreur lors de la génération");
+                                            }
+                                        }}
+                                        className="w-full py-2.5 bg-purple-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md shadow-purple-100 flex items-center justify-center gap-2"
+                                    >
+                                        <FileText size={16} className="opacity-80" />
+                                        Générer
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 bg-gray-50/50 opacity-60">
+                                    <div className="p-3 bg-gray-100 text-gray-400 rounded-xl">
+                                        <FileText size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-500 text-sm">Bordereau Livraison</h4>
+                                        <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Disponible à la livraison</p>
                                     </div>
                                     <button
                                         disabled
@@ -354,6 +451,17 @@ const OrderDetails = () => {
                             >
                                 Annuler la commande
                             </button>
+                            {isSuperAdmin && (
+                                <div className="pt-4 mt-4 border-t border-white/5">
+                                    <button
+                                        onClick={handleDeleteOrder}
+                                        disabled={updating}
+                                        className="w-full py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-white/5 text-red-500 border border-red-500/20 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <Trash2 size={12} /> Supprimer Définitvement
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -36,7 +36,10 @@ service cloud.firestore {
 
       // Écriture (Temporaire pour le seed : allow create if true)
       allow create: if true; 
-      allow update: if isAdmin();
+      allow update: if isAdmin() || (
+        // Autoriser n'importe qui à incrémenter/décrémenter le compteur de favoris seulement
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['favoritesCount'])
+      );
       allow delete: if isAdmin();
     }
 
