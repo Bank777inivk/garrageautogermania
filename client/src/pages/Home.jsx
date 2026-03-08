@@ -7,6 +7,7 @@ import FeaturesSection from '../components/FeaturesSection';
 import VerticalAd from '../components/VerticalAd';
 import SecondaryAd from '../components/SecondaryAd';
 import LogoCard from '../components/LogoCard';
+import DynamicCatchphrase from '../components/DynamicCatchphrase';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 
@@ -54,6 +55,7 @@ const Home = () => {
 
               {/* Image Pub Générée */}
               <div className="relative group overflow-hidden cursor-pointer" onClick={() => navigate('/catalogue')}>
+                <DynamicCatchphrase />
                 <img
                   src="/premium_car_ad_v2_1772795850000_1772805918746.webp"
                   alt="Premium Ad"

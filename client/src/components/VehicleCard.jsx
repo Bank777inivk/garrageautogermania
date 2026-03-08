@@ -270,7 +270,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                                 <span className={`text-base sm:text-2xl font-black tracking-tighter ${hasDiscount ? 'text-red-700' : 'text-slate-900'}`}>{Math.round(discountedPrice).toLocaleString()} €</span>
                             </div>
                         </div>
-                        <h3 className="text-sm sm:text-xl font-black text-slate-900 uppercase tracking-tight leading-tight group-hover/card:text-red-700 transition-colors">{vehicle.brand} {vehicle.model}</h3>
+                        <h3 className="text-sm sm:text-xl font-black text-slate-950 uppercase tracking-tight leading-tight group-hover/card:text-red-700 transition-colors">{vehicle.brand} {vehicle.model}</h3>
                         <p className="text-[10px] sm:text-sm text-slate-600 mt-1 sm:mt-2 line-clamp-1 sm:line-clamp-2 leading-relaxed">{vehicle.description || "Véhicule premium sélectionné par nos experts."}</p>
                     </div>
 
@@ -352,7 +352,9 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
 
             <div className="p-6 flex-grow flex flex-col justify-between overflow-visible">
                 <div>
-                    <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight leading-tight mb-1">{vehicle.brand} {vehicle.model}</h3>
+                    <h3 className="text-lg font-black text-slate-950 uppercase tracking-tight leading-tight mb-1">
+                        {vehicle.brand} {vehicle.model}
+                    </h3>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-loose">{vehicle.type} <span className="text-slate-200 mx-2">|</span> {vehicle.year} <span className="text-slate-200 mx-2">|</span> {vehicle.mileage?.toLocaleString()} km</p>
                 </div>
                 <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">

@@ -5,47 +5,32 @@ const SecondaryAd = () => {
     const navigate = useNavigate();
     const [currentCar, setCurrentCar] = useState(0);
 
-    const ruggedCars = [
+    const showcaseImages = [
         {
-            url: "https://images.unsplash.com/photo-1594976612710-664448507017?q=80&w=1200&auto=format&fit=crop",
-            text: "Toyota Land Cruiser J79",
-            sub: "L'Indestructible"
+            url: "/showroom_luxury_cars_1772994978117.webp",
+            text: "Showroom Premium",
+            sub: "Sélection Internationale"
         },
         {
-            url: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=1200&auto=format&fit=crop",
-            text: "Land Rover Defender 110",
-            sub: "L'Esprit d'Aventure"
+            url: "/car_transport_trailer_1772995047462.webp",
+            text: "Logistique Pro",
+            sub: "Transport Sécurisé"
         },
         {
-            url: "https://images.unsplash.com/photo-1520031444948-4ce50c93a228?q=80&w=1200&auto=format&fit=crop",
-            text: "Mercedes-Benz Classe G",
-            sub: "Icône Tout-Terrain"
+            url: "/port_containers_cars_1772995097646.webp",
+            text: "Import/Export",
+            sub: "Transit International"
         },
         {
-            url: "https://images.unsplash.com/photo-1603383928972-2116518cd3f3?q=80&w=1200&auto=format&fit=crop",
-            text: "Toyota Hilux Expedition",
-            sub: "Prêt pour l'Extrême"
-        },
-        {
-            url: "https://images.unsplash.com/photo-1618353386007-920f2694b288?q=80&w=1200&auto=format&fit=crop",
-            text: "Ford Bronco Wildtrak",
-            sub: "Liberté Sans Limite"
-        },
-        {
-            url: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?q=80&w=1200&auto=format&fit=crop",
-            text: "Jeep Wrangler Rubicon",
-            sub: "Pure Légende"
-        },
-        {
-            url: "https://images.unsplash.com/photo-1582234052327-0bb1092e079f?q=80&w=1200&auto=format&fit=crop",
-            text: "Nissan Patrol Y61",
-            sub: "Le Roi du Désert"
+            url: "/car_delivery_van_1772994995422.webp",
+            text: "Livraison Premium",
+            sub: "Service Clé en Main"
         }
     ];
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentCar((prev) => (prev + 1) % ruggedCars.length);
+            setCurrentCar((prev) => (prev + 1) % showcaseImages.length);
         }, 4500);
         return () => clearInterval(timer);
     }, []);
@@ -56,7 +41,7 @@ const SecondaryAd = () => {
             onClick={() => navigate('/catalogue')}
         >
             {/* Slider Images */}
-            {ruggedCars.map((car, index) => (
+            {showcaseImages.map((car, index) => (
                 <div
                     key={index}
                     className={`absolute inset-0 transition-all duration-1000 ease-in-out ${index === currentCar ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
@@ -73,7 +58,7 @@ const SecondaryAd = () => {
 
             {/* Dynamic Text Content */}
             <div className="absolute bottom-8 left-6 right-6 z-10">
-                {ruggedCars.map((car, index) => (
+                {showcaseImages.map((car, index) => (
                     <div
                         key={index}
                         className={`transition-all duration-700 delay-300 ${index === currentCar ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 absolute inset-0'
@@ -91,7 +76,7 @@ const SecondaryAd = () => {
 
             {/* Pagination Indicators */}
             <div className="absolute top-6 left-6 flex gap-2 z-20">
-                {ruggedCars.map((_, index) => (
+                {showcaseImages.map((_, index) => (
                     <div
                         key={index}
                         className={`h-1 rounded-full transition-all duration-500 ${index === currentCar ? 'w-6 bg-red-700' : 'w-2 bg-white/30'

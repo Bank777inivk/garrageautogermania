@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import useCartStore from '@shared/store/useCartStore';
 import useAuthStore from '@shared/store/useAuthStore';
 import CartDrawer from './CartDrawer';
+import ScrollingTicker from './ScrollingTicker';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,22 +56,20 @@ const Header = () => {
         <div className="container mx-auto px-4 lg:px-8 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
 
           {/* Left Side: Contact Info */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-6 shrink-0">
             <a href="tel:+491781234567" className="flex items-center hover:text-white transition-colors">
               <Phone size={14} className="mr-2 text-red-600" />
               <span className="font-medium tracking-wide">+49 178 123 4567</span>
             </a>
-            <span className="hidden md:flex items-center">
+            <span className="flex items-center">
               <Clock size={14} className="mr-2 text-red-600" />
               <span>Lun - Sam : 9h - 19h</span>
             </span>
-            <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`lg:hidden flex items-center gap-2 px-3 py-1 rounded-full transition-all ${isSearchOpen ? 'bg-red-700 text-white' : 'hover:bg-gray-800'}`}
-            >
-              <Search size={14} className={isSearchOpen ? 'text-white' : 'text-red-700'} />
-              <span className="font-black uppercase tracking-widest text-[10px]">Rechercher</span>
-            </button>
+          </div>
+
+          {/* Center: Dynamic Ticker */}
+          <div className="hidden lg:flex flex-1 justify-center px-4 overflow-hidden">
+            <ScrollingTicker />
           </div>
 
           {/* Right Side: Socials & Language */}
