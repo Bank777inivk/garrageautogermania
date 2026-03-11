@@ -8,9 +8,15 @@ import useBrands from '@shared/hooks/useBrands';
 import BrandSelect from '@shared/components/BrandSelect';
 import {
   Upload, X, Star, Car, DollarSign, Gauge, Settings, Palette,
-  Users, DoorOpen, Wind, Check, ChevronDown, Loader2, ArrowLeft, ImagePlus
+  Users, DoorOpen, Wind, Check, ChevronDown, Loader2, ArrowLeft, ImagePlus,
+  Wand2, Sparkles
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { extractVehicleData as extractMistral } from '../../utils/mistral';
+import { extractVehicleData as extractGroq } from '../../utils/groq';
+import { extractVehicleData as extractDeepSeek } from '../../utils/deepseek';
+import { extractVehicleData as extractAnthropic } from '../../utils/anthropic';
+import { extractVehicleData as extractGemini } from '../../utils/gemini';
 
 const AVAILABLE_FEATURES = [
   "Bluetooth", "Ordinateur de bord", "Lecteur CD", "Vitres électriques",
@@ -80,6 +86,11 @@ const VehicleForm = () => {
 
   const [images, setImages] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [parsing, setParsing] = useState(false);
+  const [rawAIText, setRawAIText] = useState('');
+  const [aiImage, setAIImage] = useState(null);
+  const [aiImagePreview, setAIImagePreview] = useState(null);
+  const [aiAgent, setAiAgent] = useState('mistral');
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [errors, setErrors] = useState({});
 
@@ -239,10 +250,89 @@ const VehicleForm = () => {
     }
   };
 
+  const handleAIImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("L'image est trop lourde (max 5Mo)");
+        return;
+      }
+      setAIImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setAIImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeAIImage = () => {
+    setAIImage(null);
+    setAIImagePreview(null);
+  };
+
+  const handleAIParse = async () => {
+    if (!rawAIText.trim() && !aiImage) {
+      toast.error("Veuillez coller une description ou ajouter une image");
+      return;
+    }
+
+    setParsing(true);
+    const loadingToast = toast.loading("L'IA analyse vos données...");
+
+    try {
+      let imageBase64 = null;
+      if (aiImage) {
+        imageBase64 = aiImagePreview.split(',')[1];
+      }
+
+      let data;
+      if (aiAgent === 'mistral') {
+        data = await extractMistral(rawAIText, imageBase64);
+      } else if (aiAgent === 'groq') {
+        data = await extractGroq(rawAIText);
+      } else if (aiAgent === 'deepseek') {
+        data = await extractDeepSeek(rawAIText);
+      } else if (aiAgent === 'anthropic') {
+        data = await extractAnthropic(rawAIText);
+      } else if (aiAgent === 'gemini') {
+        data = await extractGemini(rawAIText, imageBase64);
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        brand: data.brand || prev.brand,
+        model: data.model || prev.model,
+        version: data.version || prev.version,
+        year: data.year ? data.year.toString() : prev.year,
+        price: data.price ? data.price.toString() : prev.price,
+        mileage: data.mileage ? data.mileage.toString() : prev.mileage,
+        fuel: data.fuel || prev.fuel,
+        transmission: data.transmission || prev.transmission,
+        type: data.type || prev.type,
+        power: data.power ? data.power.toString() : prev.power,
+        color: data.color || prev.color,
+        description: data.description || prev.description,
+      }));
+
+      if (data.features && Array.isArray(data.features)) {
+        // Filter out features that might not be in our AVAILABLE_FEATURES list exactly
+        const validFeatures = data.features.filter(f => AVAILABLE_FEATURES.includes(f));
+        setSelectedFeatures(validFeatures);
+      }
+
+      toast.success("Formulaire auto-rempli avec succès !", { id: loadingToast });
+      setRawAIText('');
+      removeAIImage();
+    } catch (err) {
+      toast.error("L'IA n'a pas pu analyser les données. Vérifiez votre clé API.", { id: loadingToast });
+    } finally {
+      setParsing(false);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-20">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/vehicles')}
@@ -251,16 +341,16 @@ const VehicleForm = () => {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">
               {isEdit ? 'Modifier le véhicule' : 'Ajouter un véhicule'}
             </h1>
-            <p className="text-sm text-gray-500">Remplissez tous les champs pour un catalogue complet</p>
+            <p className="text-xs text-gray-500">Remplissez tous les champs</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 cursor-pointer bg-amber-50 border border-amber-200 px-4 py-2 rounded-lg hover:bg-amber-100 transition-all">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <label className="flex items-center gap-2 cursor-pointer bg-amber-50 border border-amber-200 px-3 sm:px-4 py-2 rounded-lg hover:bg-amber-100 transition-all shrink-0">
             <Star size={16} className={formData.featured ? 'text-amber-500 fill-amber-500' : 'text-gray-400'} />
-            <span className="text-sm font-bold text-gray-700">Mis en avant</span>
+            <span className="text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Mis en avant</span>
             <input
               type="checkbox"
               name="featured"
@@ -273,7 +363,7 @@ const VehicleForm = () => {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className={`text-sm font-bold rounded-lg border px-3 py-2 outline-none cursor-pointer ${formData.status === 'available'
+            className={`text-xs sm:text-sm font-bold rounded-lg border px-2 sm:px-3 py-2 outline-none cursor-pointer shrink-0 ${formData.status === 'available'
               ? 'bg-green-50 border-green-200 text-green-700'
               : 'bg-red-50 border-red-200 text-red-700'
               }`}
@@ -284,6 +374,97 @@ const VehicleForm = () => {
           </select>
         </div>
       </div>
+
+      {/* AI Parser Section */}
+      {!isEdit && (
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-600 text-white rounded-lg">
+                <Sparkles size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-800">Remplissage Magique par IA</h3>
+                <p className="text-xs text-gray-500">Choisissez votre agent pour remplir le formulaire</p>
+              </div>
+            </div>
+
+            {/* Agent Selector */}
+            <div className="flex flex-wrap bg-white/50 p-1 rounded-xl border border-indigo-100 self-start sm:self-center">
+              {[
+                { id: 'mistral', label: 'Mistral', desc: 'Photos & Texte (Free)' },
+                { id: 'gemini', label: 'Gemini', desc: 'Photos & Texte (Fast)' },
+                { id: 'groq', label: 'Groq', desc: 'Ultra rapide (Free)' },
+                { id: 'deepseek', label: 'DeepSeek', desc: 'Haute Précision' },
+                { id: 'anthropic', label: 'Claude', desc: 'Premium' }
+              ].map(agent => (
+                <button
+                  key={agent.id}
+                  type="button"
+                  onClick={() => setAiAgent(agent.id)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${aiAgent === agent.id
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-gray-500 hover:text-indigo-600 hover:bg-white/80'
+                    }`}
+                  title={agent.desc}
+                >
+                  {agent.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <textarea
+                value={rawAIText}
+                onChange={(e) => setRawAIText(e.target.value)}
+                placeholder={(aiAgent === 'mistral' || aiAgent === 'gemini')
+                  ? "Collez texte ou ajoutez une photo..."
+                  : "Collez votre annonce texte (Cet agent ne voit pas encore les photos)..."}
+                className="flex-1 h-32 md:h-24 rounded-xl border-indigo-200 border bg-white/50 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all resize-none"
+              />
+
+              {(aiAgent === 'mistral' || aiAgent === 'gemini') && (
+                <div className="flex-shrink-0 w-full md:w-48">
+                  {aiImagePreview ? (
+                    <div className="relative h-24 rounded-xl overflow-hidden border border-indigo-200 group">
+                      <img src={aiImagePreview} alt="AI analysis" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={removeAIImage}
+                        className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="text-white" size={20} />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="h-24 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-indigo-200 bg-white/30 hover:bg-indigo-50 hover:border-indigo-400 cursor-pointer transition-all">
+                      <ImagePlus className="text-indigo-400" size={24} />
+                      <span className="text-[10px] font-bold text-indigo-500 uppercase">Ajouter photo</span>
+                      <input type="file" accept="image/*" onChange={handleAIImageChange} className="hidden" />
+                    </label>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleAIParse}
+              disabled={parsing || (!rawAIText.trim() && !aiImage)}
+              className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-md group"
+            >
+              {parsing ? (
+                <Loader2 className="animate-spin" size={18} />
+              ) : (
+                <Wand2 size={18} className="group-hover:rotate-12 transition-transform" />
+              )}
+              {parsing ? "Analyse en cours..." : "Extraire les informations"}
+            </button>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={onSubmit} className="space-y-6">
         {/* Section 1: Identité */}
@@ -400,13 +581,13 @@ const VehicleForm = () => {
         <FormSection title="Habitacle & Confort" icon={Users}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <FormField label="Nombre de portes">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {['2', '3', '4', '5'].map(n => (
                   <button
                     key={n}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, doors: n }))}
-                    className={`flex-1 py-2 rounded-lg text-sm font-bold border transition-all ${formData.doors === n
+                    className={`flex-1 min-w-[40px] py-2 rounded-lg text-sm font-bold border transition-all ${formData.doors === n
                       ? 'bg-[#2271B1] text-white border-[#2271B1]'
                       : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#2271B1]/50'
                       }`}
@@ -418,13 +599,13 @@ const VehicleForm = () => {
             </FormField>
 
             <FormField label="Nombre de places">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {['2', '4', '5', '7', '8', '9'].map(n => (
                   <button
                     key={n}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, seats: n }))}
-                    className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${formData.seats === n
+                    className={`flex-1 min-w-[40px] py-2 rounded-lg text-xs font-bold border transition-all ${formData.seats === n
                       ? 'bg-[#2271B1] text-white border-[#2271B1]'
                       : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#2271B1]/50'
                       }`}
@@ -492,7 +673,7 @@ const VehicleForm = () => {
           )}
 
           {/* Upload Zone */}
-          <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-10 cursor-pointer transition-all mb-6 ${uploading ? 'border-[#2271B1] bg-[#2271B1]/5' : 'border-gray-200 hover:border-[#2271B1]/50 hover:bg-gray-50'
+          <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 sm:p-10 cursor-pointer transition-all mb-6 ${uploading ? 'border-[#2271B1] bg-[#2271B1]/5' : 'border-gray-200 hover:border-[#2271B1]/50 hover:bg-gray-50'
             }`}>
             {uploading ? (
               <>
@@ -504,8 +685,8 @@ const VehicleForm = () => {
                 <div className="p-4 bg-[#2271B1]/10 rounded-2xl text-[#2271B1] mb-3">
                   <Upload size={32} />
                 </div>
-                <p className="text-sm font-bold text-gray-700">Glisser / Déposer des photos</p>
-                <p className="text-xs text-gray-400 mt-1">ou cliquer pour parcourir • PNG, JPG • Sans limite</p>
+                <p className="text-sm font-bold text-gray-700 text-center">Glisser / Déposer des photos</p>
+                <p className="text-xs text-gray-400 mt-1 text-center max-w-xs">ou cliquer pour parcourir • PNG, JPG • Sans limite</p>
                 <div className="mt-4 px-6 py-2 bg-[#2271B1] text-white rounded-lg text-sm font-bold">
                   Choisir des photos
                 </div>
@@ -566,18 +747,18 @@ const VehicleForm = () => {
         </FormSection>
 
         {/* Submit Bar */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 rounded-xl flex justify-between items-center shadow-lg">
+        <div className="sticky bottom-4 mx-[-8px] sm:mx-0 bg-white border border-gray-200 p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row gap-3 justify-between items-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-10">
           <button
             type="button"
             onClick={() => navigate('/vehicles')}
-            className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors order-2 sm:order-1"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={loading || uploading}
-            className="px-8 py-2.5 bg-[#2271B1] text-white rounded-lg text-sm font-bold hover:bg-[#135e96] disabled:opacity-50 transition-all flex items-center gap-2 shadow-md"
+            className="w-full sm:w-auto px-8 py-3 bg-[#2271B1] text-white rounded-xl text-sm font-bold hover:bg-[#135e96] disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-md order-1 sm:order-2"
           >
             {(loading || uploading) && <Loader2 className="animate-spin" size={16} />}
             {isEdit ? 'Mettre à jour' : 'Publier le véhicule'}

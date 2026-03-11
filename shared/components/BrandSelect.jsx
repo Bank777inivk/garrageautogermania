@@ -105,10 +105,17 @@ const BrandSelect = ({
     return (
         <div ref={ref} className={`relative select-none ${className}`}>
             {/* Trigger Button */}
-            <button
-                type="button"
+            <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setOpen(!open)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm font-bold transition-all outline-none ${value
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setOpen(!open);
+                    }
+                }}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg border text-sm font-bold transition-all outline-none cursor-pointer ${value
                     ? activeClassName
                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                     }`}
@@ -141,7 +148,7 @@ const BrandSelect = ({
                 ) : (
                     <ChevronDown size={16} className={`flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
                 )}
-            </button>
+            </div>
 
             {/* Dropdown Panel - via Portal to escape overflow-hidden containers */}
             {open && coords && createPortal(

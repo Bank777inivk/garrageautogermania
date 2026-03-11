@@ -161,18 +161,18 @@ const OrderDetails = () => {
     const statusInfo = getStatusInfo(order.status);
 
     return (
-        <div className="max-w-5xl mx-auto space-y-6 pb-20">
-            <div className="flex items-center justify-between">
+        <div className="max-w-5xl mx-auto space-y-6 pb-20 px-4 md:px-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <button
                     onClick={() => navigate(order?.userId ? "/orders?userId=" + order.userId : "/orders")}
-                    className="flex items-center text-sm font-bold text-gray-500 hover:text-gray-800 transition-colors uppercase tracking-widest"
+                    className="flex items-center text-[10px] md:text-sm font-black text-gray-500 hover:text-gray-800 transition-colors uppercase tracking-[0.2em] bg-gray-100/50 sm:bg-transparent p-3 sm:p-0 rounded-xl"
                 >
                     <ArrowLeft size={18} className="mr-2" /> Retour aux commandes
                 </button>
-                <div className="flex gap-3">
+                <div className="flex gap-3 w-full sm:w-auto">
                     <button
                         onClick={() => generateOrderPDF(order, settings)}
-                        className="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all"
+                        className="flex-1 sm:flex-none flex items-center justify-center px-4 py-3 sm:py-2 border border-gray-300 rounded-xl sm:rounded-md text-[10px] sm:text-sm font-black text-gray-600 hover:bg-gray-50 transition-all uppercase tracking-widest shadow-sm"
                     >
                         <Printer size={16} className="mr-2" /> Imprimer Bon de Commande
                     </button>
@@ -183,21 +183,21 @@ const OrderDetails = () => {
                 {/* Main Content */}
                 <div className="flex-1 space-y-6">
                     {/* Order Header */}
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-start">
+                    <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                         <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-2xl font-bold text-gray-900">Commande #{order.orderNumber}</h1>
-                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusInfo.color} flex items-center`}>
+                            <div className="flex flex-wrap items-center gap-3 mb-2">
+                                <h1 className="text-xl md:text-2xl font-black text-gray-900 leading-tight">Commande #{order.orderNumber}</h1>
+                                <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${statusInfo.color} flex items-center shadow-sm`}>
                                     <statusInfo.icon size={12} className="mr-1.5" /> {statusInfo.label}
                                 </span>
                             </div>
-                            <p className="text-sm text-gray-400 font-medium">
+                            <p className="text-xs text-gray-400 font-bold">
                                 Passée le {order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleString() : 'N/A'}
                             </p>
                         </div>
-                        <div className="text-right">
-                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Montant Total</p>
-                            <h2 className="text-3xl font-bold text-indigo-600">{(order.total || 0).toLocaleString()}€</h2>
+                        <div className="w-full sm:w-auto sm:text-right pt-4 sm:pt-0 border-t sm:border-0 border-gray-50">
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Montant Total</p>
+                            <h2 className="text-3xl md:text-4xl font-black text-indigo-600">{(order.total || 0).toLocaleString()}€</h2>
                         </div>
                     </div>
 
@@ -210,17 +210,19 @@ const OrderDetails = () => {
                         </div>
                         <div className="divide-y divide-gray-50">
                             {order.items?.map((item, idx) => (
-                                <div key={idx} className="p-6 flex items-center gap-6 group hover:bg-gray-50/50 transition-colors">
-                                    <div className="w-24 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 border border-gray-100">
+                                <div key={idx} className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:bg-gray-50/50 transition-colors">
+                                    <div className="w-full sm:w-24 h-48 sm:h-16 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm">
                                         <img src={item.image} alt={item.model} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                     </div>
-                                    <div className="flex-1">
-                                        <h4 className="font-bold text-gray-900">{item.brand} {item.model}</h4>
-                                        <p className="text-xs text-gray-400 font-medium lowercase">Réf: {item.id}</p>
+                                    <div className="flex-1 space-y-1">
+                                        <h4 className="font-black text-gray-900 text-lg sm:text-base">{item.brand} {item.model}</h4>
+                                        <p className="text-[10px] sm:text-xs text-gray-400 font-black uppercase tracking-tighter">Réf: {item.id}</p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="font-bold text-gray-900">{(item.price || 0).toLocaleString()}€</p>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase">Prix Unitaire</p>
+                                    <div className="w-full sm:w-auto flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-0 border-gray-50 pt-3 sm:pt-0">
+                                        <div>
+                                            <p className="text-xl sm:text-base font-black text-gray-900">{(item.price || 0).toLocaleString()}€</p>
+                                            <p className="text-[10px] text-gray-400 font-black uppercase text-right leading-none mt-0.5">Prix Unitaire</p>
+                                        </div>
                                     </div>
                                 </div>
                             ))}

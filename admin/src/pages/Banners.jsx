@@ -93,65 +93,81 @@ const Banners = () => {
     );
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
+        <div className="space-y-8 pb-20 px-4 md:px-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-                        <ImageIcon className="mr-3 text-blue-500" size={28} /> Gestion des Bannières
+                    <h1 className="text-xl md:text-2xl font-black text-gray-900 flex items-center gap-3">
+                        <ImageIcon className="text-blue-600" size={24} /> Gestion des Bannières
                     </h1>
-                    <p className="text-sm text-gray-500">Gérez les images du carrousel d'accueil de l'application client.</p>
+                    <p className="text-xs md:text-sm text-gray-500 font-bold mt-1 uppercase tracking-widest opacity-60">Gérez les images du carrousel d'accueil.</p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center px-6 py-2.5 bg-[#2271B1] text-white rounded font-bold hover:bg-[#135e96] transition-all shadow-sm"
+                    className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-slate-200 active:scale-95 group"
                 >
-                    <Plus className="mr-2" size={18} /> Ajouter une Bannière
+                    <Plus className="group-hover:rotate-90 transition-transform" size={18} />
+                    <span>Ajouter une Bannière</span>
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 gap-8">
                 {banners.map((banner, index) => (
-                    <div key={banner.id} className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm flex flex-col md:flex-row group">
-                        <div className="w-full md:w-80 h-48 bg-gray-100 relative overflow-hidden shrink-0 border-r border-gray-50">
-                            <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                                <button onClick={() => window.open(banner.imageUrl, '_blank')} className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Eye size={20} />
+                    <div key={banner.id} className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50 flex flex-col md:flex-row group transition-all duration-500 hover:shadow-blue-600/10">
+                        <div className="w-full md:w-[400px] h-64 md:h-auto bg-slate-100 relative overflow-hidden shrink-0 border-r border-slate-50">
+                            <img src={banner.imageUrl} alt={banner.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                            <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/40 transition-all duration-500 flex items-center justify-center">
+                                <button onClick={() => window.open(banner.imageUrl, '_blank')} className="p-4 bg-white/20 backdrop-blur-xl rounded-2xl text-white opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110 active:scale-90 border border-white/30 shadow-2xl">
+                                    <Eye size={24} />
                                 </button>
+                            </div>
+                            <div className="absolute top-6 left-6 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-[10px] font-black uppercase tracking-widest shadow-2xl">
+                                #{index + 1}
                             </div>
                         </div>
 
-                        <div className="flex-1 p-6 flex flex-col justify-between">
-                            <div>
-                                <div className="flex justify-between items-start">
-                                    <h3 className="text-lg font-bold text-gray-900">{banner.title || 'Sans titre'}</h3>
+                        <div className="flex-1 p-8 md:p-10 flex flex-col justify-between">
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-start gap-4">
+                                    <div className="space-y-1">
+                                        <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">{banner.title || 'Sans titre'}</h3>
+                                        <p className="text-sm md:text-base text-slate-500 font-medium leading-relaxed">{banner.subtitle}</p>
+                                    </div>
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => handleToggleActive(banner)}
-                                            className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all ${banner.isActive ? 'bg-green-50 text-green-600 border-green-100' : 'bg-gray-50 text-gray-400 border-gray-100'}`}
+                                            className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all duration-300 shadow-sm ${banner.isActive ? 'bg-green-50 text-green-600 border-green-100 hover:bg-green-100' : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'}`}
                                         >
                                             {banner.isActive ? 'ACTIVE' : 'INACTIVE'}
                                         </button>
-                                        <button onClick={() => handleDelete(banner.id)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                            <Trash2 size={18} />
+                                        <button onClick={() => handleDelete(banner.id)} className="p-3 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-100 transition-all active:scale-90">
+                                            <Trash2 size={20} />
                                         </button>
                                     </div>
                                 </div>
-                                <p className="text-sm text-gray-500 mt-1">{banner.subtitle}</p>
                                 {banner.link && (
-                                    <div className="flex items-center gap-2 mt-4 text-xs font-medium text-blue-600 bg-blue-50 w-fit px-3 py-1.5 rounded-lg">
+                                    <div className="flex items-center gap-3 text-[10px] font-black text-blue-600 bg-blue-50/50 w-fit px-4 py-2 rounded-xl border border-blue-100/50 uppercase tracking-widest">
                                         <LinkIcon size={14} />
-                                        {banner.link}
+                                        <span>Lien : {banner.link}</span>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="flex items-center justify-between border-t border-gray-50 pt-4 mt-6">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Position : #{index + 1}</span>
-                                <div className="flex gap-2">
-                                    <button className="p-2 text-gray-400 hover:bg-gray-50 rounded disabled:opacity-30" disabled={index === 0}><MoveUp size={16} /></button>
-                                    <button className="p-2 text-gray-400 hover:bg-gray-50 rounded disabled:opacity-30" disabled={index === banners.length - 1}><MoveDown size={16} /></button>
+                            <div className="flex items-center justify-between border-t border-slate-50 pt-8 mt-10">
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        className="p-3 text-slate-400 hover:bg-slate-900 hover:text-white rounded-xl border border-slate-100 transition-all active:scale-90 disabled:opacity-20 disabled:pointer-events-none"
+                                        disabled={index === 0}
+                                    >
+                                        <MoveUp size={18} />
+                                    </button>
+                                    <button
+                                        className="p-3 text-slate-400 hover:bg-slate-900 hover:text-white rounded-xl border border-slate-100 transition-all active:scale-90 disabled:opacity-20 disabled:pointer-events-none"
+                                        disabled={index === banners.length - 1}
+                                    >
+                                        <MoveDown size={18} />
+                                    </button>
                                 </div>
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-40">Ordre d'affichage</span>
                             </div>
                         </div>
                     </div>
@@ -168,16 +184,16 @@ const Banners = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-gray-800">Ajouter une bannière</h2>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                    <div className="relative bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar animate-in zoom-in-95 duration-200">
+                        <div className="sticky top-0 bg-white/80 backdrop-blur-md z-10 p-6 border-b border-gray-100 flex items-center justify-between">
+                            <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Ajouter une bannière</h2>
+                            <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-900 transition-colors bg-slate-50 rounded-xl">
                                 <X size={24} />
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-6">
+                        <form onSubmit={handleSubmit} className="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-8">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Titre</label>
                                     <input

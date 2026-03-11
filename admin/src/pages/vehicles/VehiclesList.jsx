@@ -184,9 +184,9 @@ const VehiclesList = () => {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-3">
             <Car className="text-[#2271B1]" size={28} />
             Catalogue Véhicules
           </h1>
@@ -195,10 +195,10 @@ const VehiclesList = () => {
             <span className="text-green-600 font-bold">{availableCount} disponibles</span>
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
             onClick={() => setShowCatPanel(!showCatPanel)}
-            className={`flex items-center gap-2 px-4 py-2.5 border rounded-lg text-sm font-bold transition-all ${showCatPanel ? 'bg-[#2271B1] text-white border-[#2271B1]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+            className={`flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg text-sm font-bold transition-all ${showCatPanel ? 'bg-[#2271B1] text-white border-[#2271B1]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
               }`}
           >
             <Tags size={18} />
@@ -206,7 +206,7 @@ const VehiclesList = () => {
           </button>
           <button
             onClick={() => navigate('/vehicles/new')}
-            className="flex items-center gap-2 px-6 py-2.5 bg-[#2271B1] text-white rounded-lg font-bold text-sm hover:bg-[#135e96] transition-all shadow-md"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#2271B1] text-white rounded-lg font-bold text-sm hover:bg-[#135e96] transition-all shadow-md"
           >
             <Plus size={18} /> Ajouter un véhicule
           </button>
@@ -267,18 +267,18 @@ const VehiclesList = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             type="text"
-            placeholder="Rechercher par marque, modèle, version..."
+            placeholder="Rechercher par marque, modèle..."
             className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2271B1]/30 focus:border-[#2271B1] outline-none text-sm bg-gray-50"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="flex gap-2 overflow-x-auto">
+        <div className="flex flex-wrap gap-2">
           {['all', 'available', 'reserved', 'sold'].map(s => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all ${statusFilter === s ? 'bg-[#2271B1] text-white' : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
+              className={`flex-1 min-w-[120px] sm:min-w-0 sm:flex-none px-4 py-2 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all ${statusFilter === s ? 'bg-[#2271B1] text-white' : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
                 }`}
             >
               {s === 'all' ? 'Tous' : s === 'available' ? 'Disponibles' : s === 'reserved' ? 'Réservés' : 'Vendus'}
@@ -288,19 +288,17 @@ const VehiclesList = () => {
       </div>
 
       {/* Brand Filter Dropdown */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border ${activeTab === 'all'
-              ? 'bg-gray-900 text-white border-gray-900'
-              : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
-              }`}
-          >
-            Toutes les marques ({vehicles.length})
-          </button>
-        </div>
-        <div className="flex-1 max-w-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border ${activeTab === 'all'
+            ? 'bg-gray-900 text-white border-gray-900'
+            : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+            }`}
+        >
+          Toutes les marques ({vehicles.length})
+        </button>
+        <div className="flex-1 sm:max-w-xs">
           <BrandSelect
             brands={brands}
             value={activeTab === 'all' ? '' : activeTab}
@@ -314,7 +312,7 @@ const VehiclesList = () => {
         {activeTab !== 'all' && (
           <button
             onClick={() => setActiveTab('all')}
-            className="flex items-center gap-1.5 px-3 py-2.5 text-xs font-bold text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-lg transition-all bg-white"
+            className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-bold text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-lg transition-all bg-white"
           >
             <X size={14} /> Effacer
           </button>
@@ -362,100 +360,173 @@ const VehiclesList = () => {
 
                 {/* Brand vehicles table */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead>
-                        <tr className="bg-gray-50/50 border-b border-gray-100">
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Véhicule</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Favoris</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Année</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Carburant</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilométrage</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Prix</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Photos</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
-                          <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-50">
-                        {brandVehicles.map(vehicle => (
-                          <tr key={vehicle.id} className="hover:bg-gray-50/50 transition-colors group">
-                            <td className="px-5 py-4">
-                              <div className="flex items-center gap-3">
-                                <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100">
-                                  {vehicle.images?.[0] ? (
-                                    <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                      <Car size={18} />
+                  <div className="border-t border-gray-100">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <table className="w-full text-left">
+                        <thead>
+                          <tr className="bg-gray-50/50 border-b border-gray-100">
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Véhicule</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Favoris</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Année</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Carburant</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilométrage</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Prix</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Photos</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
+                            <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                          {brandVehicles.map(vehicle => (
+                            <tr key={vehicle.id} className="hover:bg-gray-50/50 transition-colors group">
+                              <td className="px-5 py-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100">
+                                    {vehicle.images?.[0] ? (
+                                      <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                        <Car size={18} />
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
+                                        className={`transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-200 hover:text-amber-300'}`}
+                                        title={vehicle.featured ? "Retirer la mise en avant" : "Mettre en avant (TOP)"}
+                                      >
+                                        <Star size={16} fill={vehicle.featured ? "currentColor" : "none"} />
+                                      </button>
+                                      <div className="font-bold text-gray-900 text-sm">{vehicle.model}</div>
                                     </div>
+                                    {vehicle.version && <div className="text-[10px] text-gray-400 font-medium ml-6">{vehicle.version}</div>}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.type || '-'}</td>
+                              <td className="px-5 py-4 text-center">
+                                <div className="inline-flex flex-col items-center">
+                                  <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
+                                  <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
+                                </div>
+                              </td>
+                              <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.year}</td>
+                              <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.fuel}</td>
+                              <td className="px-5 py-4 text-xs text-gray-600 font-medium">{Number(vehicle.mileage).toLocaleString()} km</td>
+                              <td className="px-5 py-4">
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-gray-900 text-sm">{Number(vehicle.price).toLocaleString()} €</span>
+                                  {vehicle.discount > 0 && (
+                                    <span className="text-[9px] font-black text-red-600 uppercase tracking-tighter">-{vehicle.discount}% PROMO</span>
                                   )}
                                 </div>
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
-                                      className={`transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-200 hover:text-amber-300'}`}
-                                      title={vehicle.featured ? "Retirer la mise en avant" : "Mettre en avant (TOP)"}
-                                    >
-                                      <Star size={16} fill={vehicle.featured ? "currentColor" : "none"} />
-                                    </button>
-                                    <div className="font-bold text-gray-900 text-sm">{vehicle.model}</div>
-                                  </div>
-                                  {vehicle.version && <div className="text-[10px] text-gray-400 font-medium ml-6">{vehicle.version}</div>}
+                              </td>
+                              <td className="px-5 py-4">
+                                <span className="flex items-center gap-1 text-xs text-gray-500 font-medium">
+                                  <ImageIcon size={14} className="text-gray-300" />
+                                  {vehicle.images?.length || 0}
+                                </span>
+                              </td>
+                              <td className="px-5 py-4">
+                                <StatusBadge status={vehicle.status} />
+                              </td>
+                              <td className="px-5 py-4 text-right">
+                                <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
+                                    className="p-2 text-[#2271B1] hover:bg-blue-50 rounded-lg transition-colors"
+                                    title="Modifier"
+                                  >
+                                    <Edit size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteVehicle(vehicle.id)}
+                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                    title="Supprimer"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden divide-y divide-gray-100">
+                      {brandVehicles.map(vehicle => (
+                        <div key={vehicle.id} className="p-4 space-y-4 hover:bg-gray-50 transition-colors">
+                          <div className="flex gap-4">
+                            <div className="w-24 h-20 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100 relative">
+                              {vehicle.images?.[0] ? (
+                                <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                  <Car size={24} />
+                                </div>
+                              )}
+                              <button
+                                onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
+                                className={`absolute top-1 left-1 p-1 rounded-full backdrop-blur-md bg-white/60 transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-400'}`}
+                              >
+                                <Star size={14} fill={vehicle.featured ? "currentColor" : "none"} />
+                              </button>
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <div className="flex justify-between items-start mb-1">
+                                <h4 className="font-bold text-gray-900 text-sm truncate">{vehicle.model}</h4>
+                                <StatusBadge status={vehicle.status} />
+                              </div>
+                              <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-2">{vehicle.version || vehicle.type}</p>
+                              <div className="flex items-center justify-between">
+                                <span className="font-black text-lg text-[#2271B1]">{Number(vehicle.price).toLocaleString()}€</span>
+                                <div className="flex gap-1">
+                                  <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
+                                  <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
                                 </div>
                               </div>
-                            </td>
-                            <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.type || '-'}</td>
-                            <td className="px-5 py-4 text-center">
-                              <div className="inline-flex flex-col items-center">
-                                <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
-                                <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
-                              </div>
-                            </td>
-                            <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.year}</td>
-                            <td className="px-5 py-4 text-xs text-gray-600 font-medium">{vehicle.fuel}</td>
-                            <td className="px-5 py-4 text-xs text-gray-600 font-medium">{Number(vehicle.mileage).toLocaleString()} km</td>
-                            <td className="px-5 py-4">
-                              <div className="flex flex-col">
-                                <span className="font-bold text-gray-900 text-sm">{Number(vehicle.price).toLocaleString()} €</span>
-                                {vehicle.discount > 0 && (
-                                  <span className="text-[9px] font-black text-red-600 uppercase tracking-tighter">-{vehicle.discount}% PROMO</span>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-5 py-4">
-                              <span className="flex items-center gap-1 text-xs text-gray-500 font-medium">
-                                <ImageIcon size={14} className="text-gray-300" />
-                                {vehicle.images?.length || 0}
-                              </span>
-                            </td>
-                            <td className="px-5 py-4">
-                              <StatusBadge status={vehicle.status} />
-                            </td>
-                            <td className="px-5 py-4 text-right">
-                              <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                  onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
-                                  className="p-2 text-[#2271B1] hover:bg-blue-50 rounded-lg transition-colors"
-                                  title="Modifier"
-                                >
-                                  <Edit size={16} />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteVehicle(vehicle.id)}
-                                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Supprimer"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-2 bg-gray-50 p-2.5 rounded-xl">
+                            <div className="text-center border-r border-gray-200">
+                              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Année</p>
+                              <p className="text-xs font-black text-gray-700">{vehicle.year}</p>
+                            </div>
+                            <div className="text-center border-r border-gray-200">
+                              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Énergie</p>
+                              <p className="text-xs font-black text-gray-700">{vehicle.fuel}</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Km</p>
+                              <p className="text-xs font-black text-gray-700 truncate">{Number(vehicle.mileage).toLocaleString()}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
+                              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white rounded-xl text-xs font-bold"
+                            >
+                              <Edit size={14} /> Modifier
+                            </button>
+                            <button
+                              onClick={() => handleDeleteVehicle(vehicle.id)}
+                              className="w-12 flex items-center justify-center bg-red-50 text-red-500 rounded-xl border border-red-100"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -465,71 +536,144 @@ const VehiclesList = () => {
       ) : (
         /* Single brand flat list */
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Véhicule</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Favoris</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Année</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Carburant</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilométrage</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Prix</th>
-                <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
-                <th className="px-5 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filteredVehicles.map(vehicle => (
-                <tr key={vehicle.id} className="hover:bg-gray-50/50 transition-colors group">
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                        {vehicle.images?.[0] ? (
-                          <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-300">
-                            <Car size={18} />
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
-                            className={`transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-200 hover:text-amber-300'}`}
-                            title={vehicle.featured ? "Retirer la mise en avant" : "Mettre en avant (TOP)"}
-                          >
-                            <Star size={16} fill={vehicle.featured ? "currentColor" : "none"} />
-                          </button>
-                          <div className="font-bold text-gray-900 text-sm">{vehicle.brand} {vehicle.model}</div>
-                        </div>
-                        {vehicle.version && <div className="text-[10px] text-gray-400 font-medium ml-6">{vehicle.version}</div>}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-4 text-xs text-gray-600">{vehicle.type || '-'}</td>
-                  <td className="px-5 py-4 text-center">
-                    <div className="inline-flex flex-col items-center">
-                      <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
-                      <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-4 text-xs text-gray-600">{vehicle.year}</td>
-                  <td className="px-5 py-4 text-xs text-gray-600">{vehicle.fuel}</td>
-                  <td className="px-5 py-4 text-xs text-gray-600">{Number(vehicle.mileage).toLocaleString()} km</td>
-                  <td className="px-5 py-4 font-bold text-gray-900 text-sm">{Number(vehicle.price).toLocaleString()} €</td>
-                  <td className="px-5 py-4"><StatusBadge status={vehicle.status} /></td>
-                  <td className="px-5 py-4 text-right">
-                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)} className="p-2 text-[#2271B1] hover:bg-blue-50 rounded-lg"><Edit size={16} /></button>
-                      <button onClick={() => handleDeleteVehicle(vehicle.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
-                    </div>
-                  </td>
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Véhicule</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Favoris</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Année</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Carburant</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kilométrage</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Prix</th>
+                  <th className="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Statut</th>
+                  <th className="px-5 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {filteredVehicles.map(vehicle => (
+                  <tr key={vehicle.id} className="hover:bg-gray-50/50 transition-colors group">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                          {vehicle.images?.[0] ? (
+                            <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-300">
+                              <Car size={18} />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
+                              className={`transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-200 hover:text-amber-300'}`}
+                              title={vehicle.featured ? "Retirer la mise en avant" : "Mettre en avant (TOP)"}
+                            >
+                              <Star size={16} fill={vehicle.featured ? "currentColor" : "none"} />
+                            </button>
+                            <div className="font-bold text-gray-900 text-sm">{vehicle.brand} {vehicle.model}</div>
+                          </div>
+                          {vehicle.version && <div className="text-[10px] text-gray-400 font-medium ml-6">{vehicle.version}</div>}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-xs text-gray-600">{vehicle.type || '-'}</td>
+                    <td className="px-5 py-4 text-center">
+                      <div className="inline-flex flex-col items-center">
+                        <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
+                        <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-xs text-gray-600">{vehicle.year}</td>
+                    <td className="px-5 py-4 text-xs text-gray-600">{vehicle.fuel}</td>
+                    <td className="px-5 py-4 text-xs text-gray-600">{Number(vehicle.mileage).toLocaleString()} km</td>
+                    <td className="px-5 py-4 font-bold text-gray-900 text-sm">{Number(vehicle.price).toLocaleString()} €</td>
+                    <td className="px-5 py-4"><StatusBadge status={vehicle.status} /></td>
+                    <td className="px-5 py-4 text-right">
+                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)} className="p-2 text-[#2271B1] hover:bg-blue-50 rounded-lg"><Edit size={16} /></button>
+                        <button onClick={() => handleDeleteVehicle(vehicle.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden divide-y divide-gray-100">
+            {filteredVehicles.map(vehicle => (
+              <div key={vehicle.id} className="p-4 space-y-4 hover:bg-gray-50 transition-colors">
+                <div className="flex gap-4">
+                  <div className="w-24 h-20 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100 relative">
+                    {vehicle.images?.[0] ? (
+                      <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-300">
+                        <Car size={24} />
+                      </div>
+                    )}
+                    <button
+                      onClick={() => toggleFeatured(vehicle.id, vehicle.featured)}
+                      className={`absolute top-1 left-1 p-1 rounded-full backdrop-blur-md bg-white/60 transition-all ${vehicle.featured ? 'text-amber-500' : 'text-gray-400'}`}
+                    >
+                      <Star size={14} fill={vehicle.featured ? "currentColor" : "none"} />
+                    </button>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-1">
+                      <h4 className="font-bold text-gray-900 text-sm truncate">{vehicle.brand} {vehicle.model}</h4>
+                      <StatusBadge status={vehicle.status} />
+                    </div>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-2">{vehicle.version || vehicle.type}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-black text-lg text-[#2271B1]">{Number(vehicle.price).toLocaleString()}€</span>
+                      <div className="flex gap-1">
+                        <Heart size={14} className={vehicle.favoritesCount > 0 ? 'text-red-500 fill-red-500' : 'text-gray-200'} />
+                        <span className="text-[10px] font-black text-gray-600">{vehicle.favoritesCount || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 bg-gray-50 p-2.5 rounded-xl">
+                  <div className="text-center border-r border-gray-200">
+                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Année</p>
+                    <p className="text-xs font-black text-gray-700">{vehicle.year}</p>
+                  </div>
+                  <div className="text-center border-r border-gray-200">
+                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Énergie</p>
+                    <p className="text-xs font-black text-gray-700">{vehicle.fuel}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Km</p>
+                    <p className="text-xs font-black text-gray-700 truncate">{Number(vehicle.mileage).toLocaleString()}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-900 text-white rounded-xl text-xs font-bold"
+                  >
+                    <Edit size={14} /> Modifier
+                  </button>
+                  <button
+                    onClick={() => handleDeleteVehicle(vehicle.id)}
+                    className="w-12 flex items-center justify-center bg-red-50 text-red-500 rounded-xl border border-red-100"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

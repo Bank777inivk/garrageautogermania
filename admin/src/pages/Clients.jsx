@@ -82,32 +82,23 @@ const Clients = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-                        <Users className="mr-3 text-indigo-600" size={28} /> Gestion des Clients
+                    <h1 className="text-xl md:text-2xl font-black text-gray-900 flex items-center gap-3">
+                        <Users className="text-indigo-600" size={24} /> Gestion des Clients
                     </h1>
-                    <p className="text-sm text-gray-500">Supervisez les comptes clients et gérez les accès à la plateforme.</p>
+                    <p className="text-xs md:text-sm text-gray-500 font-bold mt-1 uppercase tracking-widest opacity-60">Supervisez les comptes clients et gérez les accès.</p>
                 </div>
-                <div className="bg-white border rounded-lg p-1 flex shadow-sm">
-                    <button
-                        onClick={() => setFilter('all')}
-                        className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${filter === 'all' ? 'bg-[#2271B1] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
-                    >
-                        Tous
-                    </button>
-                    <button
-                        onClick={() => setFilter('active')}
-                        className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${filter === 'active' ? 'bg-[#2271B1] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
-                    >
-                        Actifs
-                    </button>
-                    <button
-                        onClick={() => setFilter('blocked')}
-                        className={`px-4 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${filter === 'blocked' ? 'bg-[#2271B1] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
-                    >
-                        Bloqués
-                    </button>
+                <div className="bg-white/50 border border-gray-100 rounded-xl p-1 flex shadow-sm self-start md:self-center overflow-x-auto max-w-full no-scrollbar">
+                    {['all', 'active', 'blocked'].map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => setFilter(f)}
+                            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap ${filter === f ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-400 hover:text-indigo-600 hover:bg-white/80'}`}
+                        >
+                            {f === 'all' ? 'Tous' : f === 'active' ? 'Actifs' : 'Bloqués'}
+                        </button>
+                    ))}
                 </div>
             </div>
 
@@ -125,7 +116,7 @@ const Clients = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
@@ -141,17 +132,17 @@ const Clients = () => {
                                 <tr key={client.id} className="hover:bg-gray-50 transition-colors group">
                                     <td className="px-6 py-5">
                                         <div className="flex items-center">
-                                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border-2 border-white shadow-sm">
+                                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-black border-2 border-white shadow-sm">
                                                 {client.firstName?.[0]}{client.lastName?.[0]}
                                             </div>
                                             <div className="ml-4">
-                                                <div className="font-bold text-gray-900">{client.firstName} {client.lastName}</div>
-                                                <div className="text-xs text-gray-400 font-medium">#{client.id.substring(0, 8)}</div>
+                                                <div className="font-black text-gray-900">{client.firstName} {client.lastName}</div>
+                                                <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">#{client.id.substring(0, 8)}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-5 hidden md:table-cell">
-                                        <div className="flex flex-col space-y-1 text-sm text-gray-600">
+                                        <div className="flex flex-col space-y-1 text-sm text-gray-600 font-medium">
                                             <div className="flex items-center">
                                                 <Mail className="mr-2 text-gray-400" size={14} />
                                                 {client.email}
@@ -159,41 +150,41 @@ const Clients = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-5 hidden lg:table-cell">
-                                        <div className="flex items-center text-sm text-gray-500">
+                                        <div className="flex items-center text-sm text-gray-500 font-medium">
                                             <Calendar className="mr-2 text-gray-400" size={14} />
                                             {client.createdAt ? new Date(client.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
                                         </div>
                                     </td>
                                     <td className="px-6 py-5">
                                         {client.blocked ? (
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 uppercase tracking-tighter">
-                                                <ShieldAlert size={12} className="mr-1" /> Bloqué
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black bg-red-50 text-red-600 border border-red-100 uppercase tracking-widest shadow-sm">
+                                                <ShieldAlert size={12} className="mr-1.5" /> Bloqué
                                             </span>
                                         ) : (
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 uppercase tracking-tighter">
-                                                <UserCheck size={12} className="mr-1" /> Actif
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black bg-green-50 text-green-600 border border-green-100 uppercase tracking-widest shadow-sm">
+                                                <UserCheck size={12} className="mr-1.5" /> Actif
                                             </span>
                                         )}
                                     </td>
                                     <td className="px-6 py-5 text-right">
-                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                             <a
                                                 href={`/orders?userId=${client.id}`}
-                                                className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-md transition-colors"
+                                                className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-lg border border-transparent hover:border-indigo-100 transition-all"
                                                 title="Voir les commandes"
                                             >
                                                 <ShoppingCart size={18} />
                                             </a>
                                             <button
                                                 onClick={() => handleToggleBlock(client)}
-                                                className={`p-2 rounded-md transition-colors ${client.blocked ? 'text-green-600 hover:bg-green-50' : 'text-orange-600 hover:bg-orange-50'}`}
+                                                className={`p-2 rounded-lg border border-transparent transition-all ${client.blocked ? 'text-green-600 hover:bg-green-50 hover:border-green-100' : 'text-orange-600 hover:bg-orange-50 hover:border-orange-100'}`}
                                                 title={client.blocked ? "Débloquer" : "Bloquer"}
                                             >
                                                 {client.blocked ? <UserCheck size={18} /> : <UserX size={18} />}
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteClient(client.id)}
-                                                className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                                                className="p-2 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all"
                                                 title="Supprimer"
                                             >
                                                 <Trash2 size={18} />
@@ -204,14 +195,76 @@ const Clients = () => {
                             ))}
                         </tbody>
                     </table>
-
-                    {filteredClients.length === 0 && (
-                        <div className="py-20 text-center flex flex-col items-center">
-                            <Users className="text-gray-200 mb-4" size={64} />
-                            <p className="text-gray-400 font-medium">Aucun client ne correspond à votre recherche.</p>
-                        </div>
-                    )}
                 </div>
+
+                {/* Version Mobile : Cartes */}
+                <div className="md:hidden divide-y divide-gray-100">
+                    {filteredClients.map((client) => (
+                        <div key={client.id} className="p-4 space-y-4 hover:bg-gray-50 active:bg-gray-50 transition-colors">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black border border-indigo-100 shadow-inner">
+                                        {client.firstName?.[0]}{client.lastName?.[0]}
+                                    </div>
+                                    <div className="ml-4">
+                                        <div className="font-black text-gray-900 text-sm">{client.firstName} {client.lastName}</div>
+                                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">#{client.id.substring(0, 8)}</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    {client.blocked ? (
+                                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-black bg-red-50 text-red-600 border border-red-100 uppercase tracking-widest flex items-center shadow-sm">
+                                            <ShieldAlert size={10} className="mr-1" /> Bloqué
+                                        </span>
+                                    ) : (
+                                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-black bg-green-50 text-green-600 border border-green-100 uppercase tracking-widest flex items-center shadow-sm">
+                                            <UserCheck size={10} className="mr-1" /> Actif
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-50/50 p-3 rounded-xl border border-gray-100 space-y-2">
+                                <div className="flex items-center text-[10px] text-gray-500 font-bold">
+                                    <Mail className="mr-2 text-gray-400" size={12} />
+                                    {client.email}
+                                </div>
+                                <div className="flex items-center text-[10px] text-gray-500 font-bold">
+                                    <Calendar className="mr-2 text-gray-400" size={12} />
+                                    Inscrit le {client.createdAt ? new Date(client.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <a
+                                    href={`/orders?userId=${client.id}`}
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-white border border-gray-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-indigo-600 shadow-sm active:scale-95 transition-all"
+                                >
+                                    <ShoppingCart size={14} /> Commandes
+                                </a>
+                                <button
+                                    onClick={() => handleToggleBlock(client)}
+                                    className={`p-3 rounded-xl border shadow-sm active:scale-95 transition-all ${client.blocked ? 'bg-green-50 border-green-100 text-green-600' : 'bg-orange-50 border-orange-100 text-orange-600'}`}
+                                >
+                                    {client.blocked ? <UserCheck size={18} /> : <UserX size={18} />}
+                                </button>
+                                <button
+                                    onClick={() => handleDeleteClient(client.id)}
+                                    className="p-3 bg-red-50 border border-red-100 rounded-xl text-red-500 shadow-sm active:scale-95 transition-all"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {filteredClients.length === 0 && (
+                    <div className="py-20 text-center flex flex-col items-center">
+                        <Users className="text-gray-200 mb-4" size={64} />
+                        <p className="text-gray-400 font-medium">Aucun client ne correspond à votre recherche.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

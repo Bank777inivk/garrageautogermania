@@ -32,30 +32,30 @@ const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false
     const title = isContract ? 'Contrat de Vente' : 'Facture';
 
     return (
-        <div className={`flex flex-col bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden ${fullScreenMode ? 'h-screen border-none rounded-none shadow-none' : 'h-[800px]'}`}>
+        <div className={`flex flex-col bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden ${fullScreenMode ? 'h-screen border-none rounded-none shadow-none' : 'h-[600px] md:h-[800px]'}`}>
             {/* Tab Switched */}
-            <div className="px-8 py-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
-                        <Zap size={20} fill="currentColor" />
+            <div className="px-4 md:px-8 py-4 md:py-6 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+                <div className="flex items-center gap-3 md:gap-4">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center shrink-0">
+                        <Zap size={18} md:size={20} fill="currentColor" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Aperçu Live</h3>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Temps réel synchronisé</p>
+                        <h3 className="text-xs md:text-sm font-black text-slate-900 uppercase tracking-tight">Aperçu Live</h3>
+                        <p className="text-[8px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">Temps réel</p>
                     </div>
                 </div>
 
-                <div className="flex bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="flex bg-white p-1 rounded-2xl border border-slate-200 shadow-sm w-full sm:w-auto">
                     <button
                         onClick={() => setDocType('contract')}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${docType === 'contract' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${docType === 'contract' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         <FileText size={14} />
                         Contrat
                     </button>
                     <button
                         onClick={() => setDocType('invoice')}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${docType === 'invoice' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${docType === 'invoice' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         <FileText size={14} />
                         Facture
@@ -64,25 +64,25 @@ const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false
             </div>
 
             {/* Document "A4" Container */}
-            <div className={`flex-1 overflow-y-auto bg-slate-200/50 custom-scrollbar ${fullScreenMode ? 'p-12' : 'p-8'}`}>
-                <div className={`bg-white mx-auto shadow-2xl min-h-[1100px] w-full p-20 flex flex-col font-sans origin-top transition-all duration-500 ${fullScreenMode ? 'max-w-[1000px]' : 'max-w-[950px]'}`}>
+            <div className={`flex-1 overflow-y-auto bg-slate-200/50 custom-scrollbar ${fullScreenMode ? 'p-6 md:p-12' : 'p-4 md:p-8'}`}>
+                <div className={`bg-white mx-auto shadow-2xl min-h-[1100px] w-full p-8 md:p-20 flex flex-col font-sans origin-top transition-all duration-500 ${fullScreenMode ? 'max-w-[1000px]' : 'max-w-[950px]'}`}>
                     {/* Header */}
-                    <div className="flex justify-between items-start mb-12">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-8 md:mb-12">
                         <div>
                             {settings.logoUrl ? (
-                                <img src={settings.logoUrl} alt="Logo" className="h-24 w-auto object-contain mb-6" />
+                                <img src={settings.logoUrl} alt="Logo" className="h-16 md:h-24 w-auto object-contain mb-4 md:mb-6" />
                             ) : (
-                                <h2 className="text-xl font-black text-slate-900">{settings.companyName || "AUTO IMPORT PRO"}</h2>
+                                <h2 className="text-lg md:text-xl font-black text-slate-900 leading-tight">{settings.companyName || "AUTO IMPORT PRO"}</h2>
                             )}
                         </div>
-                        <div className="text-right">
-                            <h1 className="text-2xl font-black text-red-700 uppercase tracking-tighter">{title}</h1>
-                            <div className="h-0.5 w-16 bg-red-700 ml-auto mt-1" />
+                        <div className="sm:text-right border-l-2 sm:border-l-0 sm:border-r-2 border-red-700 pl-4 sm:pl-0 sm:pr-4 py-1">
+                            <h1 className="text-xl md:text-2xl font-black text-red-700 uppercase tracking-tighter leading-none">{title}</h1>
+                            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Document Officiel</p>
                         </div>
                     </div>
 
                     {/* Parties */}
-                    <div className="grid grid-cols-2 gap-8 mb-12">
+                    <div className="flex flex-col sm:grid sm:grid-cols-2 gap-8 mb-8 md:mb-12">
                         <div className="space-y-3">
                             <h3 className="text-[9px] font-black text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-1">Vendeur</h3>
                             <div className="text-[9px] text-slate-600 space-y-1 font-medium">
@@ -122,8 +122,8 @@ const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false
                     </div>
 
                     {/* Items Table */}
-                    <div className="mb-8">
-                        <table className="w-full text-left text-[9px] border-collapse">
+                    <div className="mb-8 overflow-x-auto">
+                        <table className="w-full text-left text-[8px] md:text-[9px] border-collapse min-w-[500px]">
                             <thead>
                                 <tr className="bg-slate-50 text-slate-900">
                                     <th className="p-3 font-bold uppercase tracking-wider">Désignation</th>
@@ -180,18 +180,18 @@ const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false
                     </div>
 
                     {/* Signatures */}
-                    <div className="mt-12 pt-8 border-t border-slate-100 flex justify-between items-end">
-                        <div className="space-y-1">
+                    <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center sm:items-end gap-10">
+                        <div className="space-y-1 text-center sm:text-left">
                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Acheteur</p>
                             <p className="text-[8px] italic text-slate-300">Bon pour accord</p>
                             <div className="h-12" />
                         </div>
 
-                        <div className="text-right space-y-3">
+                        <div className="text-center sm:text-right space-y-3">
                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">
                                 {settings.documents?.managerName || settings.companyName}
                             </p>
-                            <div className="relative h-28 w-48 ml-auto flex items-center justify-center">
+                            <div className="relative h-20 md:h-28 w-40 md:w-48 mx-auto sm:ml-auto flex items-center justify-center">
                                 {settings.documents?.stampUrl ? (
                                     <img
                                         src={settings.documents.stampUrl}
@@ -203,7 +203,7 @@ const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <img
                                             src={settings.documents.signatureUrl}
-                                            className="h-16 w-auto object-contain"
+                                            className="h-12 md:h-16 w-auto object-contain"
                                             alt="Signature"
                                         />
                                     </div>

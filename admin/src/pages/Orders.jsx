@@ -243,35 +243,35 @@ const Orders = () => {
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
-                        <button
-                            onClick={clearUserFilter}
-                            className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-colors"
-                            title="Retour à la liste des clients"
-                        >
-                            <ChevronRight className="rotate-180" size={20} />
-                        </button>
-                        <ShoppingCart className="text-indigo-600" size={28} /> Commandes Client
-                    </h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        Affichage des commandes de <span className="font-bold text-indigo-700">{activeClient?.firstName} {activeClient?.lastName}</span>
-                    </p>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={clearUserFilter}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2.5 rounded-xl transition-all shadow-sm"
+                        title="Retour à la liste des clients"
+                    >
+                        <ChevronRight className="rotate-180" size={20} />
+                    </button>
+                    <div>
+                        <h1 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                            <ShoppingCart className="text-indigo-600" size={24} /> Commandes Client
+                        </h1>
+                        <p className="text-xs md:text-sm text-gray-500 mt-1">
+                            Commandes de <span className="font-bold text-indigo-700">{activeClient?.firstName} {activeClient?.lastName}</span>
+                        </p>
+                    </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-2">
-                    <div className="bg-white border rounded-lg p-1 flex shadow-sm flex-wrap gap-1 max-w-full">
-                        {['all', 'validation', 'pending', 'logistics', 'transit', 'concierge', 'delivered'].map((s) => (
-                            <button
-                                key={s}
-                                onClick={() => setStatusFilter(s)}
-                                className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${statusFilter === s ? 'bg-[#2271B1] text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'
-                                    }`}
-                            >
-                                {s === 'all' ? 'Toutes' : getStatusLabel(s)}
-                            </button>
-                        ))}
-                    </div>
+                <div className="flex flex-wrap bg-white/50 p-1 rounded-xl border border-gray-100 self-start md:self-center shadow-sm gap-1">
+                    {['all', 'validation', 'pending', 'logistics', 'transit', 'concierge', 'delivered'].map((s) => (
+                        <button
+                            key={s}
+                            onClick={() => setStatusFilter(s)}
+                            className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${statusFilter === s ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-500 hover:text-indigo-600 hover:bg-white/80'
+                                }`}
+                        >
+                            {s === 'all' ? 'Toutes' : getStatusLabel(s)}
+                        </button>
+                    ))}
                 </div>
             </div>
 
@@ -289,7 +289,7 @@ const Orders = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
@@ -379,16 +379,81 @@ const Orders = () => {
                             ))}
                         </tbody>
                     </table>
-
-                    {filteredOrders.length === 0 && (
-                        <div className="py-20 text-center flex flex-col items-center">
-                            <ShoppingCart className="text-gray-100 mb-4" size={64} />
-                            <p className="text-gray-400 font-medium italic">Aucune commande ne correspond à ces critères.</p>
-                        </div>
-                    )}
                 </div>
+
+                {/* Version Mobile : Cartes (Masqué sur Desktop) */}
+                <div className="md:hidden divide-y divide-gray-100">
+                    {filteredOrders.map((order) => (
+                        <div key={order.id} className="p-4 space-y-4 hover:bg-gray-50 active:bg-gray-50 transition-colors">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <div className="text-sm font-black text-indigo-600">#{order.orderNumber}</div>
+                                    <div className="flex items-center text-[10px] text-gray-400 font-bold uppercase mt-0.5">
+                                        <Calendar size={10} className="mr-1" />
+                                        {order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                                    </div>
+                                </div>
+                                <div className="font-black text-gray-900 text-base">{(order.total || 0).toLocaleString()}€</div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex flex-wrap gap-1.5">
+                                    {order.items?.map((item, idx) => (
+                                        <div key={idx} className="flex items-center text-[10px] font-bold text-gray-600 bg-gray-100 px-2.5 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+                                            <Package size={12} className="mr-1.5 text-gray-400" />
+                                            {item.brand} {item.model}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-3 pt-1">
+                                <div className="relative flex-1">
+                                    <select
+                                        value={order.status}
+                                        onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                                        className={`w-full appearance-none px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border cursor-pointer outline-none transition-all ${getStatusColor(order.status)} pr-10`}
+                                    >
+                                        <option value="validation">Validation</option>
+                                        <option value="pending">Paiement</option>
+                                        <option value="logistics">Logistique</option>
+                                        <option value="transit">En Route</option>
+                                        <option value="concierge">Arrivée</option>
+                                        <option value="delivered">Livré</option>
+                                        <option value="cancelled">Annulée</option>
+                                    </select>
+                                    <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-60 rotate-90" size={14} />
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => navigate(`/orders/${order.id}`)}
+                                        className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 shadow-sm active:scale-95 transition-all"
+                                    >
+                                        <Eye size={20} />
+                                    </button>
+                                    {isSuperAdmin && (
+                                        <button
+                                            onClick={() => handleDeleteOrder(order.id, order.orderNumber)}
+                                            className="p-2.5 bg-red-50 border border-red-100 rounded-xl text-red-500 shadow-sm active:scale-95 transition-all"
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {filteredOrders.length === 0 && (
+                    <div className="py-20 text-center flex flex-col items-center">
+                        <ShoppingCart className="text-gray-100 mb-4" size={64} />
+                        <p className="text-gray-400 font-medium italic">Aucune commande ne correspond à ces critères.</p>
+                    </div>
+                )}
             </div>
-        </div >
+        </div>
     );
 };
 

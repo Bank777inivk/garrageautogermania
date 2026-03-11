@@ -10,10 +10,11 @@ import {
   LogOut,
   Percent,
   Image,
-  UserCheck
+  UserCheck,
+  X
 } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -34,9 +35,16 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="bg-[#1D2327] text-white w-64 min-h-screen flex flex-col fixed left-0 top-0">
-      <div className="p-4 border-b border-gray-700 flex items-center justify-center">
+    <div className={`
+      bg-[#1D2327] text-white w-64 min-h-screen flex flex-col fixed left-0 top-0 z-30
+      transition-transform duration-300 transform
+      ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    `}>
+      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
         <h1 className="text-xl font-bold font-montserrat tracking-wider">AUTO IMPORT</h1>
+        <button onClick={onClose} className="lg:hidden p-1 text-gray-400 hover:text-white">
+          <X size={24} />
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-4">
@@ -45,6 +53,7 @@ const Sidebar = () => {
             <li key={item.path}>
               <NavLink
                 to={item.path}
+                onClick={() => { if (window.innerWidth < 1024) onClose(); }}
                 className={({ isActive }) =>
                   `flex items-center px-4 py-3 transition-colors ${isActive
                     ? 'bg-[#2271B1] text-white'

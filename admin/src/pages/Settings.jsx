@@ -24,15 +24,19 @@ import {
     Facebook,
     Banknote,
     Trash2,
-    FileText
+    FileText,
+    User
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import DocumentPreview from '../components/DocumentPreview';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Settings = () => {
+    const navigate = useNavigate();
+    const { tab } = useParams();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [view, setView] = useState(() => localStorage.getItem('settings_active_view') || 'hub'); // 'hub' or category id: 'identity', 'contact', 'bank', 'documents'
+    const view = tab || 'hub';
     const [docType, setDocType] = useState('contract'); // 'contract' or 'invoice'
     const [settings, setSettings] = useState({
         companyName: 'GARRAGE AUTO GERMANIA',
@@ -43,6 +47,7 @@ const Settings = () => {
             city: 'Paris',
             country: 'France'
         },
+        address: "123 Avenue de l'Automobile\n75000 Paris\nFrance", // Fallback
         email: 'contact@garrageautogermania.com',
         phone: '+33 1 23 45 67 89',
         rib: {
@@ -96,11 +101,6 @@ const Settings = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('settings_active_view', view);
-    }, [view]);
-
-
-    useEffect(() => {
         if (view === 'documents') {
             localStorage.setItem('doc_preview_sync', JSON.stringify({ ...settings, docType }));
         }
@@ -112,7 +112,7 @@ const Settings = () => {
         try {
             await setDoc(doc(db, 'settings', 'documents'), settings);
             toast.success("Configuration enregistrée");
-            if (view !== 'hub') setView('hub');
+            if (view !== 'hub') navigate('/settings');
         } catch (error) {
             console.error("Error saving settings:", error);
             toast.error("Erreur d'enregistrement");
@@ -192,45 +192,49 @@ const Settings = () => {
     ];
 
     const Header = ({ title, subtitle, showBack = false }) => (
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 md:mb-12">
             <div className="space-y-1">
                 {showBack && (
                     <button
-                        onClick={() => setView('hub')}
+                        onClick={() => navigate('/settings')}
                         className="flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-red-700 transition-colors mb-4 group"
                     >
                         <ArrowLeft size={14} className="mr-2 group-hover:-translate-x-1 transition-transform" />
                         Retour au Hub
                     </button>
                 )}
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">{title}</h1>
-                <p className="text-sm text-slate-500 font-medium">{subtitle}</p>
+                <h1 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight uppercase leading-tight">{title}</h1>
+                <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed">{subtitle}</p>
             </div>
             {view !== 'hub' && (
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl hover:bg-red-700 font-black text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-slate-200 active:scale-95 disabled:opacity-50"
+                    className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl hover:bg-red-700 font-black text-[10px] md:text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-slate-200 active:scale-95 disabled:opacity-50 w-full sm:w-auto"
                 >
                     {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-                    Sauvegarder les modifications
+                    <span className="shrink-0">Sauvegarder</span>
                 </button>
             )}
         </div>
     );
 
     const InputGroup = ({ label, icon: Icon, value, onChange, placeholder, type = "text", textArea = false }) => (
-        <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-            <div className="relative">
-                {Icon && <Icon className="absolute left-4 top-4 text-slate-300" size={18} />}
+        <div className="space-y-1.5 md:space-y-2">
+            <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] ml-1">{label}</label>
+            <div className="relative group/input">
+                {Icon && (
+                    <div className="absolute left-4 top-4 text-slate-300 group-focus-within/input:text-red-500 transition-colors">
+                        <Icon size={18} />
+                    </div>
+                )}
                 {textArea ? (
                     <textarea
                         value={value}
                         onChange={onChange}
                         placeholder={placeholder}
-                        rows={6}
-                        className={`w-full ${Icon ? 'pl-12' : 'px-4'} pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-red-500/5 focus:border-red-500/20 outline-none transition-all font-medium text-slate-900 resize-none`}
+                        rows={5}
+                        className={`w-full ${Icon ? 'pl-12' : 'px-4 md:px-6'} pr-4 md:pr-6 py-3.5 md:py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-red-500/5 focus:border-red-500/20 outline-none transition-all font-medium text-slate-900 text-sm md:text-base resize-none`}
                     />
                 ) : (
                     <input
@@ -238,7 +242,7 @@ const Settings = () => {
                         value={value}
                         onChange={onChange}
                         placeholder={placeholder}
-                        className={`w-full ${Icon ? 'pl-12' : 'px-4'} pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-red-500/5 focus:border-red-500/20 outline-none transition-all font-medium text-slate-900`}
+                        className={`w-full ${Icon ? 'pl-12' : 'px-4 md:px-6'} pr-4 md:pr-6 py-3.5 md:py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-red-500/5 focus:border-red-500/20 outline-none transition-all font-medium text-slate-900 text-sm md:text-base`}
                     />
                 )}
             </div>
@@ -246,7 +250,7 @@ const Settings = () => {
     );
 
     return (
-        <div className="w-full px-6 py-8 min-h-screen transition-all duration-700">
+        <div className="w-full px-4 md:px-6 py-6 md:py-8 min-h-screen transition-all duration-700">
             {view === 'hub' ? (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Header
@@ -254,18 +258,18 @@ const Settings = () => {
                         subtitle="Pilotez l'identité et les flux de votre plateforme Premium."
                     />
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                         {categories.map((cat) => (
                             <button
                                 key={cat.id}
-                                onClick={() => setView(cat.id)}
-                                className="group relative bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 text-left overflow-hidden flex flex-col h-64"
+                                onClick={() => navigate(`/settings/${cat.id}`)}
+                                className="group relative bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 text-left overflow-hidden flex flex-col h-56 md:h-64"
                             >
-                                <div className={`w-14 h-14 ${cat.bg} ${cat.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
-                                    <cat.icon size={28} />
+                                <div className={`w-12 h-12 md:w-14 md:h-14 ${cat.bg} ${cat.color} rounded-2xl flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-500`}>
+                                    <cat.icon size={24} md:size={28} />
                                 </div>
-                                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-2">{cat.label}</h3>
-                                <p className="text-xs text-slate-400 font-medium leading-relaxed mb-auto">{cat.desc}</p>
+                                <h3 className="text-base md:text-lg font-black text-slate-900 uppercase tracking-tight mb-2 leading-tight">{cat.label}</h3>
+                                <p className="text-[10px] md:text-xs text-slate-400 font-medium leading-relaxed mb-auto opacity-80">{cat.desc}</p>
 
                                 <div className="flex items-center text-[9px] font-black uppercase tracking-widest text-slate-300 group-hover:text-red-700 transition-colors mt-4">
                                     Configurer <ChevronRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
@@ -277,20 +281,20 @@ const Settings = () => {
                         ))}
                     </div>
 
-                    <div className="mt-12 p-10 bg-slate-900 rounded-[2.5rem] relative overflow-hidden group">
-                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                            <div className="space-y-2 text-center md:text-left">
-                                <span className="inline-flex items-center gap-2 bg-red-700 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-2">
+                    <div className="mt-8 md:mt-12 p-6 md:p-10 bg-slate-900 rounded-[2.5rem] relative overflow-hidden group">
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 text-center md:text-left">
+                            <div className="space-y-2">
+                                <span className="inline-flex items-center gap-2 bg-red-700 text-white px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] mb-2 mx-auto md:mx-0">
                                     <Shield size={10} fill="currentColor" />
                                     Système Sécurisé
                                 </span>
-                                <h2 className="text-2xl font-black text-white tracking-tight uppercase">Centralisation des données</h2>
-                                <p className="text-slate-400 text-sm font-medium">Vos modifications impactent instantanément les documents clients et l'interface publique.</p>
+                                <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase leading-tight">Centralisation des données</h2>
+                                <p className="text-slate-400 text-xs md:text-sm font-medium">Synchronisation instantanée sur toute la plateforme.</p>
                             </div>
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="px-10 py-5 bg-white text-slate-900 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-slate-100 transition-all active:scale-95 shadow-2xl flex items-center gap-3"
+                                className="w-full md:w-auto px-10 py-5 bg-white text-slate-900 rounded-2xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] hover:bg-slate-100 transition-all active:scale-95 shadow-2xl flex items-center justify-center gap-3"
                             >
                                 {saving ? <Loader2 className="animate-spin" size={18} /> : <Zap size={18} fill="currentColor" className="text-red-700" />}
                                 Sync Globale
@@ -308,10 +312,10 @@ const Settings = () => {
                         subtitle={categories.find(c => c.id === view)?.desc}
                     />
 
-                    <div className={`${view === 'documents' ? 'bg-transparent border-none shadow-none p-0' : 'bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-12 md:p-20'}`}>
+                    <div className={`${view === 'documents' ? 'bg-transparent border-none shadow-none p-0' : 'bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-6 md:p-12 lg:p-20'}`}>
                         {view === 'identity' && (
-                            <div className="space-y-16">
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                            <div className="space-y-12 md:space-y-16">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
                                     <InputGroup
                                         label="Nom de la société"
                                         icon={Building2}
@@ -320,9 +324,9 @@ const Settings = () => {
                                         placeholder="Ex: AUTO IMPORT PRO"
                                     />
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Logo Officiel</label>
-                                        <div className="flex items-center gap-8 p-6 bg-slate-50 border border-slate-100 rounded-2xl group/upload">
-                                            <div className="relative h-20 w-32 flex items-center justify-center bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Logo Officiel</label>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-6 md:gap-8 p-4 md:p-6 bg-slate-50 border border-slate-100 rounded-2xl group/upload">
+                                            <div className="relative h-20 w-32 flex items-center justify-center bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm shrink-0 mx-auto sm:mx-0">
                                                 {settings.logoUrl ? (
                                                     <img src={settings.logoUrl} alt="Logo" className="max-h-16 max-w-full object-contain p-2" />
                                                 ) : (
@@ -366,12 +370,12 @@ const Settings = () => {
                         )}
 
                         {view === 'bank' && (
-                            <div className="space-y-12">
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                                    <InputGroup label="Titulaire du Compte" icon={UserIcon} value={settings.rib.titulaire} onChange={(e) => setSettings({ ...settings, rib: { ...settings.rib, titulaire: e.target.value } })} />
+                            <div className="space-y-8 md:space-y-12">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12">
+                                    <InputGroup label="Titulaire du Compte" icon={User} value={settings.rib.titulaire} onChange={(e) => setSettings({ ...settings, rib: { ...settings.rib, titulaire: e.target.value } })} />
                                     <InputGroup label="Nom de la Banque" icon={Building2} value={settings.rib.bankName} onChange={(e) => setSettings({ ...settings, rib: { ...settings.rib, bankName: e.target.value } })} />
                                 </div>
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-12">
                                     <div className="lg:col-span-2">
                                         <InputGroup label="IBAN" icon={CreditCard} value={settings.rib.iban} onChange={(e) => setSettings({ ...settings, rib: { ...settings.rib, iban: e.target.value } })} />
                                     </div>
@@ -381,71 +385,71 @@ const Settings = () => {
                         )}
 
                         {view === 'documents' && (
-                            <div className="flex flex-col xl:flex-row gap-8 items-start">
+                            <div className="flex flex-col xl:flex-row gap-6 md:gap-8 items-start">
                                 {/* Editor Side */}
-                                <div className="w-full xl:w-5/12 bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-8 md:p-12 space-y-12">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Configuration Document</h2>
+                                <div className="w-full xl:w-5/12 bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/40 p-6 md:p-12 space-y-8 md:space-y-12">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+                                        <h2 className="text-lg md:text-xl font-black text-slate-900 uppercase tracking-tight">Configuration</h2>
                                         <button
-                                            onClick={() => window.open('/settings/preview', '_blank')}
-                                            className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                                            onClick={() => navigate('/settings/preview')}
+                                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all w-full sm:w-auto"
                                         >
                                             <ExternalLink size={14} />
                                             Aperçu Plein Écran
                                         </button>
                                     </div>
-                                    <div className="space-y-12">
+                                    <div className="space-y-8 md:space-y-12">
                                         {/* Section: Informations Essentielles */}
-                                        <div className="space-y-8">
+                                        <div className="space-y-6 md:space-y-8">
                                             <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
-                                                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
+                                                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shadow-sm shrink-0">
                                                     <Building2 size={20} />
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-widest">Informations de la Société</h3>
-                                                    <p className="text-[10px] text-slate-400 font-medium">Identité officielle et contacts de l'entreprise</p>
+                                                    <h3 className="text-[11px] md:text-[12px] font-black text-slate-900 uppercase tracking-widest leading-none">Société</h3>
+                                                    <p className="text-[9px] md:text-[10px] text-slate-400 font-medium mt-1">Identité officielle et contacts</p>
                                                 </div>
                                             </div>
 
-                                            <div className="bg-slate-50 border border-slate-100 rounded-3xl p-8 space-y-8">
+                                            <div className="bg-slate-50 border border-slate-100 rounded-3xl p-5 md:p-8 space-y-6 md:space-y-8">
                                                 {/* Top Section: Stacking Logo and Company Name vertically */}
-                                                <div className="flex flex-col gap-6 group/upload border-b border-slate-100 pb-8">
+                                                <div className="flex flex-col gap-6 group/upload border-b border-slate-100 pb-6 md:pb-8">
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Logo de la Société</label>
-                                                        <div className="relative h-40 w-full flex items-center justify-center bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Logo de la Société</label>
+                                                        <div className="relative h-32 md:h-40 w-full flex items-center justify-center bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all">
                                                             {settings.logoUrl ? (
-                                                                <img src={settings.logoUrl} alt="Logo" className="max-h-32 max-w-full object-contain p-6" />
+                                                                <img src={settings.logoUrl} alt="Logo" className="max-h-24 md:max-h-32 max-w-full object-contain p-4 md:p-6" />
                                                             ) : (
                                                                 <div className="flex flex-col items-center gap-2">
-                                                                    <ImageIcon className="text-slate-200" size={48} />
-                                                                    <span className="text-[10px] font-bold text-slate-300">Aucun logo sélectionné</span>
+                                                                    <ImageIcon className="text-slate-200" size={32} md:size={48} />
+                                                                    <span className="text-[9px] font-bold text-slate-300">Aucun logo</span>
                                                                 </div>
                                                             )}
                                                             <label className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/upload:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                                                                 <div className="flex flex-col items-center gap-2">
-                                                                    <Upload className="text-white" size={24} />
-                                                                    <span className="text-xs font-black text-white uppercase tracking-wider">Modifier le Logo</span>
+                                                                    <Upload className="text-white" size={20} md:size={24} />
+                                                                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-wider">Modifier</span>
                                                                 </div>
                                                                 <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'logoUrl')} />
                                                             </label>
                                                             {settings.logoUrl && (
                                                                 <button
                                                                     onClick={() => setSettings({ ...settings, logoUrl: '' })}
-                                                                    className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-red-50 text-red-600 rounded-2xl shadow-sm opacity-0 group-hover/upload:opacity-100 transition-opacity z-10"
+                                                                    className="absolute top-3 md:top-4 right-3 md:right-4 p-2 bg-white/90 hover:bg-red-50 text-red-600 rounded-2xl shadow-sm opacity-0 group-hover/upload:opacity-100 transition-opacity z-10"
                                                                 >
-                                                                    <Trash2 size={16} />
+                                                                    <Trash2 size={14} md:size={16} />
                                                                 </button>
                                                             )}
                                                         </div>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom de la Société</label>
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom de la Société</label>
                                                         <input
                                                             type="text"
                                                             value={settings.companyName}
                                                             onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
-                                                            placeholder="Entrez le nom officiel de votre société"
-                                                            className="w-full bg-white border border-slate-200 rounded-2xl px-6 py-5 text-xl font-black text-slate-900 placeholder:text-slate-300 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                                                            placeholder="Nom officiel"
+                                                            className="w-full bg-white border border-slate-200 rounded-2xl px-5 md:px-6 py-4 md:py-5 text-lg md:text-xl font-black text-slate-900 placeholder:text-slate-300 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
                                                         />
                                                     </div>
                                                 </div>
@@ -453,41 +457,41 @@ const Settings = () => {
                                                 {/* Bottom Section: Stacking Manager, Email, Phone all vertically for maximum space */}
                                                 <div className="flex flex-col gap-6">
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Responsable</label>
-                                                        <div className="flex items-center gap-4 px-6 py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
-                                                            <UserIcon size={18} className="text-slate-400" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Responsable</label>
+                                                        <div className="flex items-center gap-4 px-5 md:px-6 py-3.5 md:py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
+                                                            <User size={18} className="text-slate-400 shrink-0" />
                                                             <input
                                                                 type="text"
                                                                 value={settings.documents.managerName}
                                                                 onChange={(e) => setSettings({ ...settings, documents: { ...settings.documents, managerName: e.target.value } })}
-                                                                placeholder="Prénom et Nom du Responsable"
-                                                                className="flex-1 bg-transparent border-none p-0 text-base font-bold text-slate-900 placeholder:text-slate-300 focus:ring-0"
+                                                                placeholder="Responsable"
+                                                                className="flex-1 bg-transparent border-none p-0 text-sm md:text-base font-bold text-slate-900 placeholder:text-slate-300 focus:ring-0 min-w-0"
                                                             />
                                                         </div>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email de Contact</label>
-                                                        <div className="flex items-center gap-4 px-6 py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
-                                                            <Mail size={18} className="text-slate-400" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
+                                                        <div className="flex items-center gap-4 px-5 md:px-6 py-3.5 md:py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
+                                                            <Mail size={18} className="text-slate-400 shrink-0" />
                                                             <input
                                                                 type="text"
                                                                 value={settings.email}
                                                                 onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                                                                placeholder="Email professionnel"
-                                                                className="flex-1 bg-transparent border-none p-0 text-base font-bold text-slate-500 placeholder:text-slate-300 focus:ring-0"
+                                                                placeholder="Email"
+                                                                className="flex-1 bg-transparent border-none p-0 text-sm md:text-base font-bold text-slate-500 placeholder:text-slate-300 focus:ring-0 min-w-0"
                                                             />
                                                         </div>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Numéro de Téléphone</label>
-                                                        <div className="flex items-center gap-4 px-6 py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
-                                                            <Phone size={18} className="text-slate-400" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Téléphone</label>
+                                                        <div className="flex items-center gap-4 px-5 md:px-6 py-3.5 md:py-4 bg-white border border-slate-200 rounded-3xl shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/10 focus-within:border-indigo-500 transition-all">
+                                                            <Phone size={18} className="text-slate-400 shrink-0" />
                                                             <input
                                                                 type="text"
                                                                 value={settings.phone}
                                                                 onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                                                                placeholder="Numéro de téléphone"
-                                                                className="flex-1 bg-transparent border-none p-0 text-base font-bold text-slate-500 placeholder:text-slate-300 focus:ring-0"
+                                                                placeholder="Téléphone"
+                                                                className="flex-1 bg-transparent border-none p-0 text-sm md:text-base font-bold text-slate-500 placeholder:text-slate-300 focus:ring-0 min-w-0"
                                                             />
                                                         </div>
                                                     </div>
@@ -588,18 +592,18 @@ const Settings = () => {
                                             <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Signataire & Cachet</h3>
                                         </div>
 
-                                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-6">
-                                            <div className="flex gap-4 items-stretch">
-                                                <div className="w-24 space-y-2">
-                                                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center">Signature</p>
-                                                    <div className="relative h-16 border border-slate-100 bg-white rounded-xl overflow-hidden group/sig shadow-sm">
+                                        <div className="p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+                                            <div className="flex gap-4 items-stretch shrink-0 mx-auto sm:mx-0">
+                                                <div className="w-28 space-y-2">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Signature</p>
+                                                    <div className="relative h-20 border border-slate-100 bg-white rounded-xl overflow-hidden group/sig shadow-sm">
                                                         {settings.documents.signatureUrl ? (
                                                             <img src={settings.documents.signatureUrl} alt="Signature" className="h-full w-full object-contain p-2" />
                                                         ) : (
-                                                            <div className="h-full flex items-center justify-center text-slate-200"><PenTool size={16} /></div>
+                                                            <div className="h-full flex items-center justify-center text-slate-200"><PenTool size={18} /></div>
                                                         )}
                                                         <label className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/sig:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                                                            <Upload className="text-white" size={12} />
+                                                            <Upload className="text-white" size={16} />
                                                             <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'documents.signatureUrl')} />
                                                         </label>
                                                         {settings.documents.signatureUrl && (
@@ -612,16 +616,16 @@ const Settings = () => {
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="w-24 space-y-2">
-                                                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest text-center">Cachet</p>
-                                                    <div className="relative h-16 border border-slate-100 bg-white rounded-xl overflow-hidden group/stamp shadow-sm">
+                                                <div className="w-28 space-y-2">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Cachet</p>
+                                                    <div className="relative h-20 border border-slate-100 bg-white rounded-xl overflow-hidden group/stamp shadow-sm">
                                                         {settings.documents.stampUrl ? (
                                                             <img src={settings.documents.stampUrl} alt="Stamp" className="h-full w-full object-contain p-2" />
                                                         ) : (
-                                                            <div className="h-full flex items-center justify-center text-slate-200"><Zap size={16} /></div>
+                                                            <div className="h-full flex items-center justify-center text-slate-200"><Zap size={18} /></div>
                                                         )}
                                                         <label className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/stamp:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                                                            <Upload className="text-white" size={12} />
+                                                            <Upload className="text-white" size={16} />
                                                             <input type="file" className="hidden" onChange={(e) => handleFileUpload(e, 'documents.stampUrl')} />
                                                         </label>
                                                         {settings.documents.stampUrl && (
@@ -635,8 +639,8 @@ const Settings = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="text-[10px] text-slate-400 font-medium">
-                                                <p>Ces fichiers seront apposés au bas de vos {docType === 'contract' ? 'contrats' : 'factures'}.</p>
+                                            <div className="text-[10px] md:text-xs text-slate-400 font-medium leading-relaxed max-w-[200px] sm:max-w-none">
+                                                <p>Fichiers apposés automatiquement au bas de vos {docType === 'contract' ? 'contrats' : 'factures'}.</p>
                                             </div>
                                         </div>
                                     </div>

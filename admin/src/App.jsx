@@ -40,6 +40,7 @@ function App() {
             <Route path="banners" element={<Banners />} />
             <Route path="admins" element={<AdminManagement />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="settings/:tab" element={<Settings />} />
             {/* Autres routes admin protégées ici */}
           </Route>
           <Route path="settings/preview" element={<DocumentExternalPreview />} />

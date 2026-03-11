@@ -53,42 +53,45 @@ const AdminManagement = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-          <Shield className="mr-2" /> Gestion des Administrateurs
-        </h1>
+    <div className="space-y-8 pb-20">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-xl md:text-2xl font-black text-gray-900 flex items-center gap-3">
+            <Shield className="text-indigo-600" size={24} /> Gestion des Admins
+          </h1>
+          <p className="text-xs md:text-sm text-gray-500 font-bold mt-1 uppercase tracking-widest opacity-60">Gérez les accès et privilèges administrateur.</p>
+        </div>
         {isSuperAdmin && (
           <button
             onClick={() => setShowSecretLink(!showSecretLink)}
-            className="flex items-center px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors shadow-sm"
+            className="flex items-center justify-center gap-3 px-6 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95 group"
           >
-            {showSecretLink ? <EyeOff size={18} className="mr-2" /> : <Eye size={18} className="mr-2" />}
-            {showSecretLink ? 'Masquer le lien d\'inscription' : 'Afficher le lien d\'inscription'}
+            {showSecretLink ? <EyeOff size={18} /> : <Eye size={18} />}
+            <span>{showSecretLink ? 'Masquer le lien' : 'Afficher le lien'}</span>
           </button>
         )}
       </div>
 
       {isSuperAdmin && showSecretLink && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded-r-md shadow-sm">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <Lock className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+        <div className="bg-orange-50/50 border border-orange-100 p-6 rounded-[2rem] shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+              <Lock className="h-6 w-6 text-orange-500" />
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-yellow-700 font-medium">
-                Lien d'inscription secret (Accès Super Admin)
-              </p>
-              <p className="text-sm text-yellow-600 mt-1">
-                Ce lien permet de créer un compte admin. Ne le partagez qu'avec les personnes dont vous avez autorisé l'email ci-dessous.
-              </p>
-              <div className="mt-3 flex items-center space-x-2">
-                <code className="bg-white px-3 py-2 rounded border border-gray-300 text-xs font-mono text-gray-600 select-all">
+            <div className="flex-1 space-y-4">
+              <div>
+                <p className="text-sm font-black text-slate-900 uppercase tracking-tight">Lien d'inscription secret</p>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                  Ce lien permet de créer un compte admin. Ne le partagez qu'avec les personnes dont vous avez autorisé l'email ci-dessous.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <code className="flex-1 bg-white px-4 py-3 rounded-xl border border-orange-100 text-[10px] font-bold text-slate-600 break-all shadow-inner">
                   {secretLink}
                 </code>
                 <button
                   onClick={copyToClipboard}
-                  className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-2 rounded font-medium hover:bg-indigo-100 transition-colors"
+                  className="px-6 py-3 bg-white text-slate-900 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
                 >
                   Copier
                 </button>
@@ -98,21 +101,19 @@ const AdminManagement = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-6 border border-gray-100">
-        <h2 className="text-lg font-medium mb-4 text-gray-800">Ajouter un nouvel administrateur</h2>
-        <p className="text-sm text-gray-500 mb-4">
-          L'email ajouté ici aura immédiatement accès au tableau de bord s'il se connecte.
-        </p>
+      <div className="bg-white rounded-[2.5rem] p-6 md:p-10 border border-slate-100 shadow-2xl shadow-slate-200/50">
+        <div className="mb-8">
+          <h2 className="text-lg font-black text-slate-900 tracking-tight">Ajouter un Admin</h2>
+          <p className="text-xs text-slate-400 font-bold mt-1 uppercase tracking-widest opacity-60">L'email ajouté pourra accéder au back-office.</p>
+        </div>
 
-        <form onSubmit={handleAddAdmin} className="flex gap-4 items-end">
-          <div className="flex-1 max-w-md">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email de l'utilisateur</label>
+        <form onSubmit={handleAddAdmin} className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
             <input
               type="email"
-              id="email"
               value={newAdminEmail}
               onChange={(e) => setNewAdminEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+              className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none font-bold text-slate-900 placeholder:text-slate-300 transition-all"
               placeholder="nouveau.admin@exemple.com"
               required
             />
@@ -120,75 +121,77 @@ const AdminManagement = () => {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-colors"
+            className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
           >
-            <UserPlus className="mr-2 h-4 w-4" />
+            <UserPlus size={18} />
             Ajouter
           </button>
         </form>
-        {feedback && <p className={`mt-2 text-sm ${feedback.includes('Erreur') ? 'text-red-600' : 'text-green-600'}`}>{feedback}</p>}
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {feedback && <p className={`mt-4 text-[10px] font-black uppercase tracking-widest ml-1 ${feedback.includes('Erreur') ? 'text-red-500' : 'text-green-500'}`}>{feedback}</p>}
+        {error && <p className="mt-4 text-[10px] font-black uppercase tracking-widest ml-1 text-red-500">{error}</p>}
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-100">
-        <div className="px-4 py-5 sm:px-6 bg-gray-50 border-b border-gray-200">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Administrateurs Actifs</h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">Liste des utilisateurs ayant les droits d'accès au back-office.</p>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest leading-none">Administrateurs Actifs</h3>
+          <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
+            {admins.length} Total
+          </span>
         </div>
-        <div className="">
-          <ul role="list" className="divide-y divide-gray-200">
-            {/* Super Admin Hardcodé */}
-            <li className="px-4 py-4 sm:px-6 flex items-center justify-between hover:bg-indigo-50 transition-colors">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 ring-2 ring-indigo-50">
-                  <Shield size={20} />
-                </div>
-                <div className="ml-4">
-                  <div className="text-sm font-bold text-gray-900">noellinemous@gmail.com</div>
-                  <div className="text-xs text-indigo-600 font-semibold uppercase tracking-wider mt-0.5">Super Admin (Propriétaire)</div>
+
+        <div className="grid grid-cols-1 gap-4">
+          {/* Card Super Admin */}
+          <div className="bg-white border border-indigo-100 rounded-[2rem] p-6 shadow-xl shadow-indigo-100/30 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group transition-all duration-500 hover:shadow-indigo-600/10">
+            <div className="flex items-center gap-5 min-w-0">
+              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 border border-indigo-100 shadow-inner shrink-0 group-hover:scale-110 transition-transform duration-500">
+                <Shield size={24} />
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-black text-slate-900 leading-tight truncate">noellinemous@gmail.com</div>
+                <div className="inline-flex items-center gap-1.5 mt-1 bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-indigo-100">
+                  <div className="w-1 h-1 bg-indigo-500 rounded-full animate-pulse" />
+                  Super Admin
                 </div>
               </div>
-              <div className="text-xs text-gray-400 italic px-3 border border-gray-200 rounded-full py-1 bg-gray-50">
-                Non supprimable
-              </div>
-            </li>
+            </div>
+            <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest opacity-40 sm:px-4 shrink-0">Propriétaire</div>
+          </div>
 
-            {/* Admins Dynamiques */}
-            {admins.filter(admin => admin.email !== 'noellinemous@gmail.com').map((admin) => (
-              <li key={admin.email} className="px-4 py-4 sm:px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                    <span className="font-medium text-sm">{admin.email.substring(0, 2).toUpperCase()}</span>
-                  </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{admin.email}</div>
-                    <div className="flex items-center mt-0.5 space-x-2">
-                      <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-                        {admin.role || 'Admin'}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        • Ajouté le {admin.createdAt ? new Date(admin.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
-                      </span>
-                    </div>
+          {/* Admins Dynamiques */}
+          {admins.filter(admin => admin.email !== 'noellinemous@gmail.com').map((admin) => (
+            <div key={admin.email} className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-2xl shadow-slate-200/50 flex flex-col sm:flex-row sm:items-center justify-between gap-6 group transition-all duration-500 hover:shadow-indigo-600/10">
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 shadow-inner group-hover:scale-110 transition-transform duration-500 group-hover:text-indigo-600 group-hover:bg-indigo-50 group-hover:border-indigo-100">
+                  <span className="font-black text-sm uppercase tracking-tighter">{admin.email.substring(0, 2)}</span>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-black text-slate-900 leading-tight">{admin.email}</div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                      {admin.role || 'Admin Account'}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">
+                      • {admin.createdAt ? new Date(admin.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                    </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleRemoveAdmin(admin.email)}
-                  className="ml-4 px-3 py-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-md transition-colors flex items-center text-sm border border-transparent hover:border-red-200"
-                  title="Révoquer les droits"
-                >
-                  <Trash2 size={16} className="mr-1.5" />
-                  Révoquer
-                </button>
-              </li>
-            ))}
+              </div>
+              <button
+                onClick={() => handleRemoveAdmin(admin.email)}
+                className="w-full sm:w-auto px-6 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest border border-transparent hover:border-red-100 active:scale-95"
+              >
+                <Trash2 size={16} />
+                Révoquer
+              </button>
+            </div>
+          ))}
 
-            {admins.filter(admin => admin.email !== 'noellinemous@gmail.com').length === 0 && (
-              <li className="px-4 py-12 text-center text-gray-500 text-sm">
-                Aucun administrateur supplémentaire configuré.
-              </li>
-            )}
-          </ul>
+          {admins.filter(admin => admin.email !== 'noellinemous@gmail.com').length === 0 && (
+            <div className="py-20 text-center bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-4">
+              <Shield className="text-slate-200" size={48} />
+              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest opacity-60 italic">Aucun admin supplémentaire</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
