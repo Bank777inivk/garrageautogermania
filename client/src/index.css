@@ -210,7 +210,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #b91c1c;
+    background: #d97706; /* Amber-600 */
 }
 
 /* ── Sidebar Item Hover ── */
@@ -227,7 +227,7 @@ body {
     bottom: 0;
     width: 0;
     height: 2px;
-    background-color: #b91c1c;
+    background-color: #d97706; /* Amber-600 */
     transition: width 0.3s ease;
 }
 
@@ -293,17 +293,17 @@ body {
     display: inline-block;
     width: 40px;
     height: 3px;
-    background: linear-gradient(90deg, #111827, #b91c1c);
+    background: linear-gradient(90deg, #111827, #d97706); /* Amber-600 */
     border-radius: 99px;
 }
 
 /* ── Button glow on hover ── */
-.btn-red-glow {
+.btn-amber-glow {
     transition: box-shadow 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 0 15px rgba(185, 28, 28, 0.4);
+    box-shadow: 0 0 15px rgba(217, 119, 6, 0.4);
 }
 
-.btn-red-glow:hover {
-    box-shadow: 0 0 25px rgba(185, 28, 28, 0.6);
+.btn-amber-glow:hover {
+    box-shadow: 0 0 25px rgba(217, 119, 6, 0.6);
     transform: translateY(-1px);
 }

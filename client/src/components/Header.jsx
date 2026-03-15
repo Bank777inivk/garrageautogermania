@@ -58,11 +58,11 @@ const Header = () => {
           {/* Left Side: Contact Info */}
           <div className="flex items-center space-x-6 shrink-0">
             <a href="tel:+491781234567" className="flex items-center hover:text-white transition-colors">
-              <Phone size={14} className="mr-2 text-red-600" />
+              <Phone size={14} className="mr-2 text-amber-500" />
               <span className="font-medium tracking-wide">+49 178 123 4567</span>
             </a>
             <span className="flex items-center">
-              <Clock size={14} className="mr-2 text-red-600" />
+              <Clock size={14} className="mr-2 text-amber-500" />
               <span>Lun - Sam : 9h - 19h</span>
             </span>
           </div>
@@ -155,7 +155,7 @@ const Header = () => {
                 <div className="p-2.5 bg-gray-50 rounded-xl group-hover:bg-gray-900 group-hover:text-white transition-all duration-300 shadow-sm text-gray-700">
                   <ShoppingCart size={18} />
                   {getTotalItems() > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-700 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white transform translate-x-1.5 -translate-y-1.5">
+                    <span className="absolute top-0 right-0 bg-amber-600 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white transform translate-x-1.5 -translate-y-1.5">
                       {getTotalItems()}
                     </span>
                   )}
@@ -170,7 +170,7 @@ const Header = () => {
 
               {/* Mobile Menu Toggle */}
               <button
-                className="lg:hidden text-gray-800 hover:text-red-700 transition-colors p-1"
+                className="lg:hidden text-gray-800 hover:text-amber-600 transition-colors p-1"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -191,8 +191,8 @@ const Header = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={({ isActive }) =>
                   `block w-full py-3 text-center font-bold text-sm uppercase tracking-wider rounded transition-colors ${isActive
-                    ? 'text-white bg-red-700 shadow-md'
-                    : 'bg-gray-900 hover:bg-red-700 text-white'
+                    ? 'text-white bg-amber-600 shadow-md'
+                    : 'bg-gray-900 hover:bg-amber-600 text-white'
                   }`
                 }
               >
@@ -204,7 +204,7 @@ const Header = () => {
               <Link
                 to={user ? "/dashboard" : "/connexion"}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center px-4 py-3 text-gray-700 hover:text-red-700 hover:bg-gray-50 rounded-lg font-medium"
+                className="flex items-center px-4 py-3 text-gray-700 hover:text-amber-600 hover:bg-gray-50 rounded-lg font-medium"
               >
                 <User size={20} className="mr-3" />
                 {user ? t('nav.dashboard', 'Mon Espace') : t('nav.account', 'Mon Compte')}

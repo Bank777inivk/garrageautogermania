@@ -6,7 +6,7 @@ const Contact = () => {
     <div className="bg-white min-h-screen py-12 md:py-24">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 md:mb-16">
-          <p className="text-[10px] md:text-xs font-bold text-red-700 uppercase tracking-[0.2em] mb-3">Questions & Devis</p>
+          <p className="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">Questions & Devis</p>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">Contactez-nous</h1>
         </div>
 
@@ -17,7 +17,7 @@ const Contact = () => {
               <h2 className="text-lg md:text-xl font-bold font-montserrat text-slate-900 uppercase mb-8 tracking-tight border-b border-gray-200 pb-4">Nos coordonnées</h2>
               <div className="space-y-8">
                 <div className="flex items-start">
-                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-red-700">
+                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-amber-600">
                     <Phone size={20} />
                   </div>
                   <div>
@@ -28,7 +28,7 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-red-700">
+                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-amber-600">
                     <Mail size={20} />
                   </div>
                   <div>
@@ -38,7 +38,7 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start">
-                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-red-700">
+                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-amber-600">
                     <MapPin size={20} />
                   </div>
                   <div>
@@ -50,7 +50,7 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900 p-8 rounded-xl border border-red-700/20 shadow-xl hidden lg:block">
+            <div className="bg-slate-900 p-8 rounded-xl border border-amber-600/20 shadow-xl hidden lg:block">
               <h3 className="text-white font-bold font-montserrat uppercase text-sm mb-4 tracking-tight">Expertise Allemande</h3>
               <p className="text-gray-400 text-xs leading-relaxed">
                 Nos conseillers sont à votre disposition pour toute demande d'importation personnalisée. Nous gérons l'intégralité du processus logistique et administratif.
@@ -68,7 +68,7 @@ const Contact = () => {
                 <input
                   type="text"
                   placeholder="Ex: Jean Dupont"
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all text-sm"
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all text-sm"
                 />
               </div>
               <div>
@@ -76,14 +76,14 @@ const Contact = () => {
                 <input
                   type="email"
                   placeholder="jean.dupont@email.com"
-                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all text-sm"
+                  className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all text-sm"
                 />
               </div>
             </div>
 
             <div>
               <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Sujet</label>
-              <select className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all text-sm">
+              <select className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all text-sm">
                 <option>Demande de devis d'importation</option>
                 <option>Suivi de commande existante</option>
                 <option>Partenariat professionnel</option>
@@ -96,11 +96,11 @@ const Contact = () => {
               <textarea
                 rows="5"
                 placeholder="Décrivez votre projet automotive..."
-                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all text-sm"
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all text-sm"
               ></textarea>
             </div>
 
-            <button className="w-full bg-red-700 text-white py-4 rounded-xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-lg flex items-center justify-center gap-3 group active:scale-[0.98]">
+            <button className="w-full bg-amber-600 text-white py-4 rounded-xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-slate-900 transition-all shadow-lg flex items-center justify-center gap-3 group active:scale-[0.98]">
               Envoyer le message
               <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </button>

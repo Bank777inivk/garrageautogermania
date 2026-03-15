@@ -10,8 +10,10 @@ const useClientVehicleStore = create((set, get) => ({
   vehicles: [],
   currentVehicle: null,
   favoriteVehicles: [],
+  pendingVehicleIds: [],
   loading: false,
   error: null,
+  settings: null,
 
   fetchVehiclesByIds: async (ids) => {
     if (!ids || ids.length === 0) {
@@ -147,6 +149,55 @@ const useClientVehicleStore = create((set, get) => ({
       });
     } catch (error) {
       set({ error: error.message, loading: false });
+    }
+  },
+
+  fetchUserPendingVehicles: (userId) => {
+    if (!userId) {
+      set({ pendingVehicleIds: [] });
+      return;
+    }
+
+    try {
+      const q = query(
+        collection(db, 'orders'),
+        where('userId', '==', userId)
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const vehicleIds = new Set();
+        
+        snapshot.docs.forEach(doc => {
+          const data = doc.data();
+          if (data.status !== 'cancelled' && data.items) {
+            data.items.forEach(item => {
+              if (item.id) vehicleIds.add(item.id);
+            });
+          }
+        });
+
+        const ids = Array.from(vehicleIds);
+        console.log("Flux Réservations - Véhicules détectés:", ids);
+        set({ pendingVehicleIds: ids });
+      }, (error) => {
+        console.error("Firestore - Erreur flux réservations:", error);
+      });
+
+      return unsubscribe;
+    } catch (error) {
+      console.error("Store - Erreur initialisation flux réservations:", error);
+    }
+  },
+  
+  fetchSettings: async () => {
+    try {
+      const docRef = doc(db, 'settings', 'documents');
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        set({ settings: docSnap.data() });
+      }
+    } catch (error) {
+      console.error("Error fetching settings in store:", error);
     }
   },
 }));

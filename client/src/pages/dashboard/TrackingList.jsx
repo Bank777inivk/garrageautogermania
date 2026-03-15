@@ -39,7 +39,7 @@ const TrackingList = () => {
 
     if (loading) return (
         <div className="min-h-[60vh] flex flex-col items-center justify-center">
-            <div className="w-16 h-16 border-4 border-slate-100 border-t-red-700 rounded-full animate-spin"></div>
+            <div className="w-16 h-16 border-4 border-slate-100 rounded-full animate-spin" style={{ borderTopColor: '#052659' }}></div>
         </div>
     );
 
@@ -54,14 +54,14 @@ const TrackingList = () => {
                         Gérez le transit de vos véhicules en temps réel
                     </p>
                 </div>
-                <div className="flex items-center gap-3 bg-white p-2 px-4 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="flex items-center gap-3 bg-white p-2 px-4 rounded-2xl border border-slate-900/10 shadow-sm">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Système de tracking actif</span>
                 </div>
             </div>
 
             {orders.length === 0 ? (
-                <div className="bg-white rounded-[2.5rem] p-12 text-center border border-slate-50 shadow-2xl shadow-slate-200/40">
+                <div className="bg-white rounded-[2.5rem] p-12 text-center border border-slate-900/10 shadow-2xl shadow-slate-200/40">
                     <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
                         <Package className="text-slate-300" size={32} />
                     </div>
@@ -69,14 +69,14 @@ const TrackingList = () => {
                     <p className="text-slate-400 text-sm mt-2 max-w-sm mx-auto font-medium">
                         Vous n'avez pas encore de commande active. Explorez notre catalogue pour trouver votre futur véhicule.
                     </p>
-                    <Link to="/catalogue" className="inline-flex mt-8 px-8 py-4 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-700 transition-all">
+                    <Link to="/catalogue" className="inline-flex mt-8 px-8 py-4 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all hover:bg-[#052659] shadow-lg hover:shadow-xl hover:shadow-[#052659]/30">
                         Explorer le catalogue
                     </Link>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {orders.map((order) => (
-                        <div key={order.id} className="group bg-white rounded-[2.5rem] overflow-hidden border border-slate-50 shadow-xl shadow-slate-200/30 hover:shadow-2xl hover:shadow-red-700/10 transition-all duration-500 hover:-translate-y-1">
+                        <div key={order.id} className="group bg-white rounded-[2.5rem] overflow-hidden border border-slate-900/10 shadow-xl shadow-slate-200/30 hover:shadow-2xl hover:shadow-[#052659]/10 transition-all duration-500 hover:-translate-y-1">
                             {/* Vehicle Header */}
                             <div className="relative h-48 bg-slate-100">
                                 <img
@@ -87,7 +87,7 @@ const TrackingList = () => {
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
                                 <div className="absolute bottom-4 left-6 right-6">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <div className="px-2 py-0.5 bg-red-700 rounded text-[8px] font-black text-white uppercase tracking-widest">
+                                        <div className="px-2 py-0.5 rounded text-[8px] font-black text-white uppercase tracking-widest" style={{ backgroundColor: '#052659' }}>
                                             #{order.orderNumber}
                                         </div>
                                     </div>
@@ -102,7 +102,7 @@ const TrackingList = () => {
                                 <div className="space-y-5">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 group-hover:text-red-700 transition-colors">
+                                            <div className="p-2.5 bg-slate-50 rounded-xl text-slate-400 transition-colors hover:text-[#052659]">
                                                 <Compass size={16} />
                                             </div>
                                             <div>
@@ -124,7 +124,7 @@ const TrackingList = () => {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Étape</p>
-                                            <p className="text-[13px] font-black text-red-700 uppercase mt-0.5 font-sans">
+                                            <p className="text-[13px] font-black uppercase mt-0.5 font-sans" style={{ color: '#052659' }}>
                                                 {['delivered', 'completed'].includes(order.status?.toLowerCase()) ? 'Terminé' : 'En cours'}
                                             </p>
                                         </div>
@@ -143,7 +143,7 @@ const TrackingList = () => {
 
                                 <button
                                     onClick={() => navigate(`/dashboard/orders/track/${order.id}`)}
-                                    className="w-full mt-8 flex items-center justify-center gap-3 px-6 py-4 bg-slate-50 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-700 hover:text-white transition-all group/btn border border-slate-100 shadow-sm"
+                                    className="w-full mt-8 flex items-center justify-center gap-3 px-6 py-4 bg-white border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.06)] text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:text-white transition-all duration-300 group/btn hover:bg-[#052659] hover:shadow-xl hover:shadow-[#052659]/20 hover:-translate-y-0.5"
                                 >
                                     Suivra ma transaction
                                     <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />

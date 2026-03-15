@@ -87,7 +87,7 @@ const OrderTracking = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-screen bg-[#020617]">
-            <div className="w-16 h-16 border-4 border-white/5 border-t-red-700 rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-white/5 rounded-full animate-spin" style={{ borderTopColor: '#052659' }} />
         </div>
     );
 
@@ -98,11 +98,11 @@ const OrderTracking = () => {
             <style>{`
                 @keyframes extreme-pulse {
                     0%, 100% { 
-                        box-shadow: 0 0 30px rgba(220, 38, 38, 0.7), 0 0 0 0px rgba(220, 38, 38, 0.5); 
+                        box-shadow: 0 0 30px rgba(5, 38, 89, 0.7), 0 0 0 0px rgba(5, 38, 89, 0.5); 
                         transform: scale(1.1); 
                     }
                     50% { 
-                        box-shadow: 0 0 120px rgba(220, 38, 38, 1), 0 0 0 40px rgba(220, 38, 38, 0); 
+                        box-shadow: 0 0 120px rgba(5, 38, 89, 1), 0 0 0 40px rgba(5, 38, 89, 0); 
                         transform: scale(1.25); 
                     }
                 }
@@ -132,7 +132,7 @@ const OrderTracking = () => {
                     content: '';
                     position: absolute;
                     inset: -2px;
-                    border: 3px solid #dc2626;
+                    border: 3px solid #052659;
                     border-radius: inherit;
                     animation: ring-expand 1.2s infinite ease-out;
                     pointer-events: none;
@@ -227,7 +227,7 @@ const OrderTracking = () => {
                                     x1="0%" y1="50%"
                                     x2={stages[activeIndex].x}
                                     y2="50%"
-                                    stroke="rgba(220, 38, 38, 0.2)"
+                                    stroke="rgba(5, 38, 89, 0.2)"
                                     strokeWidth="10"
                                     strokeLinecap="round"
                                     className="transition-all duration-[2000ms] ease-in-out blur-lg"
@@ -236,7 +236,7 @@ const OrderTracking = () => {
                                     x1="0%" y1="50%"
                                     x2={stages[activeIndex].x}
                                     y2="50%"
-                                    stroke="#dc2626"
+                                    stroke="#052659"
                                     strokeWidth="4"
                                     strokeLinecap="round"
                                     className="transition-all duration-[2000ms] ease-in-out"
@@ -262,11 +262,11 @@ const OrderTracking = () => {
 
                                     // Colors for active/current states
                                     let labelClass = 'bg-slate-900 text-slate-500 border border-white/5';
-                                    let iconClass = 'bg-slate-900 border-white/10 text-slate-600 group-hover:border-red-500/50 group-hover:text-red-500 group-hover:scale-110';
+                                    let iconClass = 'bg-slate-900 border-white/10 text-slate-600 group-hover:border-[#052659]/50 group-hover:text-[#5483B3] group-hover:scale-110';
 
                                     if (isCurrent) {
-                                        labelClass = isDelivered ? 'bg-emerald-600 text-white scale-110' : 'bg-red-700 text-white scale-110';
-                                        iconClass = isDelivered ? 'bg-white text-emerald-600 border-emerald-500/50 animate-glow-pulse-emerald' : 'bg-white text-red-600 border-red-500/50 animate-glow-pulse';
+                                        labelClass = isDelivered ? 'bg-emerald-600 text-white scale-110' : 'bg-[#052659] text-white scale-110';
+                                        iconClass = isDelivered ? 'bg-white text-emerald-600 border-emerald-500/50 animate-glow-pulse-emerald' : 'bg-white text-[#052659] border-[#052659]/50 animate-glow-pulse';
                                     } else if (isActive) {
                                         labelClass = isValidation || isDelivered ? 'bg-emerald-600 text-white' : 'bg-white text-slate-900';
                                         iconClass = isValidation || isDelivered ? 'bg-emerald-600/10 border-emerald-500/50 text-emerald-500' : 'bg-slate-800 border-white/20 text-white';
@@ -291,10 +291,10 @@ const OrderTracking = () => {
                                                     <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-700 border-2 ${iconClass}`}>
                                                         <stage.icon size={26} className="transition-colors duration-500" />
                                                     </div>
-                                                    <div className={`w-1 h-20 mt-2 bg-gradient-to-b transition-all duration-700 ${isActive ? 'from-red-500/40 to-transparent' : 'from-white/10 to-transparent'}`} />
+                                                    <div className={`w-1 h-20 mt-2 bg-gradient-to-b transition-all duration-700 ${isActive ? 'from-[#052659]/40 to-transparent' : 'from-white/10 to-transparent'}`} />
                                                 </div>
                                                 <div className="absolute top-20 flex flex-col items-center text-center">
-                                                    <div className={`w-1 h-20 mb-2 bg-gradient-to-t transition-all duration-700 ${isActive ? 'from-red-500/40 to-transparent' : 'from-white/10 to-transparent'}`} />
+                                                    <div className={`w-1 h-20 mb-2 bg-gradient-to-t transition-all duration-700 ${isActive ? 'from-[#052659]/40 to-transparent' : 'from-white/10 to-transparent'}`} />
                                                     <p className={`text-[10px] font-bold uppercase tracking-[0.15em] w-56 transition-all duration-500 leading-relaxed ${isActive ? 'text-slate-400' : 'text-slate-600 group-hover:text-slate-300'}`}>
                                                         {stage.desc}
                                                     </p>
@@ -311,13 +311,13 @@ const OrderTracking = () => {
                                 style={{ left: stages[activeIndex].x, transform: 'translate(-50%, -50%)' }}
                             >
                                 <div className="relative group/truck">
-                                    <div className="bg-red-700 p-5 rounded-[2rem] ring-[12px] ring-red-700/10 border border-red-600/30 flex items-center justify-center">
+                                    <div className="p-5 rounded-[2rem] ring-[12px] flex items-center justify-center border" style={{ backgroundColor: '#052659', borderColor: 'rgba(5,38,89,0.3)', boxShadow: '0 0 0 12px rgba(5,38,89,0.1)' }}>
                                         <Truck size={42} className="text-white drop-shadow-lg" />
-                                        <div className="absolute -right-2 top-0 w-5 h-5 bg-white rounded-full flex items-center justify-center border-4 border-red-700">
-                                            <div className="w-1.5 h-1.5 bg-red-700 rounded-full animate-ping" />
+                                        <div className="absolute -right-2 top-0 w-5 h-5 bg-white rounded-full flex items-center justify-center border-4" style={{ borderColor: '#052659' }}>
+                                            <div className="w-1.5 h-1.5 rounded-full animate-ping" style={{ backgroundColor: '#052659' }} />
                                         </div>
                                     </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-24 h-8 bg-red-700/15 blur-3xl rounded-full mt-6" />
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-24 h-8 blur-3xl rounded-full mt-6" style={{ backgroundColor: 'rgba(5,38,89,0.3)' }} />
                                 </div>
                             </div>
                         </div>
@@ -327,10 +327,10 @@ const OrderTracking = () => {
                     <div className="lg:hidden flex flex-col gap-10 py-6 relative">
                         <div className="absolute left-6 top-10 bottom-10 w-0.5 bg-white/5">
                             <div
-                                className="absolute top-0 left-0 w-full bg-red-600 transition-all duration-[1500ms] shadow-[0_0_10px_rgba(220,38,38,0.5)]"
-                                style={{ height: `${(activeIndex / (stages.length - 1)) * 100}%` }}
+                                className="absolute top-0 left-0 w-full transition-all duration-[1500ms]"
+                                style={{ height: `${(activeIndex / (stages.length - 1)) * 100}%`, backgroundColor: '#052659', boxShadow: '0 0 10px rgba(5,38,89,0.5)' }}
                             >
-                                <div className="absolute inset-0 bg-red-500 blur-sm opacity-50"></div>
+                                <div className="absolute inset-0 blur-sm opacity-50" style={{ backgroundColor: '#5483B3' }}></div>
                             </div>
                         </div>
 
@@ -342,11 +342,11 @@ const OrderTracking = () => {
 
                             let iconMobileClass = 'bg-slate-950 border-white/5 text-slate-600';
                             let titleMobileClass = 'text-slate-500 group-hover:text-white';
-                            let badgeMobileClass = 'bg-red-600/20 border-red-600/40 text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)]';
+                            let badgeMobileClass = 'bg-[#052659]/20 border-[#052659]/40 text-[#5483B3] shadow-[0_0_15px_rgba(5,38,89,0.4)]';
 
                             if (isCurrent) {
-                                iconMobileClass = isDelivered ? 'bg-white text-emerald-600 border-emerald-600 scale-110 animate-glow-pulse-emerald' : 'bg-white text-red-600 border-red-600 scale-110 animate-glow-pulse';
-                                titleMobileClass = isDelivered ? 'text-emerald-500' : 'text-red-500';
+                                iconMobileClass = isDelivered ? 'bg-white text-emerald-600 border-emerald-600 scale-110 animate-glow-pulse-emerald' : 'bg-white text-[#052659] border-[#052659] scale-110 animate-glow-pulse';
+                                titleMobileClass = isDelivered ? 'text-emerald-500' : 'text-[#7DA0CA]';
                                 badgeMobileClass = isDelivered ? 'bg-emerald-600/20 border-emerald-600/40 text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : badgeMobileClass;
                             } else if (isActive) {
                                 iconMobileClass = isValidation || isDelivered ? 'bg-emerald-600/20 border-emerald-500 text-emerald-500' : 'bg-slate-800 border-white/20 text-white';
@@ -355,10 +355,10 @@ const OrderTracking = () => {
 
                             return (
                                 <div key={idx} className={`relative flex gap-6 items-start transition-all duration-500 group cursor-pointer ${isActive ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}>
-                                    <div className={`relative z-10 w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center border-2 transition-all duration-700 ${iconMobileClass} group-hover:scale-110 group-hover:bg-red-600/20 group-hover:border-red-500/50 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] active:scale-90`}>
+                                    <div className={`relative z-10 w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center border-2 transition-all duration-700 ${iconMobileClass} group-hover:scale-110 group-hover:bg-[#052659]/20 group-hover:border-[#052659]/50 group-hover:text-white group-hover:shadow-[0_0_30px_rgba(5,38,89,0.4)] active:scale-90`}>
                                         <stage.icon size={20} className="transition-transform duration-500 group-hover:scale-110" />
                                         {isCurrent && (
-                                            <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#020617] flex items-center justify-center ${isDelivered ? 'bg-emerald-600' : 'bg-red-600'}`}>
+                                            <div className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-[#020617] flex items-center justify-center ${isDelivered ? 'bg-emerald-600' : 'bg-[#052659]'}`}>
                                                 <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
                                             </div>
                                         )}
@@ -387,7 +387,7 @@ const OrderTracking = () => {
                     <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 md:gap-10">
                         <div className="flex items-center gap-5 md:gap-8 flex-1 bg-white/[0.02] p-6 lg:bg-transparent lg:p-0 rounded-2xl border border-white/5 lg:border-0">
                             <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/5">
-                                <MapPin className="text-red-500" size={24} md:size={32} />
+                                <MapPin size={24} md:size={32} style={{ color: '#5483B3' }} />
                             </div>
                             <div className="text-left">
                                 <p className="text-[10px] md:text-[12px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">Position Actuelle</p>
@@ -403,7 +403,7 @@ const OrderTracking = () => {
                                 <span className="text-base md:text-xl font-black uppercase text-white tracking-tight leading-none">{stages[activeIndex]?.desc || "En attente"}</span>
                             </div>
                         </div>
-                        <Link to="/contact" className="px-10 md:px-14 py-6 md:py-8 bg-red-700 text-white rounded-2xl font-black text-xs md:text-sm uppercase tracking-[0.3em] hover:bg-red-800 transition-all hover:scale-[1.05] active:scale-95 text-center flex items-center justify-center">
+                        <Link to="/contact" className="px-10 md:px-14 py-6 md:py-8 text-white rounded-2xl font-black text-xs md:text-sm uppercase tracking-[0.3em] transition-all hover:scale-[1.05] active:scale-95 text-center flex items-center justify-center" style={{ backgroundColor: '#052659' }}>
                             Assistance Directe
                         </Link>
                     </div>

@@ -73,7 +73,7 @@ const SearchBar = ({ className = "" }) => {
                 <div className="p-2">
                     <button
                         type="submit"
-                        className="h-full lg:w-48 w-full bg-slate-900 hover:bg-red-700 text-white font-black text-[11px] uppercase tracking-[0.2em] px-8 py-5 rounded-xl transition-all flex items-center justify-center shadow-xl active:scale-95 group"
+                        className="h-full lg:w-48 w-full bg-slate-900 hover:bg-amber-600 text-white font-black text-[11px] uppercase tracking-[0.2em] px-8 py-5 rounded-xl transition-all flex items-center justify-center shadow-xl active:scale-95 group"
                     >
                         <Search size={18} className="mr-3 group-hover:scale-110 transition-transform" />
                         {t('search.button', 'Chercher')}

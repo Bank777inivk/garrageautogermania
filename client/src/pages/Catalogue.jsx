@@ -17,7 +17,7 @@ import LogoCard from '../components/LogoCard';
 const Catalogue = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const { vehicles, loading, fetchVehicles } = useClientVehicleStore();
+  const { vehicles, loading, fetchVehicles, fetchSettings, settings } = useClientVehicleStore();
   const { addToCart } = useCartStore();
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
@@ -42,6 +42,7 @@ const Catalogue = () => {
     };
 
     fetchVehicles(filterObj);
+    if (!settings) fetchSettings();
   }, [location.search]);
 
   // Lock scroll when mobile filters are open

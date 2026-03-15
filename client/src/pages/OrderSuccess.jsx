@@ -4,7 +4,7 @@ import { db } from '@shared/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { CheckCircle, Printer, ArrowRight, Download, User, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
+import { generateOrderPDF } from '@shared/utils/generateAdminDocuments';
 import { toast } from 'react-hot-toast';
 
 const OrderSuccess = () => {

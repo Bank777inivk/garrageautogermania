@@ -23,13 +23,13 @@ const HeroSection = () => {
       {/* Content */}
       <div className="container mx-auto px-4 z-10 relative">
         <div className="max-w-4xl">
-          <div className="inline-block bg-red-700 text-white text-[10px] font-black px-4 py-1.5 mb-5 uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-red-700/20">
+          <div className="inline-block bg-amber-600 text-white text-[10px] font-black px-4 py-1.5 mb-5 uppercase tracking-[0.2em] rounded-sm shadow-lg shadow-amber-600/20">
             {t('hero.badge', 'Importation Premium')}
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white font-montserrat leading-[1.1] mb-8 tracking-tight">
             {t('hero.title', 'Votre voiture de rêve,')} <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-500 to-red-800">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500">
               {t('hero.subtitle', 'directement d\'Allemagne')}
             </span>
           </h1>

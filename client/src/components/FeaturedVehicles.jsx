@@ -8,11 +8,12 @@ import VehicleCard from './VehicleCard';
 
 const FeaturedVehicles = ({ gridOnly = false }) => {
   const { t } = useTranslation();
-  const { featuredVehicles, loading, fetchFeaturedVehicles } = useClientVehicleStore();
+  const { featuredVehicles, loading, fetchFeaturedVehicles, fetchSettings, settings } = useClientVehicleStore();
   const { addToCart } = useCartStore();
 
   useEffect(() => {
     fetchFeaturedVehicles();
+    if (!settings) fetchSettings();
   }, []);
 
 

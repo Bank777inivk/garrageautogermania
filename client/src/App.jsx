@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import useAuthStore from '@shared/store/useAuthStore';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Catalogue from './pages/Catalogue';
@@ -31,13 +32,22 @@ import ScrollToTop from './components/ScrollToTop';
 import DashboardLayout from './components/dashboard/DashboardLayout';
 
 function App() {
-  const { initializeAuth } = useAuthStore();
+  const { user, initializeAuth } = useAuthStore();
+  const { fetchUserPendingVehicles } = useClientVehicleStore();
+
+  // Debug mode for watermark diagnosis
+  window.DEBUG_WATERMARK = true;
 
   useEffect(() => {
     // Initialise l'écouteur d'état d'authentification
     const unsubscribe = initializeAuth();
     return () => unsubscribe();
   }, [initializeAuth]);
+
+  useEffect(() => {
+    const unsubscribe = fetchUserPendingVehicles(user?.uid);
+    return () => { if (unsubscribe && typeof unsubscribe === 'function') unsubscribe(); };
+  }, [user, fetchUserPendingVehicles]);
 
   return (
     <BrowserRouter>

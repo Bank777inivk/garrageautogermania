@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '@shared/store/useAuthStore';
 import { db } from '@shared/firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { Package, ChevronRight, Loader2, CreditCard, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Package, ChevronRight, Loader2, CreditCard, Clock, CheckCircle, XCircle, Box, Shield, Truck, MapPin } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const Orders = () => {
@@ -32,8 +32,10 @@ const Orders = () => {
         ...doc.data()
       }));
 
-      // Filter for active orders (PENDING ONLY - Actions requises)
-      const activeOrders = ordersData.filter(order => order.status === 'pending');
+      // Filter for active orders (NON-FINAL)
+      const activeOrders = ordersData.filter(order =>
+        ['validation', 'confirmed', 'pending', 'logistics', 'transit', 'concierge'].includes(order.status)
+      );
 
       activeOrders.sort((a, b) => {
         const dateA = a.createdAt?.seconds || 0;
@@ -55,7 +57,7 @@ const Orders = () => {
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center h-full min-h-[400px]">
-        <Loader2 className="animate-spin h-8 w-8 text-red-700" />
+        <Loader2 className="animate-spin h-8 w-8 text-[#052659]" />
       </div>
     );
   }
@@ -71,14 +73,44 @@ const Orders = () => {
       case 'pending':
         return {
           label: 'Action Requise : Paiement',
-          color: 'bg-amber-100/50 text-amber-700 border-amber-100',
+          color: 'bg-[#FCA311]/10 text-[#FCA311] border-[#FCA311]/20',
           icon: Clock
         };
       case 'cancelled':
         return {
           label: 'Dossier Annulé',
-          color: 'bg-slate-100 text-slate-500 border-slate-200',
+          color: 'bg-rose-50 text-rose-700 border-rose-100',
           icon: XCircle
+        };
+      case 'validation':
+        return {
+          label: 'Validation Administrative',
+          color: 'bg-slate-100 text-slate-700 border-slate-200',
+          icon: Shield
+        };
+      case 'logistics':
+        return {
+          label: 'En Logistique',
+          color: 'bg-blue-50 text-blue-700 border-blue-100',
+          icon: Box
+        };
+      case 'transit':
+        return {
+          label: 'En Transit International',
+          color: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+          icon: Truck
+        };
+      case 'concierge':
+        return {
+          label: 'Arrivage Conciergerie',
+          color: 'bg-emerald-50 text-emerald-700 border-emerald-100',
+          icon: MapPin
+        };
+      case 'confirmed':
+        return {
+          label: 'Paiement Reçu / Confirmé',
+          color: 'bg-green-50 text-green-700 border-green-100',
+          icon: CheckCircle
         };
       default:
         return {
@@ -106,7 +138,7 @@ const Orders = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none">
-            Mes Acquisitions
+            MES COMMANDES
           </h1>
           <p className="text-slate-500 mt-4 font-bold text-[10px] uppercase tracking-[0.2em]">
             Suivi en temps réel de vos dossiers d'importation
@@ -119,15 +151,15 @@ const Orders = () => {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-20 text-center">
-          <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+        <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-900/10 p-20 text-center">
+          <div className="bg-white/50 shadow-sm border border-white/80 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
             <Package size={32} />
           </div>
-          <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">Aucune acquisition</h2>
+          <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">Aucune commande</h2>
           <p className="text-slate-400 mb-8 max-w-md mx-auto font-medium text-sm text-[11px] uppercase tracking-widest">Parcourez notre catalogue pour commencer.</p>
           <Link
             to="/catalogue"
-            className="inline-flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-md active:scale-95"
+            className="inline-flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-md active:scale-95 hover:bg-[#052659]"
           >
             Découvrir le catalogue <ChevronRight size={14} />
           </Link>
@@ -140,7 +172,7 @@ const Orders = () => {
             return (
               <div
                 key={order.id}
-                className="group bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-md hover:border-slate-200 transition-all duration-500 cursor-pointer"
+                className="group bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-900/10 overflow-hidden hover:shadow-[0_20px_50px_rgba(252,163,17,0.08)] hover:bg-white/90 transition-all duration-500 cursor-pointer"
                 onClick={() => navigate(`/dashboard/orders/${order.id}`)}
               >
                 <div className="flex flex-col lg:flex-row">
@@ -162,7 +194,7 @@ const Orders = () => {
                   <div className="flex-1 p-8 lg:p-10 flex flex-col justify-between">
                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                       <div>
-                        <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-2 group-hover:text-red-700 transition-colors">
+                        <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-2 transition-colors group-hover:text-[#052659]">
                           {mainItem ? `${mainItem.brand} ${mainItem.model}` : 'Dossier Acquisition'}
                           {order.items?.length > 1 && (
                             <span className="text-[8px] sm:text-[9px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded-md border border-slate-200 ml-2 inline-block">
@@ -175,22 +207,22 @@ const Orders = () => {
                             Initié le {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
                           </p>
                           <span className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-                          <p className="text-[9px] font-black uppercase tracking-widest text-red-700">Import Direct</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-[#052659]">Import Direct</p>
                         </div>
                       </div>
                       <div className="shrink-0">{getStatusBadge(order.status)}</div>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="bg-white/50 shadow-sm p-4 rounded-xl border border-slate-900/10">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Montant</p>
                         <p className="text-base font-black text-slate-900">{order.total?.toLocaleString()}€</p>
                       </div>
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="bg-white/50 shadow-sm p-4 rounded-xl border border-slate-900/10">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Livraison</p>
                         <p className="text-[10px] font-black text-green-600 uppercase">Incluse</p>
                       </div>
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 md:col-span-2">
+                      <div className="bg-white/50 shadow-sm p-4 rounded-xl border border-slate-900/10 md:col-span-2">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Documents</p>
                         <p className="text-[10px] font-black text-slate-900 uppercase">COC EXPORT <span className="text-slate-400 ml-1">DE</span></p>
                       </div>
@@ -202,7 +234,7 @@ const Orders = () => {
                         {order.status === 'pending' && (
                           <button
                             onClick={(e) => { e.stopPropagation(); navigate(`/dashboard/payment/${order.id}`); }}
-                            className="flex-1 sm:flex-none px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-red-700 transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md"
+                            className="flex-1 sm:flex-none px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md hover:bg-slate-800 border-b-2 border-slate-700 hover:border-[#FCA311]"
                           >
                             <CreditCard size={12} />
                             <span>Finaliser</span>
@@ -210,7 +242,7 @@ const Orders = () => {
                         )}
                         <button
                           onClick={(e) => { e.stopPropagation(); navigate(`/dashboard/orders/${order.id}`); }}
-                          className="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-200 text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 group/btn"
+                          className="flex-1 sm:flex-none px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-white hover:shadow-md transition-all flex items-center justify-center gap-2 group/btn"
                         >
                           Détails
                           <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />

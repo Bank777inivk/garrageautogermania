@@ -33,7 +33,7 @@ const FeaturesSection = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-14">
-          <p className="text-xs font-bold text-red-700 uppercase tracking-[0.2em] mb-3">
+          <p className="text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">
             Notre engagement
           </p>
           <h2 className="text-3xl font-bold font-montserrat mb-4">
@@ -46,12 +46,12 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group text-center p-7 bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-red-700/40 hover:bg-gray-800 transition-all duration-400 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-900/20"
+              className="group text-center p-7 bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-amber-600/40 hover:bg-gray-800 transition-all duration-400 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/20"
               style={{ transitionDelay: `${index * 60}ms` }}
             >
               {/* Icon circle */}
-              <div className="w-16 h-16 mx-auto mb-5 rounded-xl bg-gray-900 border border-gray-700 group-hover:border-red-700/50 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:shadow-red-900/30">
-                <feature.icon size={28} className="text-red-700 group-hover:text-red-600 transition-colors duration-300" />
+              <div className="w-16 h-16 mx-auto mb-5 rounded-xl bg-gray-900 border border-gray-700 group-hover:border-amber-600/50 flex items-center justify-center transition-all duration-300 group-hover:shadow-lg group-hover:shadow-amber-900/30">
+                <feature.icon size={28} className="text-amber-600 group-hover:text-amber-500 transition-colors duration-300" />
               </div>
               <h3 className="text-base font-bold mb-2 font-montserrat tracking-tight">{feature.title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">

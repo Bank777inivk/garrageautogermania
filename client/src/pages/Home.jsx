@@ -63,7 +63,7 @@ const Home = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 right-4 text-center">
-                  <span className="text-white font-black text-[10px] uppercase tracking-widest group-hover:text-red-500 transition-colors">Découvrir l'offre</span>
+                  <span className="text-white font-black text-[10px] uppercase tracking-widest group-hover:text-amber-500 transition-colors">Découvrir l'offre</span>
                 </div>
               </div>
             </div>
@@ -84,7 +84,7 @@ const Home = () => {
             </div>
 
             {/* Banner Horizontale Premium */}
-            <div className="reveal bg-slate-900 rounded-2xl p-8 relative overflow-hidden group shadow-xl border border-red-700/20">
+            <div className="reveal bg-slate-900 rounded-2xl p-8 relative overflow-hidden group shadow-xl border border-amber-600/20">
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                   <h3 className="text-white text-xl font-black font-montserrat uppercase tracking-tight mb-2">
@@ -96,14 +96,14 @@ const Home = () => {
                 </div>
                 <Link
                   to="/catalogue"
-                  className="flex items-center gap-3 px-8 py-4 bg-red-700 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg scale-100 hover:scale-105 active:scale-95 whitespace-nowrap"
+                  className="flex items-center gap-3 px-8 py-4 bg-amber-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg scale-100 hover:scale-105 active:scale-95 whitespace-nowrap"
                 >
                   Explorer le stock
                   <ArrowRight size={16} />
                 </Link>
               </div>
               {/* Decorative Gradient */}
-              <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-red-700/10 to-transparent pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-amber-600/10 to-transparent pointer-events-none"></div>
             </div>
 
             {/* Grille de Véhicules */}

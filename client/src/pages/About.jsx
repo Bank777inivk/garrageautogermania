@@ -69,22 +69,22 @@ const About = () => {
 
   const values = [
     {
-      icon: <Shield className="text-red-700" size={24} />,
+      icon: <Shield className="text-amber-600" size={24} />,
       title: "Fiabilité",
       description: "Transparence totale sur l'historique et l'état réel de chaque véhicule importé."
     },
     {
-      icon: <Award className="text-red-700" size={24} />,
+      icon: <Award className="text-amber-600" size={24} />,
       title: "Excellence",
       description: "Spécialisation dans les marques premium allemandes et les véhicules de luxe."
     },
     {
-      icon: <Globe className="text-red-700" size={24} />,
+      icon: <Globe className="text-amber-600" size={24} />,
       title: "International",
       description: "Un réseau de partenaires solides dans toute l'Europe pour le meilleur prix."
     },
     {
-      icon: <Users className="text-red-700" size={24} />,
+      icon: <Users className="text-amber-600" size={24} />,
       title: "Accompagnement",
       description: "Un conseiller dédié pour vous accompagner à chaque étape de votre projet d'achat."
     }
@@ -104,12 +104,12 @@ const About = () => {
         </div>
 
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <p className="text-[10px] md:text-xs font-bold text-red-700 uppercase tracking-[0.2em] mb-4">
+          <p className="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-4">
             Depuis 2014 • AutoImport Pro
           </p>
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-montserrat uppercase tracking-tight mb-6 leading-tight">
             <span className="text-white">L'Importation</span> <br className="sm:hidden" />
-            <span className="text-red-700">Automobile</span> <br className="sm:hidden" />
+            <span className="text-amber-600">Automobile</span> <br className="sm:hidden" />
             <span className="text-amber-500">de Confiance</span>
           </h1>
           <p className="text-gray-300 text-sm md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
@@ -145,24 +145,24 @@ const About = () => {
                 {/* Visual Badges & Stars on Image */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                   <div className="bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 shadow-xl">
-                    <Shield size={14} className="text-red-700" />
+                    <Shield size={14} className="text-amber-600" />
                     <span className="text-[10px] font-bold uppercase tracking-widest">Premium Quality</span>
                   </div>
                   <div className="bg-white/90 backdrop-blur-sm text-slate-900 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center gap-2 shadow-xl">
-                    <CheckCircle size={14} className="text-red-700" />
+                    <CheckCircle size={14} className="text-amber-600" />
                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-800">Expertise Certifiée</span>
                   </div>
                   <div className="bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 shadow-xl">
-                    <Shield size={14} className="text-red-700" />
+                    <Shield size={14} className="text-amber-600" />
                     <span className="text-[10px] font-bold uppercase tracking-widest">Garantie Premium</span>
                   </div>
                   <div className="flex gap-0.5 px-1 mt-1">
                     {[1, 2, 3, 4, 5].map(s => (
-                      <Star key={s} size={10} fill="#b91c1c" className="text-red-700" />
+                      <Star key={s} size={10} fill="#d97706" className="text-amber-600" />
                     ))}
                   </div>
                 </div>
-                <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 bg-red-700 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-md border border-red-800">
+                <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 bg-amber-600 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-md border border-amber-700">
                   <p className="text-xl sm:text-2xl font-bold font-montserrat leading-none">10 Ans</p>
                   <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest mt-1 opacity-90">De Passion</p>
                 </div>
@@ -170,10 +170,6 @@ const About = () => {
             </div>
 
             <div className="w-full lg:w-1/2 order-1 lg:order-2">
-              <p className="text-[10px] sm:text-xs font-bold text-red-700 uppercase tracking-[0.2em] mb-3">Notre Philosophie</p>
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight mb-8 leading-tight">
-                Rendre l'Importation Automobile Accessible
-              </h2>
               <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
                 <p>
                   <strong>AutoImport Pro</strong> a été fondé avec une vision claire : offrir un accès sécurisé et transparent aux meilleurs parcs automobiles européens. Nous sommes vos courtiers de confiance.
@@ -189,8 +185,8 @@ const About = () => {
                     "Service après-vente"
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-gray-800 font-bold uppercase text-[8px] sm:text-[9px] tracking-widest leading-none">
-                      <div className="h-4 w-4 rounded-full bg-red-700/10 flex-shrink-0 flex items-center justify-center">
-                        <CheckCircle size={10} className="text-red-700" />
+                      <div className="h-4 w-4 rounded-full bg-amber-600/10 flex-shrink-0 flex items-center justify-center">
+                        <CheckCircle size={10} className="text-amber-600" />
                       </div>
                       {item}
                     </div>
@@ -206,7 +202,7 @@ const About = () => {
       <section className="py-16 md:py-24 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 sm:mb-16">
-            <p className="text-[10px] sm:text-xs font-bold text-red-700 uppercase tracking-[0.2em] mb-2">Notre Expertise</p>
+            <p className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">Notre Expertise</p>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
               Processus de Livraison Sécurisé
             </h2>
@@ -215,7 +211,7 @@ const About = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {processSteps.map((step, i) => (
               <div key={i} className="bg-white p-6 sm:p-8 rounded-xl border border-gray-100 shadow-sm transition-shadow hover:shadow-md">
-                <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-red-700 mb-6 border border-slate-800">
+                <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-amber-600 mb-6 border border-slate-800">
                   {step.icon}
                 </div>
                 <h3 className="text-gray-900 text-sm sm:text-base font-bold font-montserrat uppercase mb-2 tracking-tight">
@@ -233,7 +229,7 @@ const About = () => {
       {/* CORE VALUES */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 text-center mb-12 sm:mb-16">
-          <p className="text-[10px] sm:text-xs font-bold text-red-700 uppercase tracking-[0.2em] mb-2">Engagements</p>
+          <p className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">Engagements</p>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
             Pourquoi nous choisir ?
           </h2>
@@ -243,7 +239,7 @@ const About = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {values.map((v, i) => (
               <div key={i} className="group p-6 sm:p-8 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors">
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg inline-block text-red-700 group-hover:bg-red-700 group-hover:text-white transition-colors border border-gray-100">
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg inline-block text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors border border-gray-100">
                   {v.icon}
                 </div>
                 <h3 className="text-sm sm:text-base font-bold font-montserrat text-gray-900 uppercase mb-2 tracking-tight">
@@ -262,7 +258,7 @@ const About = () => {
       <section className="py-16 md:py-24 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 sm:mb-16">
-            <Quote className="text-red-700 mx-auto mb-4" size={32} />
+            <Quote className="text-amber-600 mx-auto mb-4" size={32} />
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
               Confiance de nos Clients
             </h2>
@@ -270,7 +266,7 @@ const About = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
             <div className="bg-white p-6 sm:p-10 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex gap-1 text-red-700 mb-6">
+              <div className="flex gap-1 text-amber-600 mb-6">
                 {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill="currentColor" />)}
               </div>
               <p className="text-gray-700 font-medium text-sm sm:text-base mb-6 leading-relaxed italic">
@@ -280,7 +276,7 @@ const About = () => {
             </div>
 
             <div className="bg-white p-6 sm:p-10 rounded-xl shadow-sm border border-gray-100">
-              <div className="flex gap-1 text-red-700 mb-6">
+              <div className="flex gap-1 text-amber-600 mb-6">
                 {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill="currentColor" />)}
               </div>
               <p className="text-gray-700 font-medium text-sm sm:text-base mb-6 leading-relaxed italic">
@@ -303,7 +299,7 @@ const About = () => {
               <User size={18} />
             </div>
             <h4 className="text-gray-900 font-bold uppercase tracking-widest text-[9px] sm:text-[10px]">Directeur Général</h4>
-            <p className="text-red-700 font-montserrat font-bold text-lg sm:text-xl mt-1 tracking-tighter">
+            <p className="text-amber-600 font-montserrat font-bold text-lg sm:text-xl mt-1 tracking-tighter">
               AutoImport Pro
             </p>
           </div>
@@ -313,7 +309,7 @@ const About = () => {
       {/* FINAL CTA SECTION - FULLY RESPONSIVE */}
       <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="bg-slate-900 rounded-2xl p-8 sm:p-12 md:p-20 text-center border border-red-700/20 shadow-xl overflow-hidden relative">
+          <div className="bg-slate-900 rounded-2xl p-8 sm:p-12 md:p-20 text-center border border-amber-600/20 shadow-xl overflow-hidden relative">
             <div className="relative z-10">
               <h2 className="text-white text-xl sm:text-2xl md:text-4xl font-bold font-montserrat uppercase tracking-tight mb-4 leading-tight">
                 Votre projet commence ici.
@@ -324,7 +320,7 @@ const About = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/catalogue"
-                  className="px-8 py-4 bg-red-700 text-white font-bold text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
+                  className="px-8 py-4 bg-amber-600 text-white font-bold text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
                 >
                   Découvrir le stock
                   <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -339,7 +335,7 @@ const About = () => {
             </div>
 
             {/* Subtle Gradient Decor (Minimalist) */}
-            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
           </div>
         </div>
       </section>

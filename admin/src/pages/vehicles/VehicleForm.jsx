@@ -9,7 +9,7 @@ import BrandSelect from '@shared/components/BrandSelect';
 import {
   Upload, X, Star, Car, DollarSign, Gauge, Settings, Palette,
   Users, DoorOpen, Wind, Check, ChevronDown, Loader2, ArrowLeft, ImagePlus,
-  Wand2, Sparkles
+  Wand2, Sparkles, Trash2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { extractVehicleData as extractMistral } from '../../utils/mistral';
@@ -53,29 +53,29 @@ const AC_OPTIONS = [
 ];
 
 const FormSection = ({ title, icon: Icon, children }) => (
-  <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-    <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex items-center gap-3">
-      <div className="p-2 bg-[#2271B1]/10 rounded-lg text-[#2271B1]">
-        <Icon size={18} />
+  <div className="bg-white rounded-3xl border border-[#E5E5E5] overflow-hidden shadow-sm">
+    <div className="px-8 py-5 bg-white border-b border-[#E5E5E5] flex items-center gap-4">
+      <div className="w-10 h-10 bg-[#14213D] text-[#FCA311] rounded-2xl flex items-center justify-center shadow-sm">
+        <Icon size={20} />
       </div>
-      <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">{title}</h3>
+      <h3 className="text-[11px] md:text-[12px] font-black text-[#14213D] uppercase tracking-widest">{title}</h3>
     </div>
-    <div className="p-6">{children}</div>
+    <div className="p-8">{children}</div>
   </div>
 );
 
 const FormField = ({ label, error, required, children }) => (
-  <div>
-    <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
-      {label} {required && <span className="text-red-500">*</span>}
+  <div className="space-y-2">
+    <label className="text-[9px] md:text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">
+      {label} {required && <span className="text-[#FCA311]">*</span>}
     </label>
     {children}
-    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    {error && <p className="text-red-500 text-[10px] font-bold mt-1.5 ml-1">{error}</p>}
   </div>
 );
 
-const inputClass = "mt-0 block w-full rounded-lg border-gray-200 border bg-gray-50 px-3 py-2.5 text-sm focus:ring-2 focus:ring-[#2271B1]/30 focus:border-[#2271B1] outline-none transition-all";
-const selectClass = `${inputClass} cursor-pointer appearance-none`;
+const inputClass = "w-full bg-white border border-[#E5E5E5] rounded-2xl px-6 py-4 text-base font-black text-[#14213D] placeholder:text-gray-300 focus:ring-2 focus:ring-[#FCA311] outline-none transition-all shadow-sm";
+const selectClass = "w-full bg-white border border-[#E5E5E5] rounded-2xl px-6 py-4 text-base font-black text-[#14213D] placeholder:text-gray-300 focus:ring-2 focus:ring-[#FCA311] outline-none transition-all shadow-sm cursor-pointer appearance-none";
 
 const VehicleForm = () => {
   const navigate = useNavigate();
@@ -330,27 +330,31 @@ const VehicleForm = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-20">
+    <div className="max-w-5xl mx-auto space-y-10 pb-20 pt-6">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-center gap-6">
           <button
             onClick={() => navigate('/vehicles')}
-            className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all"
+            className="w-12 h-12 bg-white border border-[#E5E5E5] text-[#14213D] rounded-2xl flex items-center justify-center hover:bg-[#14213D] hover:text-[#FCA311] transition-all shadow-sm group"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           </button>
           <div>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-              {isEdit ? 'Modifier le véhicule' : 'Ajouter un véhicule'}
+            <h1 className="text-2xl md:text-3xl font-black text-[#14213D] uppercase tracking-tight">
+              {isEdit ? 'Modifier le véhicule' : 'Nouveau véhicule'}
             </h1>
-            <p className="text-xs text-gray-500">Remplissez tous les champs</p>
+            <p className="text-[10px] md:text-[11px] text-[#14213D]/40 font-bold uppercase tracking-widest mt-1">
+              {isEdit ? 'Édition des caractéristiques' : 'Ajout au catalogue officiel'}
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <label className="flex items-center gap-2 cursor-pointer bg-amber-50 border border-amber-200 px-3 sm:px-4 py-2 rounded-lg hover:bg-amber-100 transition-all shrink-0">
-            <Star size={16} className={formData.featured ? 'text-amber-500 fill-amber-500' : 'text-gray-400'} />
-            <span className="text-xs sm:text-sm font-bold text-gray-700 whitespace-nowrap">Mis en avant</span>
+        <div className="flex items-center gap-3">
+          <label className={`flex items-center gap-3 cursor-pointer border rounded-2xl px-5 py-3 transition-all shadow-sm ${formData.featured 
+            ? 'bg-[#14213D] border-[#14213D] text-[#FCA311]' 
+            : 'bg-white border-[#E5E5E5] text-[#14213D]/40 hover:border-[#FCA311]'}`}>
+            <Star size={18} className={formData.featured ? 'fill-[#FCA311]' : ''} />
+            <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">Mis en avant</span>
             <input
               type="checkbox"
               name="featured"
@@ -359,38 +363,44 @@ const VehicleForm = () => {
               className="hidden"
             />
           </label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className={`text-xs sm:text-sm font-bold rounded-lg border px-2 sm:px-3 py-2 outline-none cursor-pointer shrink-0 ${formData.status === 'available'
-              ? 'bg-green-50 border-green-200 text-green-700'
-              : 'bg-red-50 border-red-200 text-red-700'
-              }`}
-          >
-            <option value="available">Disponible</option>
-            <option value="sold">Vendu</option>
-            <option value="reserved">Réservé</option>
-          </select>
+          <div className="relative">
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className={`text-[10px] md:text-xs font-black uppercase tracking-widest rounded-2xl border px-5 py-3 outline-none cursor-pointer shadow-sm appearance-none pr-10 ${formData.status === 'available'
+                ? 'bg-white border-[#E5E5E5] text-green-600'
+                : 'bg-white border-[#E5E5E5] text-red-600'
+                }`}
+            >
+              <option value="available">Disponible</option>
+              <option value="sold">Vendu</option>
+              <option value="reserved">Réservé</option>
+            </select>
+            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#14213D]/20" />
+          </div>
         </div>
       </div>
 
       {/* AI Parser Section */}
       {!isEdit && (
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl border border-indigo-100 p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-600 text-white rounded-lg">
-                <Sparkles size={20} />
+        <div className="bg-[#14213D] rounded-3xl border border-[#FCA311]/20 p-8 shadow-xl relative overflow-hidden group">
+          {/* Decorative background element */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#FCA311]/5 rounded-full blur-3xl -mr-32 -mt-32" />
+          
+          <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-10">
+            <div className="flex items-center gap-5">
+              <div className="w-14 h-14 bg-[#FCA311] text-[#14213D] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FCA311]/20">
+                <Sparkles size={28} />
               </div>
               <div>
-                <h3 className="font-bold text-gray-800">Remplissage Magique par IA</h3>
-                <p className="text-xs text-gray-500">Choisissez votre agent pour remplir le formulaire</p>
+                <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tight">Remplissage IA</h3>
+                <p className="text-[10px] md:text-[11px] text-[#FCA311] font-bold uppercase tracking-widest mt-1">Extraction de données par Intelligence Artificielle</p>
               </div>
             </div>
 
             {/* Agent Selector */}
-            <div className="flex flex-wrap bg-white/50 p-1 rounded-xl border border-indigo-100 self-start sm:self-center">
+            <div className="flex flex-wrap bg-white/5 p-1.5 rounded-2xl border border-white/10">
               {[
                 { id: 'mistral', label: 'Mistral', desc: 'Photos & Texte (Free)' },
                 { id: 'gemini', label: 'Gemini', desc: 'Photos & Texte (Fast)' },
@@ -402,9 +412,9 @@ const VehicleForm = () => {
                   key={agent.id}
                   type="button"
                   onClick={() => setAiAgent(agent.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${aiAgent === agent.id
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-gray-500 hover:text-indigo-600 hover:bg-white/80'
+                  className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${aiAgent === agent.id
+                    ? 'bg-[#FCA311] text-[#14213D] shadow-md shadow-[#FCA311]/20'
+                    : 'text-white/40 hover:text-white hover:bg-white/5'
                     }`}
                   title={agent.desc}
                 >
@@ -414,34 +424,34 @@ const VehicleForm = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex flex-col gap-6">
+            <div className="flex flex-col md:flex-row gap-6">
               <textarea
                 value={rawAIText}
                 onChange={(e) => setRawAIText(e.target.value)}
                 placeholder={(aiAgent === 'mistral' || aiAgent === 'gemini')
-                  ? "Collez texte ou ajoutez une photo..."
-                  : "Collez votre annonce texte (Cet agent ne voit pas encore les photos)..."}
-                className="flex-1 h-32 md:h-24 rounded-xl border-indigo-200 border bg-white/50 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all resize-none"
+                  ? "Collez la description ou transférez une photo de l'annonce..."
+                  : "Collez votre annonce texte pour analyse..."}
+                className="flex-1 h-32 md:h-28 rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-sm font-bold text-white placeholder:text-white/20 focus:ring-2 focus:ring-[#FCA311] outline-none transition-all resize-none leading-relaxed"
               />
 
               {(aiAgent === 'mistral' || aiAgent === 'gemini') && (
-                <div className="flex-shrink-0 w-full md:w-48">
+                <div className="flex-shrink-0 w-full md:w-56">
                   {aiImagePreview ? (
-                    <div className="relative h-24 rounded-xl overflow-hidden border border-indigo-200 group">
+                    <div className="relative h-28 md:h-full rounded-2xl overflow-hidden border border-white/10 group/img shadow-lg">
                       <img src={aiImagePreview} alt="AI analysis" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={removeAIImage}
-                        className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute inset-0 bg-[#14213D]/80 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center"
                       >
-                        <X className="text-white" size={20} />
+                        <X className="text-[#FCA311]" size={24} />
                       </button>
                     </div>
                   ) : (
-                    <label className="h-24 flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-indigo-200 bg-white/30 hover:bg-indigo-50 hover:border-indigo-400 cursor-pointer transition-all">
-                      <ImagePlus className="text-indigo-400" size={24} />
-                      <span className="text-[10px] font-bold text-indigo-500 uppercase">Ajouter photo</span>
+                    <label className="h-28 md:h-full flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#FCA311]/50 cursor-pointer transition-all group/upload">
+                      <ImagePlus className="text-white/20 group-hover/upload:text-[#FCA311] transition-colors" size={28} />
+                      <span className="text-[9px] font-black text-white/20 uppercase tracking-widest group-hover/upload:text-white transition-colors">Ajouter photo</span>
                       <input type="file" accept="image/*" onChange={handleAIImageChange} className="hidden" />
                     </label>
                   )}
@@ -453,14 +463,14 @@ const VehicleForm = () => {
               type="button"
               onClick={handleAIParse}
               disabled={parsing || (!rawAIText.trim() && !aiImage)}
-              className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-md group"
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-[#FCA311] text-[#14213D] rounded-2xl font-black text-[12px] uppercase tracking-widest hover:bg-white transition-all shadow-xl shadow-[#FCA311]/10 disabled:opacity-50 disabled:hover:bg-[#FCA311] group"
             >
               {parsing ? (
                 <Loader2 className="animate-spin" size={18} />
               ) : (
                 <Wand2 size={18} className="group-hover:rotate-12 transition-transform" />
               )}
-              {parsing ? "Analyse en cours..." : "Extraire les informations"}
+              {parsing ? "Analyse en cours..." : "Lancer l'extraction automatique"}
             </button>
           </div>
         </div>
@@ -587,9 +597,9 @@ const VehicleForm = () => {
                     key={n}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, doors: n }))}
-                    className={`flex-1 min-w-[40px] py-2 rounded-lg text-sm font-bold border transition-all ${formData.doors === n
-                      ? 'bg-[#2271B1] text-white border-[#2271B1]'
-                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#2271B1]/50'
+                    className={`flex-1 min-w-[50px] py-3.5 rounded-2xl text-[12px] font-black uppercase tracking-widest border transition-all shadow-sm ${formData.doors === n
+                      ? 'bg-[#14213D] text-[#FCA311] border-[#14213D]'
+                      : 'bg-white text-[#14213D]/40 border-[#E5E5E5] hover:border-[#FCA311]'
                       }`}
                   >
                     {n}
@@ -605,9 +615,9 @@ const VehicleForm = () => {
                     key={n}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, seats: n }))}
-                    className={`flex-1 min-w-[40px] py-2 rounded-lg text-xs font-bold border transition-all ${formData.seats === n
-                      ? 'bg-[#2271B1] text-white border-[#2271B1]'
-                      : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#2271B1]/50'
+                    className={`flex-1 min-w-[50px] py-3.5 rounded-2xl text-[12px] font-black uppercase tracking-widest border transition-all shadow-sm ${formData.seats === n
+                      ? 'bg-[#14213D] text-[#FCA311] border-[#14213D]'
+                      : 'bg-white text-[#14213D]/40 border-[#E5E5E5] hover:border-[#FCA311]'
                       }`}
                   >
                     {n}
@@ -635,18 +645,18 @@ const VehicleForm = () => {
               <label
                 key={feature}
                 onClick={() => toggleFeature(feature)}
-                className={`flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition-all ${selectedFeatures.includes(feature)
-                  ? 'bg-[#2271B1]/5 border-[#2271B1]/30 text-[#2271B1]'
-                  : 'bg-gray-50 border-gray-100 text-gray-600 hover:border-gray-200'
+                className={`flex items-center gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all shadow-sm ${selectedFeatures.includes(feature)
+                  ? 'bg-[#14213D] border-[#14213D] text-[#FCA311]'
+                  : 'bg-white border-[#E5E5E5] text-[#14213D]/60 hover:border-[#FCA311]'
                   }`}
               >
-                <div className={`w-5 h-5 rounded-md border flex items-center justify-center flex-shrink-0 transition-all ${selectedFeatures.includes(feature)
-                  ? 'bg-[#2271B1] border-[#2271B1] text-white'
-                  : 'border-gray-300'
+                <div className={`w-6 h-6 rounded-lg border flex items-center justify-center flex-shrink-0 transition-all ${selectedFeatures.includes(feature)
+                  ? 'bg-[#FCA311] border-[#FCA311] text-[#14213D]'
+                  : 'border-[#E5E5E5] bg-gray-50'
                   }`}>
-                  {selectedFeatures.includes(feature) && <Check size={12} strokeWidth={3} />}
+                  {selectedFeatures.includes(feature) && <Check size={14} strokeWidth={4} />}
                 </div>
-                <span className="text-[11px] font-bold leading-tight">{feature}</span>
+                <span className="text-[10px] md:text-[11px] font-black uppercase tracking-tight leading-tight">{feature}</span>
               </label>
             ))}
           </div>
@@ -673,22 +683,24 @@ const VehicleForm = () => {
           )}
 
           {/* Upload Zone */}
-          <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 sm:p-10 cursor-pointer transition-all mb-6 ${uploading ? 'border-[#2271B1] bg-[#2271B1]/5' : 'border-gray-200 hover:border-[#2271B1]/50 hover:bg-gray-50'
+          <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-[2.5rem] p-10 md:p-20 cursor-pointer transition-all mb-8 shadow-sm ${uploading 
+              ? 'border-[#FCA311] bg-[#14213D]/5' 
+              : 'border-[#E5E5E5] bg-gray-50 hover:border-[#FCA311] hover:bg-white'
             }`}>
             {uploading ? (
               <>
-                <Loader2 className="animate-spin text-[#2271B1] mb-3" size={40} />
-                <p className="text-sm font-bold text-[#2271B1]">Téléchargement en cours...</p>
+                <Loader2 className="animate-spin text-[#14213D] mb-5" size={48} />
+                <p className="text-[11px] font-black text-[#14213D] uppercase tracking-widest">Téléchargement en cours...</p>
               </>
             ) : (
               <>
-                <div className="p-4 bg-[#2271B1]/10 rounded-2xl text-[#2271B1] mb-3">
-                  <Upload size={32} />
+                <div className="w-20 h-20 bg-[#14213D] text-[#FCA311] rounded-[2rem] flex items-center justify-center shadow-xl mb-6">
+                  <Upload size={36} />
                 </div>
-                <p className="text-sm font-bold text-gray-700 text-center">Glisser / Déposer des photos</p>
-                <p className="text-xs text-gray-400 mt-1 text-center max-w-xs">ou cliquer pour parcourir • PNG, JPG • Sans limite</p>
-                <div className="mt-4 px-6 py-2 bg-[#2271B1] text-white rounded-lg text-sm font-bold">
-                  Choisir des photos
+                <p className="text-base font-black text-[#14213D] uppercase tracking-tight">Glisser-Déposer les clichés</p>
+                <p className="text-[10px] text-[#14213D]/40 font-bold uppercase tracking-widest mt-2">Format supportés : PNG, JPG • Aucune limite de taille</p>
+                <div className="mt-8 px-8 py-4 bg-[#14213D] text-[#FCA311] rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform">
+                  Parcourir les fichiers
                 </div>
               </>
             )}
@@ -711,32 +723,32 @@ const VehicleForm = () => {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {images.map((img, idx) => (
-                  <div key={idx} className={`relative group rounded-xl overflow-hidden border-2 transition-all ${idx === 0 ? 'border-amber-400 ring-2 ring-amber-200' : 'border-gray-100'
+                  <div key={idx} className={`relative group rounded-3xl overflow-hidden border-2 transition-all shadow-sm ${idx === 0 ? 'border-[#FCA311] ring-4 ring-[#FCA311]/10' : 'border-[#E5E5E5]'
                     }`}>
-                    <img src={img} alt={`Photo ${idx + 1}`} className="w-full h-32 object-cover" />
+                    <img src={img} alt={`Photo ${idx + 1}`} className="w-full h-40 object-cover p-1 rounded-3xl" />
                     {idx === 0 && (
-                      <div className="absolute top-2 left-2 bg-amber-400 text-white text-[9px] font-black uppercase px-2 py-1 rounded-full flex items-center gap-1">
-                        <Star size={10} fill="white" /> Principale
+                      <div className="absolute top-3 left-3 bg-[#FCA311] text-[#14213D] text-[9px] font-black uppercase px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                        <Star size={12} fill="#14213D" /> Couverture
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <div className="absolute inset-0 bg-[#14213D]/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                       {idx !== 0 && (
                         <button
                           type="button"
                           onClick={() => setCoverImage(idx)}
-                          className="p-2 bg-amber-400 text-white rounded-full hover:bg-amber-500 transition-colors"
+                          className="w-12 h-12 bg-[#FCA311] text-[#14213D] rounded-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                           title="Définir comme principale"
                         >
-                          <Star size={16} />
+                          <Star size={20} />
                         </button>
                       )}
                       <button
                         type="button"
                         onClick={() => removeImage(idx)}
-                        className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
+                        className="w-12 h-12 bg-white text-red-600 rounded-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                         title="Supprimer"
                       >
-                        <X size={16} />
+                        <Trash2 size={20} />
                       </button>
                     </div>
                   </div>
@@ -747,21 +759,24 @@ const VehicleForm = () => {
         </FormSection>
 
         {/* Submit Bar */}
-        <div className="sticky bottom-4 mx-[-8px] sm:mx-0 bg-white border border-gray-200 p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row gap-3 justify-between items-center shadow-[0_8px_30px_rgb(0,0,0,0.12)] z-10">
+        <div className="sticky bottom-6 mx-[-8px] sm:mx-0 bg-[#14213D] border border-white/10 p-5 rounded-3xl flex flex-col sm:flex-row gap-4 justify-between items-center shadow-2xl z-10 overflow-hidden">
+          {/* Decorative accents */}
+          <div className="absolute top-0 right-0 w-32 h-full bg-[#FCA311] translate-x-20 -skew-x-12 opacity-10" />
+          
           <button
             type="button"
             onClick={() => navigate('/vehicles')}
-            className="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors order-2 sm:order-1"
+            className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[11px] font-black text-white hover:bg-white/10 uppercase tracking-widest transition-all order-2 sm:order-1"
           >
-            Annuler
+            Abandonner
           </button>
           <button
             type="submit"
             disabled={loading || uploading}
-            className="w-full sm:w-auto px-8 py-3 bg-[#2271B1] text-white rounded-xl text-sm font-bold hover:bg-[#135e96] disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-md order-1 sm:order-2"
+            className="w-full sm:w-auto px-12 py-4 bg-[#FCA311] text-[#14213D] rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-white disabled:opacity-50 transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#FCA311]/10 order-1 sm:order-2"
           >
-            {(loading || uploading) && <Loader2 className="animate-spin" size={16} />}
-            {isEdit ? 'Mettre à jour' : 'Publier le véhicule'}
+            {(loading || uploading) && <Loader2 className="animate-spin" size={20} />}
+            {isEdit ? 'Enregistrer les modifications' : 'Mettre en ligne le véhicule'}
           </button>
         </div>
       </form>

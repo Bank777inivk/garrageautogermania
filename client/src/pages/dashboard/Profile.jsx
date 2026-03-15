@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuthStore from '@shared/store/useAuthStore';
 import { db } from '@shared/firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { User, MapPin, Calendar, Loader2, Phone, Mail, Building2, Save } from 'lucide-react';
+import { User, MapPin, Calendar, Loader2, Phone, Mail, Building2, Save, Award } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const Profile = () => {
@@ -94,7 +94,7 @@ const Profile = () => {
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center h-full min-h-[400px]">
-        <Loader2 className="animate-spin h-8 w-8 text-red-700" />
+        <Loader2 className="animate-spin h-8 w-8" style={{ color: '#052659' }} />
       </div>
     );
   }
@@ -116,21 +116,24 @@ const Profile = () => {
       <div className="max-w-5xl">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Profile Header - Grounded */}
-          <div className="bg-white rounded-3xl border border-slate-100 p-8 flex flex-col md:flex-row items-center gap-8 shadow-sm">
-            <div className="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-md border-4 border-white">
-              <User size={36} className="text-slate-200" />
+          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 p-8 flex flex-col md:flex-row items-center gap-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-lg overflow-hidden relative group/avatar border border-[#FCA311]/30 bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024]">
+              {/* Subtle Glow */}
+              <div className="absolute inset-0 bg-[#FCA311]/10 blur-xl group-hover/avatar:bg-[#FCA311]/20 transition-all duration-700" />
+              <User size={36} className="text-[#FCA311] relative z-10" />
             </div>
             <div className="text-center md:text-left">
               <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase">
                 {formData.firstName || 'Client'} {formData.lastName || 'AutoImport'}
               </h2>
               <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
-                <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                   <Mail size={12} />
                   {user?.email}
                 </div>
                 <div className="w-1 h-1 bg-slate-200 rounded-full my-auto hidden sm:block"></div>
-                <div className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+                <div className="text-[10px] font-black text-[#FCA311] uppercase tracking-widest flex items-center gap-1.5">
+                  <Award size={12} className="fill-current" />
                   Compte Certifié
                 </div>
               </div>
@@ -139,7 +142,7 @@ const Profile = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Identity - Grounded */}
-            <div className="bg-white rounded-3xl border border-slate-100 p-8 space-y-8 shadow-sm">
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 p-8 space-y-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
                 <User size={16} className="text-slate-400" />
                 Identité
@@ -153,7 +156,7 @@ const Profile = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl font-black text-slate-900 focus:bg-white focus:border-red-700/20 focus:ring-4 focus:ring-red-700/5 transition-all outline-none text-sm"
+                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white transition-all outline-none text-sm"
                   />
                 </div>
                 <div className="space-y-2">
@@ -163,7 +166,7 @@ const Profile = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl font-black text-slate-900 focus:bg-white focus:border-red-700/20 focus:ring-4 focus:ring-red-700/5 transition-all outline-none text-sm"
+                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white transition-all outline-none text-sm"
                   />
                 </div>
               </div>
@@ -177,7 +180,7 @@ const Profile = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-5 py-3 bg-slate-50 border border-slate-100 rounded-xl font-black text-slate-400 outline-none text-sm grayscale cursor-not-allowed"
+                    className="w-full pl-12 pr-5 py-3 bg-slate-100/50 border border-slate-200/30 rounded-xl font-black text-slate-400 outline-none text-sm grayscale cursor-not-allowed"
                     disabled
                   />
                 </div>
@@ -193,14 +196,14 @@ const Profile = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+33 6 00 00 00 00"
-                    className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl font-black text-slate-900 focus:border-slate-950 transition-all outline-none text-sm"
+                    className="w-full pl-12 pr-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
                   />
                 </div>
               </div>
             </div>
 
             {/* Localization - Grounded */}
-            <div className="bg-white rounded-3xl border border-slate-100 p-8 space-y-8 shadow-sm">
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 p-8 space-y-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
                 <MapPin size={16} className="text-slate-400" />
                 Localisation
@@ -216,7 +219,7 @@ const Profile = () => {
                     value={formData.company}
                     onChange={handleChange}
                     placeholder="Optionnel"
-                    className="w-full pl-12 pr-5 py-3 bg-white border border-slate-200 rounded-xl font-black text-slate-900 focus:border-slate-950 transition-all outline-none text-sm"
+                    className="w-full pl-12 pr-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
                   />
                 </div>
               </div>
@@ -229,7 +232,7 @@ const Profile = () => {
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="N°, Rue, Appt..."
-                  className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl font-black text-slate-900 focus:border-slate-950 transition-all outline-none text-sm"
+                  className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
                 />
               </div>
 
@@ -241,7 +244,7 @@ const Profile = () => {
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl font-black text-slate-900 focus:border-slate-950 transition-all outline-none text-sm"
+                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
                   />
                 </div>
                 <div className="space-y-2">
@@ -251,7 +254,7 @@ const Profile = () => {
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl font-black text-slate-900 focus:border-slate-950 transition-all outline-none text-sm"
+                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
                   />
                 </div>
               </div>
@@ -262,7 +265,7 @@ const Profile = () => {
                   name="country"
                   value={formData.country}
                   onChange={handleChange}
-                  className="w-full px-5 py-3 bg-white border border-slate-200 rounded-xl font-black text-slate-900 focus:border-slate-950 transition-all outline-none text-sm appearance-none"
+                  className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm appearance-none"
                 >
                   <option value="France">France 🇫🇷</option>
                   <option value="Belgique">Belgique 🇧🇪</option>
@@ -277,15 +280,19 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 bg-slate-900 rounded-3xl shadow-lg">
-            <div className="text-white text-center md:text-left">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden relative group bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024] border border-[#FCA311]/30">
+            {/* Vivid Atmosphere */}
+            <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#FCA311]/10 rounded-full blur-[80px] group-hover:bg-[#FCA311]/20 transition-all duration-1000" />
+            <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-[#5483B3]/5 rounded-full blur-[80px] group-hover:bg-[#5483B3]/15 transition-all duration-1000" />
+            
+            <div className="relative z-10 text-white text-center md:text-left">
               <p className="font-black text-sm tracking-tight uppercase leading-none mb-2">Sécurité des données</p>
-              <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Conformité RGPD & Chiffrement de bout en bout</p>
+              <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">Conformité RGPD & Chiffrement de bout en bout</p>
             </div>
             <button
               type="submit"
               disabled={saving}
-              className="w-full md:w-auto flex items-center justify-center bg-white text-slate-900 px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-700 hover:text-white transition-all shadow-md active:scale-95 disabled:opacity-70 group"
+              className="w-full md:w-auto flex items-center justify-center bg-white text-slate-900 px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 disabled:opacity-70 group hover:bg-slate-800 hover:text-white border border-white hover:border-[#FCA311]"
             >
               {saving ? <Loader2 className="animate-spin mr-3" size={14} /> : <Save className="mr-3 group-hover:scale-110 transition-transform" size={14} />}
               {saving ? 'Synchronisation...' : 'Enregistrer'}

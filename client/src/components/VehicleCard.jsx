@@ -9,18 +9,25 @@ import {
 import useCartStore from '@shared/store/useCartStore';
 import useFavoriteStore from '@shared/store/useFavoriteStore';
 import useAuthStore from '@shared/store/useAuthStore';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 import { toast } from 'react-hot-toast';
+import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
 
 const VehicleCard = ({ vehicle, layout = 'grid' }) => {
     const { t } = useTranslation();
-    const { addToCart } = useCartStore();
+    const { addToCart, items: cartItems } = useCartStore();
     const { toggleFavorite, favorites } = useFavoriteStore();
     const { user } = useAuthStore();
+    const { pendingVehicleIds, settings } = useClientVehicleStore();
     const isFavorite = favorites.includes(vehicle.id);
+    
+    // Fallback watermark calculation for robustness
+    const effectiveWatermarkId = settings?.watermarkPublicId || (settings?.logoUrl ? getPublicIdFromUrl(settings.logoUrl) : null);
     const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
     const [showPopup, setShowPopup] = React.useState(false);
     const [showStatusPopup, setShowStatusPopup] = React.useState(false);
     const [showSharePopup, setShowSharePopup] = React.useState(false);
+    const [showCartPopup, setShowCartPopup] = React.useState(false);
     const [showFavoriteFeedback, setShowFavoriteFeedback] = React.useState(false);
     const hasDiscount = vehicle.discount > 0;
     const discountedPrice = hasDiscount ? vehicle.price * (1 - vehicle.discount / 100) : vehicle.price;
@@ -67,6 +74,13 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
             return () => clearTimeout(timer);
         }
     }, [showSharePopup]);
+
+    React.useEffect(() => {
+        if (showCartPopup) {
+            const timer = setTimeout(() => setShowCartPopup(false), 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [showCartPopup]);
 
     React.useEffect(() => {
         if (showFavoriteFeedback) {
@@ -117,7 +131,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                     </div>
                 </div>
                 <div className="mt-5 flex gap-2 relative z-10">
-                    <Link to="/connexion" className="flex-1 bg-slate-900 text-white py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.stopPropagation(); setShowPopup(false); }}>
+                    <Link to="/connexion" className="flex-1 bg-slate-900 text-white py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.stopPropagation(); setShowPopup(false); }}>
                         <LogIn size={12} /> Se connecter
                     </Link>
                     <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowPopup(false); }} className="p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 hover:text-slate-600 transition-all active:scale-95 flex items-center justify-center">
@@ -176,16 +190,50 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
             </div>
         );
     };
+    const StatusPopup = () => {
+        const isUserReserved = pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold';
+        return (
+            <div className={`absolute right-0 -bottom-2 translate-y-full z-40 animate-in fade-in slide-in-from-top-3 duration-500 pointer-events-auto w-[280px]`}>
+                <div className="bg-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl p-4 relative overflow-hidden group/status text-left">
+                    <div className={`absolute top-0 right-0 w-24 h-24 ${isUserReserved ? 'bg-emerald-600/20' : 'bg-amber-600/20'} rounded-full blur-2xl -mr-12 -mt-12`} />
+                    <div className="flex items-start gap-4 relative z-10">
+                        <div className={`p-2 ${isUserReserved ? 'bg-emerald-600' : 'bg-amber-600'} rounded-lg text-white shadow-lg`}>
+                            {isUserReserved ? <Zap size={18} className="animate-pulse" /> : <ShieldCheck size={18} />}
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black text-white uppercase tracking-[0.1em] mb-1 leading-tight">
+                                {isUserReserved ? 'VOTRE RÉSERVATION ✨' : vehicle.status === 'sold' ? 'VÉHICULE VENDU 🏁' : 'VÉHICULE RÉSERVÉ 🗝️'}
+                            </p>
+                            <p className="text-[11px] text-gray-400 font-medium leading-relaxed">
+                                {isUserReserved 
+                                    ? "Cette pépite vous est réservée. Elle vous attend sagement dans votre espace." 
+                                    : vehicle.status === 'sold' 
+                                        ? "Ce bijou a déjà trouvé son propriétaire." 
+                                        : "Un client a posé une option sur ce véhicule."}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="absolute top-[-4px] right-4 w-2 h-2 bg-slate-900 border-l border-t border-white/10 rotate-45" />
+                </div>
+            </div>
+        );
+    };
 
-    const StatusPopup = () => (
-        <div className="absolute right-0 -bottom-2 translate-y-full z-40 animate-in fade-in slide-in-from-top-3 duration-500 pointer-events-auto w-[280px]">
-            <div className="bg-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl p-4 relative overflow-hidden group/status text-left">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/20 rounded-full blur-2xl -mr-12 -mt-12" />
-                <div className="flex items-start gap-4 relative z-10">
-                    <div className="p-2 bg-red-600 rounded-lg text-white shadow-lg"><ShieldCheck size={18} /></div>
+    const CartSuccessPopup = ({ isDuplicate }) => (
+        <div className={`absolute right-0 -bottom-2 translate-y-full z-40 animate-in fade-in slide-in-from-top-3 duration-500 pointer-events-auto w-[240px]`}>
+            <div className="bg-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl p-3 relative overflow-hidden text-left">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-600/20 rounded-full blur-2xl -mr-10 -mt-10" />
+                <div className="flex items-center gap-3 relative z-10">
+                    <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg">
+                        <ShoppingCart size={14} />
+                    </div>
                     <div>
-                        <p className="text-[10px] font-black text-white uppercase tracking-[0.1em] mb-1 leading-tight">{vehicle.status === 'sold' ? 'VÉHICULE VENDU 🏁' : 'VÉHICULE RÉSERVÉ 🗝️'}</p>
-                        <p className="text-[11px] text-gray-400 font-medium leading-relaxed">{vehicle.status === 'sold' ? "Ce bijou a déjà trouvé son propriétaire." : "Un client a posé une option."}</p>
+                        <p className="text-[10px] font-black text-white uppercase tracking-tight">
+                            {isDuplicate ? 'DÉJÀ AJOUTÉ ! 🛒' : 'AJOUTÉ ! 🛒'}
+                        </p>
+                        <p className="text-[9px] text-gray-400 font-medium">
+                            {isDuplicate ? 'Il vous attend dans le panier.' : 'C\'est dans le panier.'}
+                        </p>
                     </div>
                 </div>
                 <div className="absolute top-[-4px] right-4 w-2 h-2 bg-slate-900 border-l border-t border-white/10 rotate-45" />
@@ -204,7 +252,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                             {(vehicle.images?.slice(0, 3) || ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop']).map((img, idx) => (
                                 <img
                                     key={idx}
-                                    src={img}
+                                    src={applyWatermark(img, effectiveWatermarkId, settings?.watermarkEnabled)}
                                     alt={`${vehicle.brand} ${vehicle.model}`}
                                     className={`absolute inset-0 w-full h-full object-cover transform group-hover/card:scale-110 transition-all duration-[2000ms] ease-in-out ${idx === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
                                 />
@@ -232,7 +280,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
 
                     {/* Status Badges internal but outside clipping if needed */}
                     <div className="absolute top-2 left-10 z-10 flex flex-col gap-2">
-                        {vehicle.status === 'sold' && <span className="bg-red-700 text-white text-[9px] font-black px-2.5 py-1 rounded-lg shadow-lg uppercase tracking-widest border border-red-600/50">Vendu</span>}
+                        {vehicle.status === 'sold' && <span className="bg-amber-700 text-white text-[9px] font-black px-2.5 py-1 rounded-lg shadow-lg uppercase tracking-widest border border-amber-600/50">Vendu</span>}
                         {vehicle.status === 'reserved' && <span className="bg-amber-500 text-white text-[9px] font-black px-2.5 py-1 rounded-lg shadow-lg uppercase tracking-widest border border-amber-400/50">Réservé</span>}
                     </div>
 
@@ -240,7 +288,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                         {/* Circular Discount Badge */}
                         {hasDiscount && <div className="w-12 h-12 bg-red-600/95 backdrop-blur-md rounded-full flex flex-col items-center justify-center text-white border border-white/20 shadow-xl ring-4 ring-red-600/20"><span className="text-[14px] font-black leading-none">-{vehicle.discount}%</span></div>}
                         <div className="bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm border border-white/10">
-                            <MapPin size={10} className="text-red-700" />
+                            <MapPin size={10} className="text-amber-600" />
                             <span className="text-[9px] font-bold text-white uppercase tracking-tight flex items-baseline gap-1.5">ALLEMAGNE <span className="text-[7px] text-slate-400 font-black">IMPORT</span></span>
                         </div>
                     </div>
@@ -270,21 +318,51 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                                 <span className={`text-base sm:text-2xl font-black tracking-tighter ${hasDiscount ? 'text-red-700' : 'text-slate-900'}`}>{Math.round(discountedPrice).toLocaleString()} €</span>
                             </div>
                         </div>
-                        <h3 className="text-sm sm:text-xl font-black text-slate-950 uppercase tracking-tight leading-tight group-hover/card:text-red-700 transition-colors">{vehicle.brand} {vehicle.model}</h3>
+                        <h3 className="text-sm sm:text-xl font-black text-slate-950 uppercase tracking-tight leading-tight group-hover/card:text-amber-600 transition-colors">{vehicle.brand} {vehicle.model}</h3>
                         <p className="text-[10px] sm:text-sm text-slate-600 mt-1 sm:mt-2 line-clamp-1 sm:line-clamp-2 leading-relaxed">{vehicle.description || "Véhicule premium sélectionné par nos experts."}</p>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-slate-600 sm:py-4 sm:border-y border-slate-50">
-                        <div className="flex items-center gap-1"><Calendar size={12} className="text-red-700" /><span className="text-[10px] sm:text-xs font-bold">{vehicle.year}</span></div>
-                        <div className="flex items-center gap-1 border-l border-slate-200 pl-3"><Gauge size={12} className="text-red-700" /><span className="text-[10px] sm:text-xs font-bold">{vehicle.mileage?.toLocaleString()} km</span></div>
+                        <div className="flex items-center gap-1"><Calendar size={12} className="text-amber-600" /><span className="text-[10px] sm:text-xs font-bold">{vehicle.year}</span></div>
+                        <div className="flex items-center gap-1 border-l border-slate-200 pl-3"><Gauge size={12} className="text-amber-600" /><span className="text-[10px] sm:text-xs font-bold">{vehicle.mileage?.toLocaleString()} km</span></div>
                     </div>
 
                     <div className="flex items-center justify-between gap-4 pt-2 border-t border-slate-50 sm:border-t-0 sm:pt-0">
-                        <div className={`text-xs font-bold ${vehicle.status === 'available' ? 'text-emerald-600' : vehicle.status === 'sold' ? 'text-red-600' : 'text-amber-500'}`}>{vehicle.status === 'available' ? 'Disponible' : vehicle.status === 'sold' ? 'Vendu' : 'Réservé'}</div>
+                        {pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold' ? (
+                            <div className="text-[10px] font-black text-amber-600 uppercase tracking-tight flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 shadow-sm animate-in fade-in slide-in-from-left-2 duration-500">
+                                <ShieldCheck size={14} className="animate-pulse" /> RÉSERVÉ POUR VOUS
+                            </div>
+                        ) : (
+                            <div className={`text-xs font-bold tracking-tight px-3 py-1.5 rounded-lg ${vehicle.status === 'available' ? 'text-emerald-600 bg-emerald-50 border border-emerald-100' : vehicle.status === 'sold' ? 'text-amber-600 bg-amber-50 border border-amber-100' : 'text-amber-500 bg-amber-50 border border-amber-100'}`}>
+                                {vehicle.status === 'available' ? 'Disponible' : vehicle.status === 'sold' ? 'Vendu' : 'Réservé'}
+                            </div>
+                        )}
                         <div className="flex gap-2 relative">
                             <Link to={`/vehicule/${vehicle.id}`} className="px-4 py-2 bg-slate-50 text-slate-900 rounded-lg font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2"><Eye size={14} /> Détails</Link>
-                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (vehicle.status === 'available') { addToCart(vehicle); } else { setShowStatusPopup(!showStatusPopup); } }} className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center shadow-lg ${vehicle.status === 'available' ? 'bg-slate-900 text-white hover:bg-red-700' : 'bg-slate-100 text-slate-400'}`}><ShoppingCart size={14} /></button>
+                            <button 
+                                onClick={(e) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    const isAlreadyInCart = cartItems.some(item => item.id === vehicle.id);
+                                    if (vehicle.status === 'available' && !pendingVehicleIds.includes(vehicle.id)) { 
+                                        if (!isAlreadyInCart) addToCart(vehicle); 
+                                        setShowCartPopup(true);
+                                    } else { 
+                                        setShowStatusPopup(!showStatusPopup); 
+                                    } 
+                                }} 
+                                className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center shadow-lg active:scale-95 ${
+                                    pendingVehicleIds.includes(vehicle.id) 
+                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
+                                        : vehicle.status === 'available' 
+                                            ? 'bg-slate-900 text-white hover:bg-amber-600' 
+                                            : 'bg-slate-100 text-slate-400'
+                                }`}
+                            >
+                                <ShoppingCart size={14} />
+                            </button>
                             {showStatusPopup && <StatusPopup />}
+                            {showCartPopup && <CartSuccessPopup isDuplicate={cartItems.some(item => item.id === vehicle.id)} />}
                         </div>
                     </div>
                 </div>
@@ -303,7 +381,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                         {(vehicle.images?.slice(0, 3) || ['https://placehold.co/600x400']).map((img, idx) => (
                             <img
                                 key={idx}
-                                src={img}
+                                src={applyWatermark(img, effectiveWatermarkId, settings?.watermarkEnabled)}
                                 alt={`${vehicle.brand} ${vehicle.model}`}
                                 className={`absolute inset-0 w-full h-full object-cover transform group-hover/card:scale-110 transition-all duration-[2000ms] ease-in-out ${idx === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
                             />
@@ -358,11 +436,41 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-loose">{vehicle.type} <span className="text-slate-200 mx-2">|</span> {vehicle.year} <span className="text-slate-200 mx-2">|</span> {vehicle.mileage?.toLocaleString()} km</p>
                 </div>
                 <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
-                    <p className={`text-xs font-bold tracking-tight ${vehicle.status === 'available' ? 'text-emerald-600' : vehicle.status === 'sold' ? 'text-red-600' : 'text-amber-500'}`}>{vehicle.status === 'available' ? 'Disponible' : vehicle.status === 'sold' ? 'Vendu' : 'Réservé'}</p>
+                    {pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold' ? (
+                        <p className="text-xs font-black text-amber-600 uppercase tracking-tight flex items-center gap-1.5">
+                            <ShieldCheck size={14} /> RÉSERVÉ POUR VOUS
+                        </p>
+                    ) : (
+                        <p className={`text-xs font-bold tracking-tight ${vehicle.status === 'available' ? 'text-emerald-600' : vehicle.status === 'sold' ? 'text-amber-600' : 'text-amber-500'}`}>
+                            {vehicle.status === 'available' ? 'Disponible' : vehicle.status === 'sold' ? 'Vendu' : 'Réservé'}
+                        </p>
+                    )}
                     <div className="flex gap-2 relative">
                         <Link to={`/vehicule/${vehicle.id}`} className="p-3 bg-slate-50 text-slate-900 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm"><Eye size={16} /></Link>
-                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (vehicle.status === 'available') { addToCart(vehicle); } else { setShowStatusPopup(!showStatusPopup); } }} className={`p-3 rounded-xl transition-all shadow-lg active:scale-95 ${vehicle.status === 'available' ? 'bg-slate-900 text-white hover:bg-red-700' : 'bg-slate-100 text-slate-400'}`}><ShoppingCart size={16} /></button>
+                        <button 
+                            onClick={(e) => { 
+                                e.preventDefault(); 
+                                e.stopPropagation(); 
+                                const isAlreadyInCart = cartItems.some(item => item.id === vehicle.id);
+                                if (vehicle.status === 'available' && !pendingVehicleIds.includes(vehicle.id)) { 
+                                    if (!isAlreadyInCart) addToCart(vehicle); 
+                                    setShowCartPopup(true);
+                                } else { 
+                                    setShowStatusPopup(!showStatusPopup); 
+                                } 
+                            }} 
+                            className={`p-3 rounded-xl transition-all shadow-lg active:scale-95 ${
+                                pendingVehicleIds.includes(vehicle.id) 
+                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
+                                    : vehicle.status === 'available' 
+                                        ? 'bg-slate-900 text-white hover:bg-amber-600' 
+                                        : 'bg-slate-100 text-slate-400'
+                            }`}
+                        >
+                            <ShoppingCart size={16} />
+                        </button>
                         {showStatusPopup && <StatusPopup />}
+                        {showCartPopup && <CartSuccessPopup isDuplicate={cartItems.some(item => item.id === vehicle.id)} />}
                     </div>
                 </div>
             </div>

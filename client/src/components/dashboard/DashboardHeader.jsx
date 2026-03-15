@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Menu, Bell, User } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
 import useAuthStore from '@shared/store/useAuthStore';
 import { db } from '@shared/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
@@ -16,9 +16,7 @@ const DashboardHeader = ({ toggleSidebar }) => {
       try {
         const docRef = doc(db, 'clients', user.uid);
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProfile(docSnap.data());
-        }
+        if (docSnap.exists()) setProfile(docSnap.data());
       } catch (error) {
         console.error("Error fetching header profile:", error);
       }
@@ -31,32 +29,42 @@ const DashboardHeader = ({ toggleSidebar }) => {
     : user?.email?.split('@')[0];
 
   return (
-    <header className="bg-white border-b border-slate-100 h-16 lg:h-20 flex items-center justify-between px-4 sm:px-6 lg:px-12 sticky top-0 z-40 transition-all">
-      {/* Left: Mobile Toggle & Title */}
+    <header
+      className="h-16 lg:h-20 flex items-center justify-between px-4 sm:px-6 lg:px-12 sticky top-0 z-40 transition-all bg-white/30 backdrop-blur-md border-b border-white/20"
+    >
+      {/* Left */}
       <div className="flex items-center gap-6">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-3 text-slate-600 hover:bg-slate-50 rounded-2xl border border-slate-100 transition-all active:scale-95"
+          className="lg:hidden p-3 rounded-2xl transition-all active:scale-95"
+          style={{ color: '#021024', backgroundColor: 'rgba(2,16,36,0.05)', border: '1px solid rgba(2,16,36,0.1)' }}
         >
-          <Menu size={24} />
+          <Menu size={22} />
         </button>
         <Link to="/dashboard" className="hidden sm:block hover:opacity-80 transition-opacity">
-          <h1 className="text-lg lg:text-xl font-black text-slate-900 tracking-tight">Espace <span className="text-slate-900 uppercase text-xs lg:text-sm ml-1 tracking-widest">Client</span></h1>
-          <p className="text-[8px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Gestion de vos acquisitions</p>
+          <h1 className="text-lg lg:text-xl font-black tracking-tight" style={{ color: '#021024' }}>
+            Espace <span className="uppercase text-xs lg:text-sm ml-1 tracking-widest" style={{ color: '#052659' }}>Client</span>
+          </h1>
+          <p className="text-[8px] lg:text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: '#5483B3' }}>Gestion de vos acquisitions</p>
         </Link>
       </div>
 
-      {/* Right: Actions & Profile */}
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4 pl-6 border-l border-slate-100">
-          <Link to="/dashboard/profile" className="text-right hidden md:block hover:opacity-70 transition-opacity">
-            <p className="text-sm font-black text-slate-900 leading-tight capitalize">
-              {displayName}
-            </p>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Membre Premium</p>
+      {/* Right */}
+      <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4 pl-5" style={{ borderLeft: '1px solid rgba(2,16,36,0.1)' }}>
+          <Link to="/dashboard/profile" className="text-right hidden md:block hover:opacity-100 transition-all group/text">
+            <p className="text-sm font-black leading-tight capitalize text-slate-900 group-hover/text:text-[#FCA311] transition-colors">{displayName}</p>
+            <div className="flex items-center gap-1.5 justify-end">
+                <div className="w-1 h-1 rounded-full bg-[#FCA311] shadow-[0_0_8px_rgba(252,163,17,0.8)] animate-pulse"></div>
+                <p className="text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-[#FCA311] via-[#fbbf24] to-[#FCA311] bg-clip-text text-transparent animate-shimmer">Membre Premium</p>
+            </div>
           </Link>
-          <Link to="/dashboard/profile" className="w-10 h-10 lg:w-12 lg:h-12 bg-slate-950 rounded-xl lg:rounded-2xl flex items-center justify-center text-white border border-slate-900 shadow-xl shadow-slate-200 group cursor-pointer hover:scale-105 transition-all">
-            <User size={18} className="group-hover:text-red-500 transition-colors" />
+          <Link
+            to="/dashboard/profile"
+            className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-all group bg-[#021024] relative overflow-hidden active:scale-95 border-b-2 border-white/10 hover:border-[#FCA311]/50"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#FCA311]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <User size={18} className="text-slate-200 group-hover:text-[#FCA311] transition-colors relative z-10" />
           </Link>
         </div>
       </div>

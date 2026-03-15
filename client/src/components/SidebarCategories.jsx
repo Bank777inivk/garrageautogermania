@@ -110,14 +110,14 @@ const SidebarCategories = () => {
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 flex flex-col group/sidebar">
       {/* Header Premium */}
-      <div className="bg-slate-900 text-white p-5 flex items-center justify-between font-black font-montserrat text-[11px] uppercase tracking-[0.2em] border-b border-red-700/30 relative overflow-hidden group/header">
+      <div className="bg-slate-900 text-white p-5 flex items-center justify-between font-black font-montserrat text-[11px] uppercase tracking-[0.2em] border-b border-amber-600/30 relative overflow-hidden group/header">
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-8 h-8 rounded-lg bg-red-700/10 flex items-center justify-center border border-red-700/20 group-hover/header:rotate-12 transition-transform">
-            <LayoutGrid size={16} className="text-red-600" />
+          <div className="w-8 h-8 rounded-lg bg-amber-600/10 flex items-center justify-center border border-amber-600/20 group-hover/header:rotate-12 transition-transform">
+            <LayoutGrid size={16} className="text-amber-600" />
           </div>
           {t('catalogue.advancedFilters', 'FILTRES AVANCÉS')}
         </div>
-        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-red-700/10 to-transparent pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-amber-600/10 to-transparent pointer-events-none"></div>
       </div>
 
       <div className="flex-grow overflow-y-auto max-h-[800px] custom-scrollbar">
@@ -127,7 +127,7 @@ const SidebarCategories = () => {
             onClick={() => toggleSection('basic')}
             className="flex items-center justify-between w-full group"
           >
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-red-700 transition-colors">Identification</span>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-amber-600 transition-colors">Identification</span>
             {openSections.basic ? <ChevronUp size={14} className="text-slate-300" /> : <ChevronDown size={14} className="text-slate-300" />}
           </button>
 
@@ -135,7 +135,7 @@ const SidebarCategories = () => {
             <div className="space-y-4 pt-2">
               <div>
                 <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center">
-                  <LayoutGrid size={10} className="mr-1.5 text-red-600" />
+                  <LayoutGrid size={10} className="mr-1.5 text-amber-600" />
                   MARQUES
                 </label>
                 <BrandSelect
@@ -152,7 +152,7 @@ const SidebarCategories = () => {
 
               <div>
                 <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center">
-                  <Search size={10} className="mr-1.5 text-red-600" />
+                  <Search size={10} className="mr-1.5 text-amber-600" />
                   MODÈLE
                 </label>
                 <div className="relative">
@@ -162,7 +162,7 @@ const SidebarCategories = () => {
                     placeholder="Ex: Série 3, RS6..."
                     value={filters.model}
                     onChange={handleFilterChange}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-8 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-8 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all"
                   />
                   <Search size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 </div>
@@ -170,14 +170,14 @@ const SidebarCategories = () => {
 
               <div>
                 <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center">
-                  <Filter size={10} className="mr-1.5 text-red-600" />
+                  <Filter size={10} className="mr-1.5 text-amber-600" />
                   TYPE DE VÉHICULE
                 </label>
                 <select
                   name="type"
                   value={filters.type}
                   onChange={handleFilterChange}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all cursor-pointer"
                 >
                   <option value="all">Tous les types</option>
                   <option value="Berline">Berline</option>
@@ -200,7 +200,7 @@ const SidebarCategories = () => {
                     placeholder="Min"
                     value={filters.minPrice}
                     onChange={handleFilterChange}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -211,7 +211,7 @@ const SidebarCategories = () => {
                     placeholder="Max"
                     value={filters.maxPrice}
                     onChange={handleFilterChange}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -225,7 +225,7 @@ const SidebarCategories = () => {
                     placeholder="Min"
                     value={filters.minMileage}
                     onChange={handleFilterChange}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -236,7 +236,7 @@ const SidebarCategories = () => {
                     placeholder="Max"
                     value={filters.maxMileage}
                     onChange={handleFilterChange}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all"
                   />
                 </div>
               </div>
@@ -251,8 +251,8 @@ const SidebarCategories = () => {
             className="flex items-center justify-between w-full group"
           >
             <div className="flex items-center gap-2">
-              <Settings size={14} className="text-red-700" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-red-700 transition-colors">Technique & Moteur</span>
+              <Settings size={14} className="text-amber-600" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-amber-600 transition-colors">Technique & Moteur</span>
             </div>
             {openSections.tech ? <ChevronUp size={14} className="text-slate-300" /> : <ChevronDown size={14} className="text-slate-300" />}
           </button>
@@ -261,7 +261,7 @@ const SidebarCategories = () => {
             <div className="space-y-4 pt-2">
               <div>
                 <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">CARBURANT</label>
-                <select name="fuel" value={filters.fuel} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all">
+                <select name="fuel" value={filters.fuel} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all">
                   <option value="all">Tous les carburants</option>
                   <option value="Essence">Essence</option>
                   <option value="Diesel">Diesel</option>
@@ -271,7 +271,7 @@ const SidebarCategories = () => {
               </div>
               <div>
                 <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">TRANSMISSION</label>
-                <select name="transmission" value={filters.transmission} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all">
+                <select name="transmission" value={filters.transmission} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all">
                   <option value="all">Toutes les boîtes</option>
                   <option value="Automatique">Automatique</option>
                   <option value="Manuelle">Manuelle</option>
@@ -280,16 +280,16 @@ const SidebarCategories = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">CH MIN</label>
-                  <input type="number" name="minPower" placeholder="Min" value={filters.minPower} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all" />
+                  <input type="number" name="minPower" placeholder="Min" value={filters.minPower} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all" />
                 </div>
                 <div>
                   <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">CH MAX</label>
-                  <input type="number" name="maxPower" placeholder="Max" value={filters.maxPower} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all" />
+                  <input type="number" name="maxPower" placeholder="Max" value={filters.maxPower} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all" />
                 </div>
               </div>
               <div>
                 <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">COULEUR</label>
-                <select name="color" value={filters.color} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-red-700/10 focus:border-red-700 outline-none transition-all">
+                <select name="color" value={filters.color} onChange={handleFilterChange} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-[12px] font-bold text-slate-900 focus:ring-2 focus:ring-amber-600/10 focus:border-amber-600 outline-none transition-all">
                   <option value="all">Toutes les couleurs</option>
                   <option value="Noir">Noir</option>
                   <option value="Blanc">Blanc</option>
@@ -310,8 +310,8 @@ const SidebarCategories = () => {
             className="flex items-center justify-between w-full group"
           >
             <div className="flex items-center gap-2">
-              <Wind size={14} className="text-red-700" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-red-700 transition-colors">Climatisation</span>
+              <Wind size={14} className="text-amber-600" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-amber-600 transition-colors">Climatisation</span>
             </div>
             {openSections.ac ? <ChevronUp size={14} className="text-slate-300" /> : <ChevronDown size={14} className="text-slate-300" />}
           </button>
@@ -333,7 +333,7 @@ const SidebarCategories = () => {
                     value={option.value}
                     checked={filters.ac === option.value}
                     onChange={handleFilterChange}
-                    className="w-4 h-4 text-red-700 bg-slate-100 border-slate-300 focus:ring-red-700"
+                    className="w-4 h-4 text-amber-600 bg-slate-100 border-slate-300 focus:ring-amber-600"
                   />
                   <span className="text-xs font-bold text-slate-600 tracking-tight">{option.label}</span>
                 </label>
@@ -349,8 +349,8 @@ const SidebarCategories = () => {
             className="flex items-center justify-between w-full group"
           >
             <div className="flex items-center gap-2">
-              <Check size={14} className="text-red-700" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-red-700 transition-colors">Caractéristiques</span>
+              <Check size={14} className="text-amber-600" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-amber-600 transition-colors">Caractéristiques</span>
             </div>
             {openSections.features ? <ChevronUp size={14} className="text-slate-300" /> : <ChevronDown size={14} className="text-slate-300" />}
           </button>
@@ -363,7 +363,7 @@ const SidebarCategories = () => {
                     onClick={() => handleFeatureToggle(feature)}
                     className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${filters.features.includes(feature)
                       ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-                      : 'border-slate-200 bg-white group-hover/feat:border-red-700'
+                      : 'border-slate-200 bg-white group-hover/feat:border-amber-600'
                       }`}
                   >
                     {filters.features.includes(feature) && <Check size={12} strokeWidth={4} />}
@@ -382,7 +382,7 @@ const SidebarCategories = () => {
       <div className="p-5 border-t border-slate-100 bg-slate-50/50">
         <button
           onClick={applyFilters}
-          className="w-full bg-slate-900 text-white font-black text-[11px] uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-red-700 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
+          className="w-full bg-slate-900 text-white font-black text-[11px] uppercase tracking-[0.2em] py-4 rounded-xl hover:bg-amber-600 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
         >
           <Search size={16} />
           CHERCHER LES VÉHICULES

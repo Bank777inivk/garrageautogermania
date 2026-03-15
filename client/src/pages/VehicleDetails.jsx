@@ -11,15 +11,19 @@ import {
   Star, Zap, Copy, MessageCircle, X, LogIn, Sparkles, ChevronRight, Settings, Maximize2
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
 
 const VehicleDetails = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { currentVehicle, loading, error, fetchVehicleById } = useClientVehicleStore();
-  const { addToCart } = useCartStore();
+  const { currentVehicle, loading, error, fetchVehicleById, pendingVehicleIds, settings, fetchSettings } = useClientVehicleStore();
+  const { addToCart, items: cartItems } = useCartStore();
   const { toggleFavorite, favorites } = useFavoriteStore();
   const { user } = useAuthStore();
+  
+  // Robust watermark calculation
+  const effectiveWatermarkId = settings?.watermarkPublicId || (settings?.logoUrl ? getPublicIdFromUrl(settings.logoUrl) : null);
 
   const [activeImage, setActiveImage] = useState(0);
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0 });
@@ -31,12 +35,14 @@ const VehicleDetails = () => {
   const [showLightbox, setShowLightbox] = useState(false);
   const [showStatusPopup, setShowStatusPopup] = useState(false);
   const [showSharePopup, setShowSharePopup] = useState(false);
+  const [showCartPopup, setShowCartPopup] = useState(false);
   const [showFavoriteFeedback, setShowFavoriteFeedback] = useState(false);
 
   const isFavorite = favorites.includes(id);
 
   useEffect(() => {
     if (id) fetchVehicleById(id);
+    if (!settings) fetchSettings();
   }, [id]);
 
   useEffect(() => {
@@ -54,6 +60,9 @@ const VehicleDetails = () => {
     if (showSharePopup) { const t = setTimeout(() => setShowSharePopup(false), 10000); return () => clearTimeout(t); }
   }, [showSharePopup]);
   useEffect(() => {
+    if (showCartPopup) { const t = setTimeout(() => setShowCartPopup(false), 4000); return () => clearTimeout(t); }
+  }, [showCartPopup]);
+  useEffect(() => {
     if (showFavoriteFeedback) { const t = setTimeout(() => setShowFavoriteFeedback(false), 4000); return () => clearTimeout(t); }
   }, [showFavoriteFeedback]);
 
@@ -61,8 +70,8 @@ const VehicleDetails = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="relative">
-          <div className="w-16 h-16 border-4 border-slate-200 border-t-red-600 rounded-full animate-spin"></div>
-          <Star className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-red-600" size={20} />
+          <div className="w-16 h-16 border-4 border-slate-200 border-t-amber-600 rounded-full animate-spin"></div>
+          <Star className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-amber-600" size={20} />
         </div>
       </div>
     );
@@ -77,7 +86,7 @@ const VehicleDetails = () => {
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">Oups !</h2>
           <p className="text-slate-500 font-medium mb-8">Ce véhicule n'est plus disponible ou l'adresse est incorrecte.</p>
-          <Link to="/catalogue" className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-xl shadow-slate-900/10 active:scale-95">
+          <Link to="/catalogue" className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-600 transition-all shadow-xl shadow-slate-900/10 active:scale-95">
             <ChevronLeft size={16} /> Retour au catalogue
           </Link>
         </div>
@@ -131,7 +140,7 @@ const VehicleDetails = () => {
           </div>
         </div>
         <div className="mt-6 flex gap-2 relative z-10">
-          <Link to="/connexion" className="flex-1 bg-slate-900 text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2">
+          <Link to="/connexion" className="flex-1 bg-slate-900 text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2">
             <LogIn size={14} /> Connexion
           </Link>
           <button onClick={() => setShowLoginPopup(false)} className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 hover:text-slate-600 transition-all active:scale-95">
@@ -157,14 +166,50 @@ const VehicleDetails = () => {
     </div>
   );
 
-  const StatusPopup = () => (
-    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-4 z-50 animate-in fade-in slide-in-from-bottom-2 duration-500 w-[300px]">
-      <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-3xl p-5 overflow-hidden relative">
-        <div className="flex items-start gap-4 relative z-10">
-          <div className="p-3 bg-red-600 rounded-2xl text-white shadow-xl"><ShieldCheck size={22} /></div>
-          <div className="text-left">
-            <p className="text-xs font-black text-white uppercase tracking-[0.1em] mb-1 leading-tight">{vehicle.status === 'sold' ? 'VÉHICULE VENDU 🏁' : 'VÉHICULE RÉSERVÉ 🗝️'}</p>
-            <p className="text-[11px] text-gray-400 font-medium leading-relaxed">{vehicle.status === 'sold' ? "Désolé, cette pépite a déjà trouvé son propriétaire." : "Un client a posé une option sur ce véhicule."}</p>
+  const StatusPopup = () => {
+    const isUserReserved = pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold';
+    return (
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-4 z-50 animate-in fade-in slide-in-from-bottom-2 duration-500 w-[300px]">
+        <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-3xl p-5 overflow-hidden relative">
+          <div className={`absolute top-0 right-0 w-24 h-24 ${isUserReserved ? 'bg-emerald-600/20' : 'bg-amber-600/20'} rounded-full blur-2xl -mr-12 -mt-12`} />
+          <div className="flex items-start gap-4 relative z-10">
+            <div className={`p-3 ${isUserReserved ? 'bg-emerald-600' : 'bg-amber-600'} rounded-2xl text-white shadow-xl`}>
+              {isUserReserved ? <Zap size={22} className="animate-pulse" /> : <ShieldCheck size={22} />}
+            </div>
+            <div className="text-left">
+              <p className="text-xs font-black text-white uppercase tracking-[0.1em] mb-1 leading-tight">
+                {isUserReserved ? 'VOTRE RÉSERVATION ✨' : vehicle.status === 'sold' ? 'VÉHICULE VENDU 🏁' : 'VÉHICULE RÉSERVÉ 🗝️'}
+              </p>
+              <p className="text-[11px] text-gray-400 font-medium leading-relaxed">
+                {isUserReserved 
+                  ? "Cette pépite vous est réservée. Elle vous attend sagement dans votre espace." 
+                  : vehicle.status === 'sold' 
+                    ? "Désolé, cette pépite a déjà trouvé son propriétaire." 
+                    : "Un client a posé une option sur ce véhicule."}
+              </p>
+            </div>
+          </div>
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-[-8px] w-4 h-4 bg-slate-900 border-r border-b border-white/10 rotate-45" />
+        </div>
+      </div>
+    );
+  };
+
+  const CartSuccessPopup = ({ isDuplicate }) => (
+    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-4 z-50 animate-in fade-in slide-in-from-bottom-2 duration-500 w-[240px]">
+      <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-2xl p-3 relative overflow-hidden text-left">
+        <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-600/20 rounded-full blur-2xl -mr-10 -mt-10" />
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg">
+            <ShoppingCart size={14} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black text-white uppercase tracking-tight">
+              {isDuplicate ? 'DÉJÀ AJOUTÉ ! 🛒' : 'AJOUTÉ ! 🛒'}
+            </p>
+            <p className="text-[9px] text-gray-400 font-medium">
+              {isDuplicate ? 'Il vous attend dans le panier.' : 'C\'est dans le panier.'}
+            </p>
           </div>
         </div>
         <div className="absolute left-1/2 -translate-x-1/2 bottom-[-8px] w-4 h-4 bg-slate-900 border-r border-b border-white/10 rotate-45" />
@@ -226,7 +271,7 @@ const VehicleDetails = () => {
             {/* Image */}
             <div className="relative flex-1 w-full max-h-[70vh] sm:max-h-[85vh] flex items-center justify-center">
               <img
-                src={images[activeImage]}
+                src={applyWatermark(images[activeImage], effectiveWatermarkId, settings?.watermarkEnabled)}
                 alt="Plein écran"
                 className="max-w-full max-h-full object-contain rounded-xl sm:rounded-2xl shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
@@ -270,7 +315,7 @@ const VehicleDetails = () => {
       {/* ── TOP HEADER / BREADCRUMB ── */}
       <div className="bg-white border-b border-slate-100 sticky top-[72px] z-30">
         <div className="container mx-auto px-4 py-2">
-          <Link to="/catalogue" className="inline-flex items-center gap-1.5 text-red-600 hover:text-red-700 transition-all font-black text-[10px] uppercase tracking-widest">
+          <Link to="/catalogue" className="inline-flex items-center gap-1.5 text-amber-600 hover:text-amber-700 transition-all font-black text-[10px] uppercase tracking-widest">
             <ChevronLeft size={14} />
             Retour au catalogue
           </Link>
@@ -300,7 +345,7 @@ const VehicleDetails = () => {
                 ref={imageRef}
               >
                 <img
-                  src={images[activeImage]}
+                  src={applyWatermark(images[activeImage], effectiveWatermarkId, settings?.watermarkEnabled)}
                   alt={`${vehicle.brand}`}
                   className={`w-full h-full object-cover transition-transform duration-500 ${isZooming ? 'opacity-0' : 'opacity-100'}`}
                 />
@@ -308,7 +353,7 @@ const VehicleDetails = () => {
                   <div
                     className="absolute inset-0 pointer-events-none transition-transform duration-200"
                     style={{
-                      backgroundImage: `url(${images[activeImage]})`,
+                      backgroundImage: `url(${applyWatermark(images[activeImage], effectiveWatermarkId, settings?.watermarkEnabled)})`,
                       backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
                       backgroundSize: '180%'
                     }}
@@ -340,7 +385,7 @@ const VehicleDetails = () => {
               {/* Agrandir Button */}
               <button
                 onClick={() => setShowLightbox(true)}
-                className="absolute bottom-4 right-4 p-2 bg-white/90 text-slate-900 rounded-xl shadow-xl border border-slate-100 hover:bg-white hover:text-red-600 transition-all active:scale-95"
+                className="absolute bottom-4 right-4 p-2 bg-white/90 text-slate-900 rounded-xl shadow-xl border border-slate-100 hover:bg-white hover:text-amber-600 transition-all active:scale-95"
                 title="Agrandir la photo"
               >
                 <Maximize2 size={16} />
@@ -353,9 +398,9 @@ const VehicleDetails = () => {
                 <button
                   key={index}
                   onClick={() => setActiveImage(index)}
-                  className={`flex-shrink-0 w-16 sm:w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeImage === index ? 'border-red-600 ring-4 ring-red-600/5' : 'border-slate-50 hover:border-slate-200'}`}
+                  className={`flex-shrink-0 w-16 sm:w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeImage === index ? 'border-amber-600 ring-4 ring-amber-600/5' : 'border-slate-50 hover:border-slate-200'}`}
                 >
-                  <img src={img} alt={`Img ${index + 1}`} className="w-full h-full object-cover" />
+                  <img src={applyWatermark(img, effectiveWatermarkId, settings?.watermarkEnabled)} alt={`Img ${index + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -363,7 +408,7 @@ const VehicleDetails = () => {
             {/* DESCRIPTION (Minimalist Card) */}
             <div className="bg-white rounded-3xl border-2 border-slate-300 p-8">
               <h2 className="text-xl font-black text-slate-900 mb-6 uppercase tracking-tight flex items-center gap-3">
-                <span className="w-1 h-6 bg-red-600 rounded-full"></span>
+                <span className="w-1 h-6 bg-amber-600 rounded-full"></span>
                 Description
               </h2>
               <div className="text-slate-600 text-sm leading-relaxed font-medium">
@@ -377,7 +422,7 @@ const VehicleDetails = () => {
               {/* Info Cards */}
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                 <div className="p-5 bg-white rounded-2xl border-2 border-slate-200 flex items-start gap-3">
-                  <div className="p-2.5 bg-white text-red-600 rounded-xl shadow-sm shrink-0"><ShieldCheck size={20} /></div>
+                  <div className="p-2.5 bg-white text-amber-600 rounded-xl shadow-sm shrink-0"><ShieldCheck size={20} /></div>
                   <div className="text-left">
                     <h4 className="font-black text-slate-900 uppercase text-[10px] tracking-widest mb-1">Garantie 12 Mois</h4>
                     <p className="text-[10px] text-slate-500 font-medium leading-relaxed">Assistance européenne 24/7 incluse.</p>
@@ -407,8 +452,13 @@ const VehicleDetails = () => {
               {/* BADGES DYNAMIQUES */}
               <div className="flex flex-wrap gap-2 mb-8">
                 {vehicle.status === 'sold' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white rounded-xl text-[9px] font-black uppercase border border-red-700">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-700 text-white rounded-xl text-[9px] font-black uppercase border border-amber-800">
                     🏁 VENDU
+                  </div>
+                )}
+                {pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold' && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 text-white rounded-xl text-[9px] font-black uppercase border border-amber-700 shadow-lg">
+                    🗝️ RÉSERVÉ POUR VOUS
                   </div>
                 )}
                 {vehicle.status === 'reserved' && (
@@ -455,43 +505,53 @@ const VehicleDetails = () => {
               {/* STATS (2x2 Grid) */}
               <div className="grid grid-cols-2 gap-3 mb-8">
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-50 flex flex-col items-center">
-                  <Calendar className="text-red-700" size={16} />
+                  <Calendar className="text-amber-600" size={16} />
                   <span className="text-xs font-black text-slate-900 mt-1">{vehicle.year}</span>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-50 flex flex-col items-center">
-                  <Gauge className="text-red-700" size={16} />
+                  <Gauge className="text-amber-600" size={16} />
                   <span className="text-xs font-black text-slate-900 mt-1">{vehicle.mileage?.toLocaleString()} km</span>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-50 flex flex-col items-center">
-                  <Fuel className="text-red-700" size={16} />
+                  <Fuel className="text-amber-600" size={16} />
                   <span className="text-xs font-black text-slate-900 mt-1">{vehicle.fuel}</span>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-50 flex flex-col items-center">
-                  <Settings className="text-red-700" size={16} />
+                  <Settings className="text-amber-600" size={16} />
                   <span className="text-xs font-black text-slate-900 mt-1">{vehicle.transmission}</span>
                 </div>
               </div>
 
               {/* ACTIONS */}
               <div className="space-y-3">
-                <div className="relative">
-                  <button
-                    onClick={() => {
-                      if (vehicle.status === 'available') {
-                        addToCart(vehicle);
-                        toast.success("Ajouté !");
-                      } else { setShowStatusPopup(true); }
-                    }}
-                    className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95 ${vehicle.status === 'available' ? 'bg-slate-900 text-white hover:bg-black' : 'bg-slate-100 text-slate-400'}`}
-                  >
-                    Commander
-                  </button>
-                  {showStatusPopup && <StatusPopup />}
-                </div>
+                  <div className="relative">
+                    <button
+                      onClick={() => {
+                        const isAlreadyInCart = cartItems.some(item => item.id === vehicle.id);
+                        if (vehicle.status === 'available' && !pendingVehicleIds.includes(vehicle.id)) {
+                          if (!isAlreadyInCart) addToCart(vehicle);
+                          setShowCartPopup(true);
+                        } else { 
+                          setShowStatusPopup(!showStatusPopup); 
+                        }
+                      }}
+                      className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg active:scale-95 ${
+                        pendingVehicleIds.includes(vehicle.id)
+                          ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                          : vehicle.status === 'available' 
+                            ? 'bg-slate-900 text-white hover:bg-black' 
+                            : 'bg-slate-100 text-slate-400'
+                      }`}
+                    >
+                      {pendingVehicleIds.includes(vehicle.id) ? 'Déjà réservé' : 'Commander'}
+                    </button>
+                    {showStatusPopup && <StatusPopup />}
+                    {showCartPopup && <CartSuccessPopup isDuplicate={cartItems.some(item => item.id === vehicle.id)} />}
+                  </div>
 
                 {/* Appeler — bloqué si vendu/réservé */}
                 {vehicle.status === 'available' ? (
-                  <a href="tel:+491781234567" className="w-full py-4 bg-red-700 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-800 transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95">
+                  <a href="tel:+491781234567" className="w-full py-4 bg-amber-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95">
                     <Phone size={16} /> Appeler
                   </a>
                 ) : (
@@ -527,11 +587,11 @@ const VehicleDetails = () => {
 
               <div className="mt-6 pt-6 border-t border-slate-100 space-y-2">
                 <div className="flex items-center gap-3 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                  <div className={`w-1.5 h-1.5 rounded-full ${vehicle.status === 'available' ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
+                  <div className={`w-1.5 h-1.5 rounded-full ${vehicle.status === 'available' ? 'bg-emerald-500' : 'bg-amber-600'}`}></div>
                   {vehicle.status === 'available' ? 'En stock' : 'Indisponible'}
                 </div>
                 <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                  <MapPin size={11} className="text-red-500" />
+                  <MapPin size={11} className="text-amber-500" />
                   🇩🇪 Allemagne — Visible sur rendez-vous
                 </div>
               </div>

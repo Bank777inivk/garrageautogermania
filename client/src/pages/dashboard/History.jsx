@@ -30,9 +30,9 @@ const History = () => {
                 ...doc.data()
             }));
 
-            // Filter for history items (PAID, DELIVERED, COMPLETED, CANCELLED)
+            // Filter for history items (FINAL statuses only)
             const historyItems = ordersData.filter(order =>
-                ['logistics', 'transit', 'concierge', 'delivered', 'completed', 'cancelled'].includes(order.status)
+                ['delivered', 'completed', 'cancelled'].includes(order.status)
             );
 
             historyItems.sort((a, b) => {
@@ -51,7 +51,7 @@ const History = () => {
     if (authLoading || loading) {
         return (
             <div className="flex justify-center items-center h-full min-h-[400px]">
-                <Loader2 className="animate-spin h-8 w-8 text-red-700" />
+                <Loader2 className="animate-spin h-8 w-8" style={{ color: '#052659' }} />
             </div>
         );
     }
@@ -102,18 +102,19 @@ const History = () => {
             </div>
 
             {orders.length === 0 ? (
-                <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-20 text-center">
-                    <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-900/10 p-20 text-center">
+                    <div className="bg-white/50 shadow-sm border border-white/80 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
                         <HistoryIcon size={32} />
                     </div>
                     <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">Historique vide</h2>
                     <p className="text-slate-400 mb-8 max-w-md mx-auto font-medium text-sm text-[11px] uppercase tracking-widest">Vos dossiers terminés apparaîtront ici.</p>
                 </div>
             ) : (
-                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
+                <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(252,163,17,0.05)]">
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-50/50 border-b border-slate-100">
+                            <thead className="bg-white/30 border-b border-white/20">
                                 <tr>
                                     <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Véhicule & Référence</th>
                                     <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date Clôture</th>
@@ -129,10 +130,10 @@ const History = () => {
                                     const Icon = config.icon;
 
                                     return (
-                                        <tr key={order.id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <tr key={order.id} className="hover:bg-white/50 transition-colors group">
                                             <td className="p-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+                                                    <div className="w-12 h-12 rounded-xl bg-white/50 overflow-hidden shrink-0 border border-slate-900/10 shadow-sm">
                                                         <img src={mainItem?.image} alt="" className="w-full h-full object-cover" />
                                                     </div>
                                                     <div>
@@ -160,10 +161,10 @@ const History = () => {
                                                     {config.label}
                                                 </div>
                                             </td>
-                                            <td className="p-6 text-right">
+                                             <td className="p-6 text-right">
                                                 <button
                                                     onClick={() => navigate(`/dashboard/orders/${order.id}`)}
-                                                    className="p-2.5 bg-slate-50 text-slate-400 rounded-xl border border-slate-100 hover:bg-slate-900 hover:text-white hover:border-slate-800 transition-all active:scale-90"
+                                                    className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-400 rounded-xl border border-white/60 shadow-sm hover:bg-slate-800 hover:text-white hover:border-[#FCA311] transition-all active:scale-90"
                                                 >
                                                     <ChevronRight size={16} />
                                                 </button>
@@ -173,6 +174,57 @@ const History = () => {
                                 })}
                             </tbody>
                         </table>
+                    </div>
+
+                    <div className="md:hidden flex flex-col divide-y divide-white/40">
+                        {orders.map((order) => {
+                            const mainItem = order.items?.[0];
+                            const config = getStatusConfig(order.status);
+                            const Icon = config.icon;
+
+                            return (
+                                <div key={order.id} className="p-6 flex flex-col gap-5 hover:bg-white/50 transition-colors bg-white/20">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 rounded-xl bg-white/50 overflow-hidden shrink-0 border border-slate-900/10 shadow-sm">
+                                            <img src={mainItem?.image} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-slate-900 text-sm tracking-tight leading-snug">{mainItem?.brand} {mainItem?.model}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">#{order.orderNumber}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 bg-white/40 p-4 rounded-2xl border border-slate-900/10 shadow-sm">
+                                        <div>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Date</p>
+                                            <p className="text-[11px] font-black text-[#052659]">
+                                                {order.updatedAt?.seconds ? new Date(order.updatedAt.seconds * 1000).toLocaleDateString('fr-FR') : '-'}
+                                            </p>
+                                            <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-500 uppercase tracking-widest mt-1">
+                                                <Clock size={8} /> Finalisé
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Montant Total</p>
+                                            <p className="font-black text-[#052659] text-[13px]">{order.total?.toLocaleString()} €</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between pt-1">
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[8.5px] font-black uppercase tracking-widest border ${config.color}`}>
+                                            <Icon size={10} />
+                                            {config.label}
+                                        </div>
+                                             <button
+                                            onClick={() => navigate(`/dashboard/orders/${order.id}`)}
+                                            className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-900 rounded-xl border border-slate-900/10 shadow-sm hover:bg-slate-800 hover:text-white hover:border-[#FCA311] transition-all active:scale-90"
+                                        >
+                                            <ChevronRight size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             )}

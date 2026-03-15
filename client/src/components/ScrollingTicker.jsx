@@ -37,9 +37,9 @@ const ScrollingTicker = () => {
         <div className="hidden lg:flex flex-1 justify-center items-center h-full overflow-hidden px-4">
             <div className={`transition-all duration-1000 ease-in-out transform ${fade}`}>
                 <p className="text-white font-bold text-[10px] tracking-wide text-center leading-none">
-                    <span className="text-red-600 mr-2 text-xs">✦</span>
+                    <span className="text-amber-500 mr-2 text-xs">✦</span>
                     {phrases[currentIndex]}
-                    <span className="text-red-600 ml-2 text-xs">✦</span>
+                    <span className="text-amber-500 ml-2 text-xs">✦</span>
                 </p>
             </div>
         </div>

@@ -92,11 +92,11 @@ const Register = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-3xl">
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
-            <div className="p-3 bg-slate-900 rounded-2xl shadow-lg border border-red-700/20">
-              <ShieldCheck size={32} className="text-red-700" />
+            <div className="p-3 bg-slate-900 rounded-2xl shadow-lg border border-amber-600/20">
+              <ShieldCheck size={32} className="text-amber-600" />
             </div>
           </div>
-          <p className="text-[10px] font-bold text-red-700 uppercase tracking-[0.2em] mb-2">Inscription Client</p>
+          <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">Inscription Client</p>
           <h2 className="text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
             Créer votre compte
           </h2>
@@ -108,7 +108,7 @@ const Register = () => {
             {/* Informations Personnelles */}
             <div>
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center border-b border-gray-100 pb-2">
-                <User className="mr-2 text-red-700" size={14} />
+                <User className="mr-2 text-amber-600" size={14} />
                 Identité & Contact
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -120,7 +120,7 @@ const Register = () => {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -131,7 +131,7 @@ const Register = () => {
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -142,7 +142,7 @@ const Register = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -153,7 +153,7 @@ const Register = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   />
                 </div>
               </div>
@@ -162,7 +162,7 @@ const Register = () => {
             {/* Adresse */}
             <div className="pt-4">
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center border-b border-gray-100 pb-2">
-                <MapPin className="mr-2 text-red-700" size={14} />
+                <MapPin className="mr-2 text-amber-600" size={14} />
                 Adresse de facturation
               </h3>
 
@@ -173,7 +173,7 @@ const Register = () => {
                   type="text"
                   value={formData.company}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                 />
               </div>
 
@@ -185,7 +185,7 @@ const Register = () => {
                   required
                   value={formData.address}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                 />
               </div>
 
@@ -198,7 +198,7 @@ const Register = () => {
                     required
                     value={formData.zipCode}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -209,7 +209,7 @@ const Register = () => {
                     required
                     value={formData.city}
                     onChange={handleChange}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   />
                 </div>
               </div>
@@ -221,7 +221,7 @@ const Register = () => {
                   required
                   value={formData.country}
                   onChange={handleChange}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all cursor-pointer"
+                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all cursor-pointer"
                 >
                   <option value="France">France</option>
                   <option value="Belgique">Belgique</option>
@@ -235,7 +235,7 @@ const Register = () => {
             {/* Sécurité */}
             <div className="pt-4">
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center border-b border-gray-100 pb-2">
-                <Lock className="mr-2 text-red-700" size={14} />
+                <Lock className="mr-2 text-amber-600" size={14} />
                 Sécurité du compte
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -248,12 +248,12 @@ const Register = () => {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all pr-12"
+                      className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all pr-12"
                       placeholder="Min. 6 caractères"
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-700 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-amber-600 transition-colors"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -269,12 +269,12 @@ const Register = () => {
                       required
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all pr-12"
+                      className="block w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all pr-12"
                       placeholder="Répétez le mot de passe"
                     />
                     <button
                       type="button"
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-700 transition-colors"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-amber-600 transition-colors"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
                       {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -288,7 +288,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-slate-900 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 disabled:opacity-70 transition-all active:scale-[0.98]"
+                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-slate-900 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 disabled:opacity-70 transition-all active:scale-[0.98]"
               >
                 {loading ? <Loader2 className="animate-spin h-5 w-5" /> : "Finaliser l'inscription"}
               </button>
@@ -299,7 +299,7 @@ const Register = () => {
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Déjà un compte ?</p>
             <Link
               to="/connexion"
-              className="inline-flex items-center text-[11px] font-bold uppercase tracking-widest text-red-700 hover:text-slate-900 transition-colors"
+              className="inline-flex items-center text-[11px] font-bold uppercase tracking-widest text-amber-600 hover:text-slate-900 transition-colors"
             >
               Se connecter maintenant
               <ArrowRight className="ml-2 h-4 w-4" />

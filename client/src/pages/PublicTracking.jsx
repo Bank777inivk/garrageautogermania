@@ -98,8 +98,8 @@ const PublicTracking = () => {
                     <div className="bg-white rounded-[2.5rem] md:rounded-[3.5rem] border border-slate-100 p-8 md:p-14 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] relative overflow-hidden group/card transition-all duration-500 hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.12)]">
                         {/* Header Section Integrated Inside the Card */}
                         <div className="text-center mb-10 md:mb-12 relative z-10">
-                            <div className="w-20 h-20 md:w-24 md:h-24 bg-red-700/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6 md:mb-8 border border-red-700/10">
-                                <Truck className="text-red-700" size={32} md:size={40} />
+                            <div className="w-20 h-20 md:w-24 md:h-24 bg-amber-600/5 rounded-[2rem] flex items-center justify-center mx-auto mb-6 md:mb-8 border border-amber-600/10">
+                                <Truck className="text-amber-600" size={32} md:size={40} />
                             </div>
                             <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4 text-slate-900">
                                 {t('tracking.title')}
@@ -116,14 +116,14 @@ const PublicTracking = () => {
                                     value={orderNumberInput}
                                     onChange={(e) => setOrderNumberInput(e.target.value)}
                                     placeholder={t('tracking.placeholder')}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 md:py-6 pl-8 md:pl-10 pr-20 md:pr-24 outline-none focus:border-red-700/40 focus:ring-4 focus:ring-red-700/5 transition-all text-lg md:text-xl font-black placeholder:text-slate-300 text-slate-900"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 md:py-6 pl-8 md:pl-10 pr-20 md:pr-24 outline-none focus:border-amber-600/40 focus:ring-4 focus:ring-amber-600/5 transition-all text-lg md:text-xl font-black placeholder:text-slate-300 text-slate-900"
                                 />
-                                <Search className="absolute right-8 md:right-10 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-red-700 transition-colors" size={24} md:size={28} />
+                                <Search className="absolute right-8 md:right-10 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within/input:text-amber-600 transition-colors" size={24} md:size={28} />
                             </div>
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-5 md:py-6 bg-slate-950 hover:bg-red-700 disabled:bg-slate-200 rounded-xl md:rounded-2xl font-black text-xs md:text-sm text-white uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-xl shadow-slate-900/20"
+                                className="w-full py-5 md:py-6 bg-slate-950 hover:bg-amber-600 disabled:bg-slate-200 rounded-xl md:rounded-2xl font-black text-xs md:text-sm text-white uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-xl shadow-slate-900/20"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={20} /> : t('tracking.search')}
                             </button>
@@ -206,9 +206,9 @@ const PublicTracking = () => {
                         </div>
                     </div>
 
-                    <div className="hidden sm:flex items-center gap-4 bg-red-600/10 border border-red-500/20 px-6 md:px-8 py-3 md:py-4 rounded-2xl w-full md:w-auto justify-center md:justify-start">
-                        <Zap size={18} md:size={20} className="text-red-500" />
-                        <span className="text-[10px] md:text-[12px] font-black uppercase tracking-[0.2em] text-red-500">Livraison Prioritaire</span>
+                    <div className="hidden sm:flex items-center gap-4 bg-amber-600/10 border border-amber-500/20 px-6 md:px-8 py-3 md:py-4 rounded-2xl w-full md:w-auto justify-center md:justify-start">
+                        <Zap size={18} md:size={20} className="text-amber-500" />
+                        <span className="text-[10px] md:text-[12px] font-black uppercase tracking-[0.2em] text-amber-500">Livraison Prioritaire</span>
                     </div>
                 </div>
 
@@ -262,13 +262,13 @@ const PublicTracking = () => {
                             {/* Pointer (Truck) */}
                             <div className="absolute top-1/2 -translate-y-1/2 z-40 transition-all duration-[2000ms] ease-in-out pointer-events-none" style={{ left: stages[activeIndex].x, transform: 'translate(-50%, -50%)' }}>
                                 <div className="relative group/truck">
-                                    <div className="bg-red-700 p-5 rounded-[2rem] ring-[12px] ring-red-700/10 border border-red-600/30 flex items-center justify-center">
+                                    <div className="bg-amber-600 p-5 rounded-[2rem] ring-[12px] ring-amber-600/10 border border-amber-500/30 flex items-center justify-center">
                                         <Truck size={42} className="text-white drop-shadow-lg" />
-                                        <div className="absolute -right-2 top-0 w-5 h-5 bg-white rounded-full flex items-center justify-center border-4 border-red-700">
-                                            <div className="w-1.5 h-1.5 bg-red-700 rounded-full animate-ping" />
+                                        <div className="absolute -right-2 top-0 w-5 h-5 bg-white rounded-full flex items-center justify-center border-4 border-amber-600">
+                                            <div className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-ping" />
                                         </div>
                                     </div>
-                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-24 h-8 bg-red-700/15 blur-3xl rounded-full mt-6" />
+                                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-24 h-8 bg-amber-600/15 blur-3xl rounded-full mt-6" />
                                 </div>
                             </div>
                         </div>

@@ -15,23 +15,40 @@ const Cart = () => {
 
   if (items.length === 0) {
     return (
-      <div className="bg-white min-h-[70vh] flex items-center justify-center py-12 px-6">
-        <div className="text-center max-w-md">
-          <div className="bg-gray-50 p-8 rounded-3xl mb-8 flex items-center justify-center border border-gray-100 shadow-sm relative overflow-hidden group">
-            <Car size={64} className="text-gray-200 group-hover:scale-110 transition-transform duration-500" />
-            <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-red-700/5 rounded-full blur-2xl"></div>
+      <div className="bg-white min-h-[85vh] flex items-center justify-center py-12 px-6">
+        <div className="w-full max-w-lg animate-in fade-in zoom-in duration-700">
+          <div className="bg-slate-900 p-12 md:p-16 rounded-[40px] shadow-[0_22px_70px_4px_rgba(0,0,0,0.15)] relative overflow-hidden text-center border border-slate-800">
+            {/* Background Accents */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-600/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-amber-600/5 rounded-full blur-3xl" />
+            
+            <div className="relative z-10">
+              <div className="bg-white/5 w-24 h-24 rounded-3xl mx-auto mb-8 flex items-center justify-center border border-white/10 group">
+                <ShoppingBag size={40} className="text-amber-600 group-hover:scale-110 transition-transform duration-500 animate-pulse" />
+              </div>
+              
+              <h2 className="text-2xl md:text-3xl font-black text-white font-montserrat uppercase tracking-tight mb-4">
+                Votre Sélection est Vide
+              </h2>
+              <p className="text-slate-400 mb-12 text-[12px] font-medium leading-relaxed uppercase tracking-[0.1em] max-w-sm mx-auto">
+                L'excellence vous attend. Explorez notre catalogue pour trouver le véhicule qui correspond à vos exigences.
+              </p>
+              
+              <Link
+                to="/catalogue"
+                className="inline-flex items-center gap-4 bg-amber-600 text-white px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-white hover:text-slate-900 transition-all shadow-xl shadow-amber-600/20 active:scale-[0.98] group"
+              >
+                <Car size={16} className="group-hover:-translate-x-1 transition-transform" />
+                Découvrir le Catalogue
+              </Link>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 font-montserrat uppercase tracking-tight mb-4">Votre panier est vide</h2>
-          <p className="text-gray-500 mb-10 text-sm leading-relaxed">
-            Vous n'avez pas encore sélectionné de véhicule. Parcourez notre catalogue exclusif pour trouver votre prochaine voiture premium.
-          </p>
-          <Link
-            to="/catalogue"
-            className="w-full bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-lg flex items-center justify-center gap-3 active:scale-[0.98]"
-          >
-            <ArrowLeft size={14} />
-            Explorer le catalogue
-          </Link>
+          
+          <div className="mt-8 flex justify-center gap-8 opacity-30 grayscale pointer-events-none">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Export Expert</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Garantie Premium</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Vérification 110 Points</div>
+          </div>
         </div>
       </div>
     );
@@ -41,11 +58,11 @@ const Cart = () => {
     <div className="bg-white min-h-screen pt-24 pb-10 md:py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center gap-4 mb-10 md:mb-16">
-          <div className="p-3 bg-slate-900 rounded-xl shadow-lg border border-red-700/20">
-            <ShoppingBag size={24} className="text-red-700" />
+          <div className="p-3 bg-slate-900 rounded-xl shadow-lg border border-amber-600/20">
+            <ShoppingBag size={24} className="text-amber-600" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-red-700 uppercase tracking-[0.2em] mb-1 leading-none">Votre Sélection</p>
+            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-1 leading-none">Votre Sélection</p>
             <h1 className="text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight leading-none">Mon Panier ({items.length})</h1>
           </div>
         </div>
@@ -76,7 +93,7 @@ const Cart = () => {
                       </div>
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-gray-400 hover:text-red-700 transition-colors p-2 bg-gray-50 rounded-lg border border-gray-100 hover:bg-red-50"
+                        className="text-gray-400 hover:text-amber-600 transition-colors p-2 bg-gray-50 rounded-lg border border-gray-100 hover:bg-amber-50"
                         title="Retirer"
                       >
                         <Trash2 size={16} />
@@ -85,14 +102,23 @@ const Cart = () => {
 
                     <div className="mt-6 flex justify-between items-end">
                       <div className="flex flex-col">
-                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Prix Import</span>
-                        <span className="text-red-700 font-bold text-xl md:text-2xl font-montserrat leading-none">
-                          {item.price?.toLocaleString()} €
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Prix Import</span>
+                          {item.discount > 0 && (
+                            <span className="text-[10px] sm:text-xs font-bold text-slate-400 line-through">
+                              {item.price?.toLocaleString()} €
+                            </span>
+                          )}
+                        </div>
+                        <span className={`font-bold text-xl md:text-2xl font-montserrat leading-none ${item.discount > 0 ? 'text-red-700' : 'text-amber-600'}`}>
+                          {item.discount > 0 
+                            ? Math.round(item.price * (1 - item.discount / 100)).toLocaleString() 
+                            : item.price?.toLocaleString()} €
                         </span>
                       </div>
                       <Link
                         to={`/vehicule/${item.id}`}
-                        className="text-[10px] font-bold text-slate-900 uppercase tracking-widest hover:text-red-700 border-b border-gray-200 hover:border-red-700 transition-all pb-0.5"
+                        className="text-[10px] font-bold text-slate-900 uppercase tracking-widest hover:text-amber-600 border-b border-gray-200 hover:border-amber-600 transition-all pb-0.5"
                       >
                         Détails véhicule
                       </Link>
@@ -104,7 +130,7 @@ const Cart = () => {
 
             <button
               onClick={clearCart}
-              className="group text-gray-400 hover:text-red-700 text-[10px] font-bold uppercase tracking-widest flex items-center mt-6 transition-colors"
+              className="group text-gray-400 hover:text-amber-600 text-[10px] font-bold uppercase tracking-widest flex items-center mt-6 transition-colors"
             >
               <Trash2 size={13} className="mr-2 group-hover:scale-110 transition-transform" />
               Vider ma sélection
@@ -127,13 +153,13 @@ const Cart = () => {
                 </div>
                 <div className="border-t border-white/5 pt-6 flex justify-between items-baseline">
                   <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Total Final</span>
-                  <span className="font-bold text-red-700 text-3xl font-montserrat">{getFinalTotal().toLocaleString()} €</span>
+                  <span className="font-bold text-amber-600 text-3xl font-montserrat">{getFinalTotal().toLocaleString()} €</span>
                 </div>
               </div>
 
               <button
                 onClick={handleCheckout}
-                className="w-full bg-red-700 text-white py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-slate-900 transition-all shadow-xl shadow-red-700/20 flex items-center justify-center gap-3 active:scale-[0.98] group"
+                className="w-full bg-amber-600 text-white py-5 rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-slate-900 transition-all shadow-xl shadow-amber-600/20 flex items-center justify-center gap-3 active:scale-[0.98] group"
               >
                 Passer à la commande
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -146,7 +172,7 @@ const Cart = () => {
               </div>
 
               {/* Subtle background blur accent */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
             </div>
           </div>
         </div>

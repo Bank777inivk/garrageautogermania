@@ -7,7 +7,7 @@ const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-[#FFFFFF] overflow-hidden">
       {/* Overlay mobile */}
       {isSidebarOpen && (
         <div

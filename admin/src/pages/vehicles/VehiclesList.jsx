@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '@shared/firebase/config';
-import { collection, query, orderBy, onSnapshot, doc, deleteDoc, addDoc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, deleteDoc, addDoc, getDocs, serverTimestamp, updateDoc, getDoc } from 'firebase/firestore';
 import useVehicleStore from '@shared/store/useVehicleStore';
 import uploadToCloudinary from '@shared/cloudinary/config';
 import {
@@ -9,6 +9,7 @@ import {
   Loader2, Image as ImageIcon, X, Upload, Star, Eye, EyeOff, Check, Heart
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
 
 import useBrands from '@shared/hooks/useBrands';
 import BrandSelect from '@shared/components/BrandSelect';
@@ -18,13 +19,13 @@ import BrandSelect from '@shared/components/BrandSelect';
 // =========================================================
 const StatusBadge = ({ status }) => {
   const styles = {
-    available: 'bg-green-100 text-green-700 border border-green-200',
-    sold: 'bg-red-100 text-red-700 border border-red-200',
-    reserved: 'bg-amber-100 text-amber-700 border border-amber-200',
+    available: 'bg-green-50 text-green-700 border border-green-100',
+    sold: 'bg-red-50 text-red-700 border border-red-100',
+    reserved: 'bg-[#FCA311]/10 text-[#FCA311] border border-[#FCA311]/20',
   };
   const labels = { available: 'Disponible', sold: 'Vendu', reserved: 'Réservé' };
   return (
-    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${styles[status] || styles.available}`}>
+    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${styles[status] || styles.available}`}>
       {labels[status] || status}
     </span>
   );
@@ -51,43 +52,43 @@ const CategoryModal = ({ category, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
-        <div className="p-5 border-b border-gray-100 flex justify-between items-center">
-          <h3 className="font-bold text-gray-800">{category ? 'Modifier la marque' : 'Nouvelle marque'}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={22} /></button>
+      <div className="absolute inset-0 bg-[#000000]/80 backdrop-blur-md" onClick={onClose} />
+      <div className="relative bg-white rounded-[2rem] w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden border border-[#E5E5E5]">
+        <div className="p-6 border-b border-[#E5E5E5] flex justify-between items-center bg-gray-50">
+          <h3 className="font-black text-[#14213D] uppercase tracking-tight">{category ? 'Modifier la marque' : 'Nouvelle marque'}</h3>
+          <button onClick={onClose} className="text-[#14213D]/20 hover:text-[#14213D] transition-colors"><X size={24} /></button>
         </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Nom de la marque</label>
+        <div className="p-8 space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">Nom de la marque</label>
             <input
               value={name}
               onChange={e => setName(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 bg-gray-50 focus:ring-2 focus:ring-[#2271B1]/30 focus:border-[#2271B1] outline-none text-sm font-bold"
+              className="w-full border border-[#E5E5E5] rounded-2xl px-4 py-4 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#FCA311] outline-none text-base font-bold text-[#14213D] transition-all"
               placeholder="ex: BMW, Mercedes, Audi..."
             />
           </div>
-          <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 block">Logo de la marque</label>
-            <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-6 cursor-pointer hover:bg-gray-50 transition-all relative">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">Logo de la marque</label>
+            <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#E5E5E5] rounded-2xl p-8 cursor-pointer hover:bg-gray-50 hover:border-[#FCA311] transition-all relative group">
               {imageUrl ? (
-                <img src={imageUrl} alt="logo" className="h-20 object-contain" />
+                <img src={imageUrl} alt="logo" className="h-24 object-contain" />
               ) : uploading ? (
-                <Loader2 className="animate-spin text-[#2271B1]" size={32} />
+                <Loader2 className="animate-spin text-[#FCA311]" size={36} />
               ) : (
                 <>
-                  <Upload size={24} className="text-gray-400 mb-2" />
-                  <span className="text-xs text-gray-500 font-medium">Cliquer pour télécharger</span>
+                  <Upload size={32} className="text-[#14213D]/10 group-hover:text-[#FCA311] mb-3 transition-colors" />
+                  <span className="text-[10px] text-[#14213D]/40 font-black uppercase tracking-widest">Cliquer pour télécharger</span>
                 </>
               )}
               <input type="file" accept="image/*" className="hidden" onChange={handleUpload} disabled={uploading} />
             </label>
           </div>
-          <div className="flex gap-3 pt-2">
-            <button onClick={onClose} className="flex-1 py-2.5 border border-gray-200 rounded-lg text-sm font-bold text-gray-600">Annuler</button>
+          <div className="flex gap-4 pt-4">
+            <button onClick={onClose} className="flex-1 py-4 border border-[#E5E5E5] rounded-2xl text-[10px] font-black uppercase tracking-widest text-[#14213D]/40 hover:bg-gray-50 transition-all">Annuler</button>
             <button
               onClick={() => { if (!name.trim()) return toast.error('Nom requis'); onSave({ name: name.trim(), image: imageUrl }); }}
-              className="flex-1 py-2.5 bg-[#2271B1] text-white rounded-lg text-sm font-bold hover:bg-[#135e96] transition-all"
+              className="flex-1 py-4 bg-[#14213D] text-[#FCA311] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FCA311] hover:text-[#14213D] transition-all shadow-xl shadow-[#14213D]/10"
             >
               Enregistrer
             </button>
@@ -121,6 +122,15 @@ const VehiclesList = () => {
   const [catModal, setCatModal] = useState(null); // null | 'new' | category obj
   const [showCatPanel, setShowCatPanel] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const docSnap = await getDoc(doc(db, 'settings', 'documents'));
+      if (docSnap.exists()) setSettings(docSnap.data());
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => { fetchVehicles(); }, [fetchVehicles]);
 
@@ -186,29 +196,32 @@ const VehiclesList = () => {
       {/* Page Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-3">
-            <Car className="text-[#2271B1]" size={28} />
+          <h1 className="text-xl md:text-2xl font-black text-[#14213D] flex items-center gap-3 uppercase tracking-tight">
+            <Car className="text-[#FCA311]" size={26} />
             Catalogue Véhicules
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-[10px] text-[#14213D]/40 font-black mt-1 uppercase tracking-[0.2em]">
             {totalVehicles} véhicules •{' '}
-            <span className="text-green-600 font-bold">{availableCount} disponibles</span>
+            <span className="text-green-600">{availableCount} disponibles</span>
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
             onClick={() => setShowCatPanel(!showCatPanel)}
-            className={`flex items-center justify-center gap-2 px-4 py-2.5 border rounded-lg text-sm font-bold transition-all ${showCatPanel ? 'bg-[#2271B1] text-white border-[#2271B1]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-              }`}
+            className={`flex items-center justify-center gap-2 px-5 py-3 border rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+              showCatPanel
+                ? 'bg-[#14213D] text-[#FCA311] border-[#14213D] shadow-lg shadow-[#14213D]/10'
+                : 'border-[#E5E5E5] text-[#14213D]/50 hover:bg-[#14213D]/5 hover:text-[#14213D]'
+            }`}
           >
-            <Tags size={18} />
+            <Tags size={16} />
             Gestion Marques {showCatPanel ? <X size={14} /> : <ChevronDown size={14} />}
           </button>
           <button
             onClick={() => navigate('/vehicles/new')}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#2271B1] text-white rounded-lg font-bold text-sm hover:bg-[#135e96] transition-all shadow-md"
+            className="flex items-center justify-center gap-3 px-7 py-3 bg-[#14213D] text-[#FCA311] rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#FCA311] hover:text-[#14213D] transition-all shadow-xl shadow-[#14213D]/10 active:scale-95 border-b-4 border-[#FCA311]/20 group"
           >
-            <Plus size={18} /> Ajouter un véhicule
+            <Plus size={18} className="group-hover:rotate-90 transition-transform" /> Ajouter un véhicule
           </button>
         </div>
       </div>
@@ -217,14 +230,14 @@ const VehiclesList = () => {
       {showCatPanel && (
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-bold text-gray-700 flex items-center gap-2">
-              <Tags size={18} className="text-[#2271B1]" /> Marques & Catégories ({brands.length})
+            <h3 className="font-black text-[#14213D] flex items-center gap-2 text-[11px] uppercase tracking-widest">
+              <Tags size={18} className="text-[#FCA311]" /> Marques & Catégories ({brands.length})
             </h3>
             <button
               onClick={() => setCatModal('new')}
-              className="flex items-center gap-2 text-sm font-bold text-[#2271B1] hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-all"
+              className="flex items-center gap-2 text-[10px] font-black text-[#14213D]/50 hover:text-[#14213D] hover:bg-[#14213D]/5 px-4 py-2 rounded-xl transition-all uppercase tracking-widest border border-[#E5E5E5]"
             >
-              <Plus size={16} /> Nouvelle marque
+              <Plus size={16} className="text-[#FCA311]" /> Nouvelle marque
             </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
@@ -244,7 +257,7 @@ const VehiclesList = () => {
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => setCatModal(cat)}
-                    className="p-1 text-[#2271B1] hover:bg-blue-50 rounded"
+                    className="p-1.5 text-[#14213D]/40 hover:text-[#FCA311] hover:bg-[#14213D] rounded-lg transition-colors"
                   >
                     <Edit size={12} />
                   </button>
@@ -262,13 +275,13 @@ const VehiclesList = () => {
       )}
 
       {/* Search & Filters Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col lg:flex-row gap-4 shadow-sm">
+      <div className="bg-white border border-[#E5E5E5] rounded-2xl p-5 flex flex-col lg:flex-row gap-4 shadow-sm">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#FCA311]" size={18} />
           <input
             type="text"
             placeholder="Rechercher par marque, modèle..."
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#2271B1]/30 focus:border-[#2271B1] outline-none text-sm bg-gray-50"
+            className="w-full pl-11 pr-4 py-3 border border-[#E5E5E5] rounded-2xl focus:ring-2 focus:ring-[#FCA311] focus:border-[#FCA311] outline-none text-sm bg-white font-black text-[#14213D] placeholder:text-[#14213D]/20 transition-all"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
@@ -278,8 +291,11 @@ const VehiclesList = () => {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`flex-1 min-w-[120px] sm:min-w-0 sm:flex-none px-4 py-2 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all ${statusFilter === s ? 'bg-[#2271B1] text-white' : 'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
-                }`}
+              className={`flex-1 min-w-[100px] sm:min-w-0 sm:flex-none px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                statusFilter === s
+                  ? 'bg-[#14213D] text-[#FCA311] shadow-lg shadow-[#14213D]/10 border-b-2 border-[#FCA311]/30'
+                  : 'bg-white text-[#14213D]/40 border border-[#E5E5E5] hover:bg-[#14213D]/5 hover:text-[#14213D]'
+              }`}
             >
               {s === 'all' ? 'Tous' : s === 'available' ? 'Disponibles' : s === 'reserved' ? 'Réservés' : 'Vendus'}
             </button>
@@ -291,10 +307,11 @@ const VehiclesList = () => {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <button
           onClick={() => setActiveTab('all')}
-          className={`px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border ${activeTab === 'all'
-            ? 'bg-gray-900 text-white border-gray-900'
-            : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
-            }`}
+          className={`px-5 py-3 rounded-2xl text-[10px] font-black whitespace-nowrap transition-all border uppercase tracking-widest ${
+            activeTab === 'all'
+              ? 'bg-[#14213D] text-[#FCA311] border-[#14213D] shadow-lg shadow-[#14213D]/10'
+              : 'bg-white text-[#14213D]/50 border-[#E5E5E5] hover:bg-[#14213D]/5 hover:text-[#14213D]'
+          }`}
         >
           Toutes les marques ({vehicles.length})
         </button>
@@ -312,7 +329,7 @@ const VehiclesList = () => {
         {activeTab !== 'all' && (
           <button
             onClick={() => setActiveTab('all')}
-            className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-bold text-gray-500 hover:text-red-600 border border-gray-200 hover:border-red-200 rounded-lg transition-all bg-white"
+            className="flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-black text-[#14213D]/40 hover:text-red-600 border border-[#E5E5E5] hover:border-red-200 rounded-2xl transition-all bg-white uppercase tracking-widest"
           >
             <X size={14} /> Effacer
           </button>
@@ -322,7 +339,7 @@ const VehiclesList = () => {
       {/* Vehicle List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-[#2271B1]" size={36} />
+          <Loader2 className="animate-spin text-[#14213D]" size={36} />
         </div>
       ) : filteredVehicles.length === 0 ? (
         <div className="py-20 text-center bg-white rounded-2xl border border-gray-100">
@@ -385,7 +402,11 @@ const VehiclesList = () => {
                                 <div className="flex items-center gap-3">
                                   <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100">
                                     {vehicle.images?.[0] ? (
-                                      <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                                      <img 
+                                        src={applyWatermark(vehicle.images?.[0] || 'https://images.unsplash.com/photo-1542362567-b052fd119971?auto=format&fit=crop&q=80', settings?.watermarkPublicId || (settings?.logoUrl ? getPublicIdFromUrl(settings.logoUrl) : null), settings?.watermarkEnabled)} 
+                                        alt="" 
+                                        className="w-full h-full object-cover" 
+                                      />
                                     ) : (
                                       <div className="w-full h-full flex items-center justify-center text-gray-300">
                                         <Car size={18} />
@@ -438,7 +459,7 @@ const VehiclesList = () => {
                                 <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                   <button
                                     onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
-                                    className="p-2 text-[#2271B1] hover:bg-blue-50 rounded-lg transition-colors"
+                                    className="p-2 text-[#14213D]/40 hover:text-[#FCA311] hover:bg-[#14213D] rounded-lg transition-colors"
                                     title="Modifier"
                                   >
                                     <Edit size={16} />
@@ -465,7 +486,11 @@ const VehiclesList = () => {
                           <div className="flex gap-4">
                             <div className="w-24 h-20 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100 relative">
                               {vehicle.images?.[0] ? (
-                                <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                                <img 
+                                  src={applyWatermark(vehicle.images?.[0] || 'https://images.unsplash.com/photo-1542362567-b052fd119971?auto=format&fit=crop&q=80', settings?.watermarkPublicId || (settings?.logoUrl ? getPublicIdFromUrl(settings.logoUrl) : null), settings?.watermarkEnabled)} 
+                                  alt="" 
+                                  className="w-full h-full object-cover" 
+                                />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-300">
                                   <Car size={24} />
@@ -559,7 +584,11 @@ const VehiclesList = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                           {vehicle.images?.[0] ? (
-                            <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                            <img 
+                              src={applyWatermark(vehicle.images[0], settings?.watermarkPublicId, settings?.watermarkEnabled)} 
+                              alt="" 
+                              className="w-full h-full object-cover" 
+                            />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-300">
                               <Car size={18} />
@@ -595,7 +624,7 @@ const VehiclesList = () => {
                     <td className="px-5 py-4"><StatusBadge status={vehicle.status} /></td>
                     <td className="px-5 py-4 text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)} className="p-2 text-[#2271B1] hover:bg-blue-50 rounded-lg"><Edit size={16} /></button>
+                        <button onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)} className="p-2 text-[#14213D]/40 hover:text-[#FCA311] hover:bg-[#14213D] rounded-lg transition-colors"><Edit size={16} /></button>
                         <button onClick={() => handleDeleteVehicle(vehicle.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
                       </div>
                     </td>
@@ -612,7 +641,11 @@ const VehiclesList = () => {
                 <div className="flex gap-4">
                   <div className="w-24 h-20 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100 relative">
                     {vehicle.images?.[0] ? (
-                      <img src={vehicle.images[0]} alt="" className="w-full h-full object-cover" />
+                      <img 
+                        src={applyWatermark(vehicle.images[0], settings?.watermarkPublicId, settings?.watermarkEnabled)} 
+                        alt="" 
+                        className="w-full h-full object-cover" 
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-300">
                         <Car size={24} />

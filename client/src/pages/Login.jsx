@@ -56,11 +56,11 @@ const Login = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
-            <div className="p-3 bg-slate-900 rounded-2xl shadow-lg border border-red-700/20">
-              <ShieldCheck size={32} className="text-red-700" />
+            <div className="p-3 bg-slate-900 rounded-2xl shadow-lg border border-amber-600/20">
+              <ShieldCheck size={32} className="text-amber-600" />
             </div>
           </div>
-          <p className="text-[10px] font-bold text-red-700 uppercase tracking-[0.2em] mb-2">Espace Client Sécurisé</p>
+          <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">Espace Client Sécurisé</p>
           <h2 className="text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
             Se Connecter
           </h2>
@@ -84,7 +84,7 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                  className="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   placeholder="votre@email.com"
                 />
               </div>
@@ -106,7 +106,7 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-700 focus:bg-white outline-none transition-all"
+                  className="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-amber-600 focus:bg-white outline-none transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -118,7 +118,7 @@ const Login = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-red-700 focus:ring-red-700 border-gray-300 rounded-md transition-colors cursor-pointer"
+                  className="h-4 w-4 text-amber-600 focus:ring-amber-600 border-gray-300 rounded-md transition-colors cursor-pointer"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-gray-500 cursor-pointer">
                   Rester connecté
@@ -126,7 +126,7 @@ const Login = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="text-red-700 hover:text-slate-900 transition-colors">
+                <a href="#" className="text-amber-600 hover:text-slate-900 transition-colors">
                   Oublié ?
                 </a>
               </div>
@@ -136,7 +136,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-slate-900 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700 disabled:opacity-70 transition-all active:scale-[0.98]"
+                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-[10px] font-bold uppercase tracking-[0.2em] text-white bg-slate-900 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 disabled:opacity-70 transition-all active:scale-[0.98]"
               >
                 {loading ? <Loader2 className="animate-spin h-5 w-5" /> : "Se connecter"}
               </button>

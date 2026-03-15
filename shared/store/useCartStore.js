@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { toast } from 'react-hot-toast';
+import useClientVehicleStore from './useClientVehicleStore';
 
 const useCartStore = create(
   persist(
@@ -9,15 +10,23 @@ const useCartStore = create(
 
       addToCart: (vehicle) => {
         const { items } = get();
-        // Check if item already exists
+        
+        // Check if item already exists in cart
         const exists = items.find((item) => item.id === vehicle.id);
         if (exists) {
-          toast.error("Ce véhicule est déjà dans votre panier");
+          // toast.error("Ce véhicule est déjà dans votre panier");
+          return;
+        }
+
+        // Check if user already ordered this vehicle
+        const { pendingVehicleIds } = useClientVehicleStore.getState();
+        if (pendingVehicleIds.includes(vehicle.id)) {
+          // toast.error("Vous avez déjà une commande en cours pour ce véhicule");
           return;
         }
 
         set({ items: [...items, vehicle] });
-        toast.success(`${vehicle.brand} ${vehicle.model} ajouté au panier`);
+        // toast.success(`${vehicle.brand} ${vehicle.model} ajouté au panier`);
       },
 
       removeFromCart: (vehicleId) => {
@@ -40,15 +49,17 @@ const useCartStore = create(
       getTotalItems: () => get().items.length,
 
       getTotalPrice: () => {
-        return get().items.reduce((total, item) => total + (Number(item.price) || 0), 0);
+        return get().items.reduce((total, item) => {
+          const discount = item.discount || 0;
+          const effectivePrice = discount > 0 
+            ? item.price * (1 - discount / 100) 
+            : item.price;
+          return total + (Number(effectivePrice) || 0);
+        }, 0);
       },
 
       getShippingCost: () => {
-        const total = get().getTotalPrice();
-        // Exemple de règle : livraison gratuite si > 50 000€, sinon 550€
-        // Pour l'instant on fixe à 550€ comme sur la maquette, sauf si vide
-        if (total === 0) return 0;
-        return total > 50000 ? 0 : 550;
+        return 0;
       },
 
       getFinalTotal: () => {

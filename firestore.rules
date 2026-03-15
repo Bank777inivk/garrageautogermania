@@ -69,8 +69,19 @@ service cloud.firestore {
       // Création (Client) : Tout le monde peut créer une commande
       allow create: if true;
 
-      // Modification/Suppression (Admin seulement)
-      allow update, delete: if isAdmin();
+      // Modification (Admin ou Propriétaire si en attente)
+      allow update: if isAdmin() || (
+        request.auth != null && 
+        resource.data.userId == request.auth.uid && 
+        resource.data.status == 'pending' &&
+        request.resource.data.status == 'pending' && // Ne peut pas changer le statut
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'paymentOption', 'discountAmount', 'total', 'amountToPayNow', 'fullPaymentDiscount', 'updatedAt'
+        ])
+      );
+
+      // Suppression (Admin seulement)
+      allow delete: if isAdmin();
     }
 
     // ============================================================================
@@ -100,7 +111,7 @@ service cloud.firestore {
     // RÈGLES POUR LA COLLECTION 'SETTINGS' (PARAMÈTRES GLOBAUX)
     // ============================================================================
     match /settings/{settingId} {
-      allow read: if true;
+      allow read: if isAuthenticated() || isAdmin();
       allow write: if isAdmin();
     }
     

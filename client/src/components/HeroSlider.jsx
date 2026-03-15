@@ -92,7 +92,7 @@ const HeroSlider = () => {
 
           <button
             type="submit"
-            className="bg-gray-900 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            className="bg-gray-900 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
             <Search size={20} />
           </button>
@@ -117,12 +117,12 @@ const HeroSlider = () => {
 
             <div className="absolute inset-0 flex items-center container mx-auto px-8 md:px-16">
               <div className="max-w-2xl text-white">
-                <div className="inline-flex items-center bg-gray-900 text-white text-[10px] font-bold px-3 py-1.5 mb-5 uppercase tracking-[0.15em] rounded-full animate-fadeIn shadow-sm border border-red-600/40">
+                <div className="inline-flex items-center bg-gray-900 text-white text-[10px] font-bold px-3 py-1.5 mb-5 uppercase tracking-[0.15em] rounded-full animate-fadeIn shadow-sm border border-amber-600/40">
                   {t(slide.badge, 'Importation Premium')}
                 </div>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-black font-montserrat leading-tight mb-5 animate-slideUp tracking-tight drop-shadow-lg">
                   {t(slide.title, 'Votre voiture de rêve,')} <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-red-500 to-yellow-400">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500">
                     {t(slide.subtitle, "directement d'Allemagne")}
                   </span>
                 </h2>
@@ -132,7 +132,7 @@ const HeroSlider = () => {
 
                 <button
                   onClick={() => navigate('/catalogue')}
-                  className="btn-red-glow inline-flex items-center bg-white text-gray-900 hover:bg-gray-50 font-bold py-3.5 px-8 rounded-xl transition-all animate-slideUp delay-200 text-sm tracking-wide shadow-lg"
+                  className="btn-amber-glow inline-flex items-center bg-white text-gray-900 hover:bg-gray-50 font-bold py-3.5 px-8 rounded-xl transition-all animate-slideUp delay-200 text-sm tracking-wide shadow-lg"
                 >
                   {t('hero.cta', 'Voir les offres')}
                   <ChevronRight size={20} className="ml-2" />
@@ -150,7 +150,7 @@ const HeroSlider = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-1.5 rounded-full transition-all duration-500 shadow-sm ${index === currentSlide ? 'bg-red-700 w-10 shadow-red-700/30' : 'bg-white/30 w-3 hover:bg-white/60'
+              className={`h-1.5 rounded-full transition-all duration-500 shadow-sm ${index === currentSlide ? 'bg-amber-600 w-10 shadow-amber-600/30' : 'bg-white/30 w-3 hover:bg-white/60'
                 }`}
             />
           ))}

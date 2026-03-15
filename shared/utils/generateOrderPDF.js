@@ -114,7 +114,8 @@ export const generateOrderPDF = async (order, settings = null) => {
   // Vehicle Info
   const item = order.items && order.items[0] ? order.items[0] : {};
   const formattedRef = item.id && item.id.length > 8 ? item.id.substring(0, 8).toUpperCase() : (item.id || 'N/A');
-  const formattedUnitPrice = formatPrice(item.price || 0);
+  const displayPrice = item.effectivePrice || (item.discount > 0 ? item.price * (1 - item.discount / 100) : item.price);
+  const formattedUnitPrice = formatPrice(displayPrice || 0);
 
   doc.setFillColor(243, 244, 246);
   doc.rect(pageWidth / 2 + 5, 68, pageWidth / 2 - 25, 35, 'F');
@@ -151,15 +152,38 @@ export const generateOrderPDF = async (order, settings = null) => {
   const shippingText = order.shipping === 0 ? 'Offerts' : formatPrice(order.shipping || 0);
   doc.text(shippingText, pageWidth - 25, tableTop + 24, { align: "right" });
 
-  doc.line(20, tableTop + 32, pageWidth - 20, tableTop + 32);
+  let summaryY = tableTop + 32;
+  if (order.discountAmount > 0) {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(220, 38, 38); // Red for discount
+    doc.text(`Remise Exceptionnelle Paiement Intégral (-15%)`, 25, summaryY + 8);
+    doc.text(`-${formatPrice(order.discountAmount)}`, pageWidth - 25, summaryY + 8, { align: "right" });
+    doc.setTextColor(...blackColor);
+    doc.setFont('helvetica', 'normal');
+    summaryY += 10;
+  }
+
+  doc.line(20, summaryY + 2, pageWidth - 20, summaryY + 2);
 
   // Total
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  doc.text("TOTAL À PAYER", pageWidth - 80, tableTop + 40);
+  doc.text("TOTAL NET À RÉGLER", pageWidth - 80, summaryY + 10);
   doc.setTextColor(...primaryColor);
-  doc.text(formatPrice(order.total || 0), pageWidth - 25, tableTop + 40, { align: "right" });
+  doc.text(formatPrice(order.total || 0), pageWidth - 25, summaryY + 10, { align: "right" });
   doc.setTextColor(...blackColor);
+
+  // Payment Breakdown
+  doc.setFontSize(8.5);
+  doc.setFont('helvetica', 'italic');
+  const paymentText = order.paymentOption === 'full' 
+    ? "Option choisie : Règlement intégral immédiat (Remise 15% appliquée)"
+    : "Option choisie : Règlement par acompte de 30% (Solde à la livraison)";
+  doc.text(paymentText, 20, summaryY + 22);
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`MONTANT DU VIREMENT ATTENDU : ${formatPrice(order.amountToPayNow || 0)}`, 20, summaryY + 32);
 
   // Bank Details
   const bankTop = 180;

@@ -25,8 +25,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '@shared/store/useAuthStore';
-import { generateContractPDF, generatePaymentReceiptPDF, generateDeliverySlipPDF } from '@shared/utils/generateAdminDocuments';
-import { generateOrderPDF } from '@shared/utils/generateOrderPDF';
+import { generateOrderPDF, generateContractPDF, generatePaymentReceiptPDF, generateDeliverySlipPDF } from '@shared/utils/generateAdminDocuments';
 
 const OrderDetails = () => {
     const { user } = useAuthStore();
@@ -136,24 +135,21 @@ const OrderDetails = () => {
 
     const getStatusInfo = (status) => {
         switch (status) {
-            case 'validation': return { label: 'Validation', color: 'bg-emerald-100 text-emerald-700', icon: Shield };
-            case 'pending': return { label: 'Paiement', color: 'bg-yellow-100 text-yellow-700', icon: CreditCard };
-            case 'logistics': return { label: 'Logistique', color: 'bg-blue-100 text-blue-700', icon: Box };
-            case 'transit': return { label: 'En Route', color: 'bg-indigo-100 text-indigo-700', icon: Truck };
-            case 'concierge': return { label: 'Arrivée', color: 'bg-fuchsia-100 text-fuchsia-700', icon: MapPin };
-            case 'delivered': return { label: 'Livré', color: 'bg-green-100 text-green-700', icon: CheckCircle2 };
-            case 'cancelled': return { label: 'Annulée', color: 'bg-red-100 text-red-700', icon: AlertCircle };
-            // Legacy fallbacks
-            case 'confirmed': return { label: 'Logistique', color: 'bg-blue-100 text-blue-700', icon: Box };
-            case 'completed': return { label: 'Livré', color: 'bg-green-100 text-green-700', icon: CheckCircle2 };
-            default: return { label: status, color: 'bg-gray-100 text-gray-700', icon: FileText };
+            case 'validation': return { label: 'Validation', color: 'bg-emerald-50 text-emerald-600 border-emerald-100', icon: Shield };
+            case 'pending': return { label: 'Paiement', color: 'bg-[#FCA311]/10 text-[#FCA311] border-[#FCA311]/20', icon: CreditCard };
+            case 'logistics': return { label: 'Logistique', color: 'bg-[#14213D]/5 text-[#14213D] border-[#14213D]/10', icon: Box };
+            case 'transit': return { label: 'En Route', color: 'bg-[#14213D]/5 text-[#14213D] border-[#14213D]/10', icon: Truck };
+            case 'concierge': return { label: 'Arrivée', color: 'bg-[#14213D]/5 text-[#14213D] border-[#14213D]/10', icon: MapPin };
+            case 'delivered': return { label: 'Livré', color: 'bg-green-50 text-green-600 border-green-100', icon: CheckCircle2 };
+            case 'cancelled': return { label: 'Annulée', color: 'bg-red-50 text-red-600 border-red-100', icon: AlertCircle };
+            default: return { label: status, color: 'bg-gray-50 text-gray-500 border-gray-100', icon: FileText };
         }
     };
 
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="animate-spin text-blue-600" size={32} />
+                <Loader2 className="animate-spin text-[#14213D]" size={32} />
             </div>
         );
     }
@@ -162,19 +158,19 @@ const OrderDetails = () => {
 
     return (
         <div className="max-w-5xl mx-auto space-y-6 pb-20 px-4 md:px-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <button
                     onClick={() => navigate(order?.userId ? "/orders?userId=" + order.userId : "/orders")}
-                    className="flex items-center text-[10px] md:text-sm font-black text-gray-500 hover:text-gray-800 transition-colors uppercase tracking-[0.2em] bg-gray-100/50 sm:bg-transparent p-3 sm:p-0 rounded-xl"
+                    className="flex items-center text-[10px] md:text-xs font-black text-[#14213D]/40 hover:text-[#14213D] transition-all uppercase tracking-[0.2em] bg-white border border-[#E5E5E5] px-6 py-4 rounded-2xl shadow-sm"
                 >
-                    <ArrowLeft size={18} className="mr-2" /> Retour aux commandes
+                    <ArrowLeft size={16} className="mr-3 text-[#FCA311]" /> Retour au Flux
                 </button>
                 <div className="flex gap-3 w-full sm:w-auto">
                     <button
                         onClick={() => generateOrderPDF(order, settings)}
-                        className="flex-1 sm:flex-none flex items-center justify-center px-4 py-3 sm:py-2 border border-gray-300 rounded-xl sm:rounded-md text-[10px] sm:text-sm font-black text-gray-600 hover:bg-gray-50 transition-all uppercase tracking-widest shadow-sm"
+                        className="flex-1 sm:flex-none flex items-center justify-center px-6 py-4 border border-[#E5E5E5] rounded-2xl text-[10px] font-black text-[#14213D] hover:bg-[#14213D] hover:text-[#FCA311] transition-all uppercase tracking-widest shadow-sm group"
                     >
-                        <Printer size={16} className="mr-2" /> Imprimer Bon de Commande
+                        <Printer size={16} className="mr-3 text-[#FCA311] group-hover:text-[#FCA311]" /> Exporter Bon Commande
                     </button>
                 </div>
             </div>
@@ -183,75 +179,69 @@ const OrderDetails = () => {
                 {/* Main Content */}
                 <div className="flex-1 space-y-6">
                     {/* Order Header */}
-                    <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                    <div className="bg-[#14213D] p-10 md:p-12 rounded-[2.5rem] shadow-2xl shadow-[#14213D]/20 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8 border-b-8 border-[#FCA311]">
                         <div>
-                            <div className="flex flex-wrap items-center gap-3 mb-2">
-                                <h1 className="text-xl md:text-2xl font-black text-gray-900 leading-tight">Commande #{order.orderNumber}</h1>
-                                <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${statusInfo.color} flex items-center shadow-sm`}>
-                                    <statusInfo.icon size={12} className="mr-1.5" /> {statusInfo.label}
+                            <div className="flex flex-wrap items-center gap-4 mb-4">
+                                <h1 className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight uppercase">Dossier #{order.orderNumber}</h1>
+                                <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border ${statusInfo.color} flex items-center shadow-lg backdrop-blur-md`}>
+                                    <statusInfo.icon size={14} className="mr-2" /> {statusInfo.label}
                                 </span>
                             </div>
-                            <p className="text-xs text-gray-400 font-bold">
-                                Passée le {order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleString() : 'N/A'}
+                            <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em]">
+                                Enregistré le {order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleString() : 'N/A'}
                             </p>
                         </div>
-                        <div className="w-full sm:w-auto sm:text-right pt-4 sm:pt-0 border-t sm:border-0 border-gray-50">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Montant Total</p>
-                            <h2 className="text-3xl md:text-4xl font-black text-indigo-600">{(order.total || 0).toLocaleString()}€</h2>
+                        <div className="w-full sm:w-auto sm:text-right">
+                            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-3">Solde Total TTC</p>
+                            <h2 className="text-4xl md:text-5xl font-black text-[#FCA311] tracking-tighter">{(order.total || 0).toLocaleString()}€</h2>
                         </div>
                     </div>
 
                     {/* Items Tray */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="p-4 bg-gray-50 border-b border-gray-100">
-                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center">
-                                <Package size={16} className="mr-2" /> Articles sélectionnés
+                    <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-900/10 overflow-hidden">
+                        <div className="px-8 py-6 bg-white border-b border-[#E5E5E5]">
+                            <h3 className="text-[10px] font-black text-[#14213D] uppercase tracking-[0.3em] flex items-center">
+                                <Package size={18} className="mr-4 text-[#FCA311]" /> Liste des Véhicules
                             </h3>
                         </div>
-                        <div className="divide-y divide-gray-50">
+                        <div className="divide-y divide-[#E5E5E5]">
                             {order.items?.map((item, idx) => (
-                                <div key={idx} className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 group hover:bg-gray-50/50 transition-colors">
-                                    <div className="w-full sm:w-24 h-48 sm:h-16 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm">
-                                        <img src={item.image} alt={item.model} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                <div key={idx} className="p-10 flex flex-col sm:flex-row items-center gap-8 group hover:bg-[#14213D]/5 transition-all duration-500">
+                                    <div className="w-full sm:w-40 h-28 bg-[#14213D] rounded-[1.5rem] overflow-hidden flex-shrink-0 border-2 border-[#14213D] shadow-xl group-hover:rotate-1 transition-transform">
+                                        <img src={item.image} alt={item.model} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                     </div>
-                                    <div className="flex-1 space-y-1">
-                                        <h4 className="font-black text-gray-900 text-lg sm:text-base">{item.brand} {item.model}</h4>
-                                        <p className="text-[10px] sm:text-xs text-gray-400 font-black uppercase tracking-tighter">Réf: {item.id}</p>
-                                    </div>
-                                    <div className="w-full sm:w-auto flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-0 border-gray-50 pt-3 sm:pt-0">
-                                        <div>
-                                            <p className="text-xl sm:text-base font-black text-gray-900">{(item.price || 0).toLocaleString()}€</p>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase text-right leading-none mt-0.5">Prix Unitaire</p>
+                                    <div className="flex-1 text-center sm:text-left">
+                                        <h4 className="font-black text-[#14213D] text-2xl tracking-tighter uppercase mb-1">{item.brand} {item.model}</h4>
+                                        <div className="flex flex-wrap justify-center sm:justify-start items-center gap-4">
+                                            <p className="text-[9px] text-[#14213D]/30 font-black uppercase tracking-widest">Réf Système: {item.id}</p>
                                         </div>
+                                    </div>
+                                    <div className="w-full sm:w-auto flex flex-col items-center sm:items-end">
+                                        <p className="text-3xl font-black text-[#14213D]">{(item.price || 0).toLocaleString()}€</p>
+                                        <p className="text-[9px] text-[#FCA311] font-black uppercase tracking-widest mt-1">Valeur unitaire</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Documents Section */}
-                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-bold text-gray-800 flex items-center">
-                                <FileText size={20} className="mr-2 text-indigo-500" /> Documents Client
+                    <div className="bg-white p-10 md:p-12 rounded-[2.5rem] shadow-sm border border-slate-900/10 space-y-10">
+                        <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-6">
+                            <h3 className="text-[10px] font-black text-[#14213D] flex items-center uppercase tracking-[0.3em]">
+                                <FileText size={20} className="mr-4 text-[#FCA311]" /> Documents Contractuels
                             </h3>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-1 rounded">
-                                Génération PDF
+                            <span className="text-[8px] font-black text-[#14213D]/40 uppercase tracking-widest bg-[#14213D]/5 px-3 py-1.5 rounded-xl">
+                                Synchronisation Cloud
                             </span>
                         </div>
-                        <p className="text-[11px] text-gray-500 font-medium italic mb-6">
-                            Générez les documents officiels pour cette commande synchronisés avec les paramètres du garage.
-                        </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {/* Bon de Commande */}
-                            <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-blue-100 transition-colors bg-white shadow-sm group">
-                                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+                            <div className="p-8 border border-slate-900/10 rounded-[2rem] flex flex-col items-center text-center gap-6 hover:border-[#FCA311] transition-all bg-white shadow-sm group">
+                                <div className="p-4 bg-[#14213D]/5 text-[#14213D] rounded-2xl group-hover:bg-[#14213D] group-hover:text-[#FCA311] transition-all duration-300">
                                     <FileText size={24} />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-900 text-sm">Bon de commande</h4>
-                                </div>
+                                <h4 className="font-black text-[#14213D] text-[10px] uppercase tracking-widest">Bon de commande</h4>
                                 <button
                                     onClick={async () => {
                                         try {
@@ -262,47 +252,41 @@ const OrderDetails = () => {
                                             toast.error("Erreur lors de la génération");
                                         }
                                     }}
-                                    className="w-full py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-all shadow-sm flex items-center justify-center gap-2"
+                                    className="w-full py-3 bg-white border border-slate-900/10 text-[#14213D] rounded-2xl text-[7px] font-black uppercase tracking-widest hover:bg-[#14213D] hover:text-[#FCA311] transition-all shadow-sm flex items-center justify-center gap-2"
                                 >
-                                    <FileText size={16} className="text-blue-500" />
-                                    Aperçu
+                                    <FileText size={16} /> Aperçu
                                 </button>
                             </div>
 
                             {/* Contrat de Vente */}
-                            <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-indigo-100 transition-colors bg-white shadow-sm group">
-                                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-110 transition-transform">
+                            <div className="p-8 border border-slate-900/10 rounded-[2rem] flex flex-col items-center text-center gap-6 hover:border-[#FCA311] transition-all bg-white shadow-sm group">
+                                <div className="p-4 bg-[#14213D]/5 text-[#14213D] rounded-2xl group-hover:bg-[#14213D] group-hover:text-[#FCA311] transition-all duration-300">
                                     <FileText size={24} />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-900 text-sm">Contrat de Vente</h4>
-                                </div>
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            await generateContractPDF(order, settings);
-                                            toast.success("Contrat de vente téléchargé");
-                                        } catch (error) {
-                                            console.error("PDF Error:", error);
-                                            toast.error("Erreur lors de la génération");
-                                        }
-                                    }}
-                                    className="w-full py-2.5 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 flex items-center justify-center gap-2"
-                                >
-                                    <FileText size={16} className="opacity-80" />
-                                    Duplicata
-                                </button>
+                                <h4 className="font-black text-[#14213D] text-[10px] uppercase tracking-widest">Contrat de Vente</h4>
+                                    <button
+                                        onClick={async () => {
+                                            try {
+                                                await generateContractPDF(order, settings);
+                                                toast.success("Contrat de vente téléchargé");
+                                            } catch (error) {
+                                                console.error("PDF Error:", error);
+                                                toast.error("Erreur lors de la génération");
+                                            }
+                                        }}
+                                        className="w-full py-3 bg-[#14213D] text-[#FCA311] rounded-2xl text-[7px] font-black uppercase tracking-widest hover:bg-[#052659] transition-all border border-[#14213D] flex items-center justify-center gap-2"
+                                    >
+                                        <FileText size={14} /> Duplicata
+                                    </button>
                             </div>
 
                             {/* Reçu de Paiement (Conditionnel) */}
                             {(order?.status === 'delivered' || order?.status === 'completed' || order?.status === 'logistics' || order?.status === 'transit' || order?.status === 'concierge') ? (
-                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-green-100 transition-colors bg-white shadow-sm group">
-                                    <div className="p-3 bg-green-50 text-green-600 rounded-xl group-hover:scale-110 transition-transform">
+                                <div className="p-8 border border-slate-900/10 rounded-[2rem] flex flex-col items-center text-center gap-6 hover:border-[#FCA311] transition-all bg-white shadow-sm group">
+                                    <div className="p-4 bg-[#14213D]/5 text-[#14213D] rounded-2xl group-hover:bg-[#14213D] group-hover:text-[#FCA311] transition-all duration-300">
                                         <FileText size={24} />
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-900 text-sm">Reçu de Paiement</h4>
-                                    </div>
+                                    <h4 className="font-black text-[#14213D] text-[10px] uppercase tracking-widest">Reçu de Paiement</h4>
                                     <button
                                         onClick={async () => {
                                             try {
@@ -313,39 +297,33 @@ const OrderDetails = () => {
                                                 toast.error("Erreur lors de la génération");
                                             }
                                         }}
-                                        className="w-full py-2.5 bg-green-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-green-700 transition-all shadow-md shadow-green-100 flex items-center justify-center gap-2"
+                                        className="w-full py-3 bg-[#14213D] text-[#FCA311] rounded-2xl text-[7px] font-black uppercase tracking-widest hover:bg-[#052659] transition-all border border-[#14213D] flex items-center justify-center gap-2"
                                     >
-                                        <FileText size={16} className="opacity-80" />
-                                        Duplicata
+                                        <FileText size={14} /> Duplicata
                                     </button>
                                 </div>
                             ) : (
-                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 bg-gray-50/50 opacity-60">
-                                    <div className="p-3 bg-gray-100 text-gray-400 rounded-xl">
+                                <div className="p-8 border border-[#E5E5E5] rounded-[2rem] flex flex-col items-center text-center gap-6 bg-gray-50/50 opacity-40 grayscale">
+                                    <div className="p-4 bg-[#14213D]/5 text-[#14213D] rounded-2xl">
                                         <FileText size={24} />
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-500 text-sm">Reçu de Paiement</h4>
-                                        <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Disponible après paiement</p>
-                                    </div>
+                                    <h4 className="font-black text-[#14213D] text-[10px] uppercase tracking-widest">Reçu de Paiement</h4>
                                     <button
                                         disabled
-                                        className="w-full py-2.5 bg-gray-100 text-gray-400 rounded-lg text-xs font-bold uppercase tracking-widest cursor-not-allowed"
+                                        className="w-full py-4 bg-gray-100 text-gray-400 rounded-2xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed"
                                     >
-                                        Bloqué
+                                        En attente
                                     </button>
                                 </div>
                             )}
 
                             {/* Bordereau de Livraison (Conditionnel) */}
                             {(order?.status === 'delivered' || order?.status === 'completed' || order?.status === 'logistics' || order?.status === 'transit' || order?.status === 'concierge') ? (
-                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 hover:border-purple-100 transition-colors bg-white shadow-sm group">
-                                    <div className="p-3 bg-purple-50 text-purple-600 rounded-xl group-hover:scale-110 transition-transform">
+                                <div className="p-8 border border-slate-900/10 rounded-[2rem] flex flex-col items-center text-center gap-6 hover:border-[#FCA311] transition-all bg-white shadow-sm group">
+                                    <div className="p-4 bg-[#14213D]/5 text-[#14213D] rounded-2xl group-hover:bg-[#14213D] group-hover:text-[#FCA311] transition-all duration-300">
                                         <FileText size={24} />
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-900 text-sm">Bordereau Livraison</h4>
-                                    </div>
+                                    <h4 className="font-black text-[#14213D] text-[10px] uppercase tracking-widest">Bordereau Livraison</h4>
                                     <button
                                         onClick={async () => {
                                             try {
@@ -356,26 +334,22 @@ const OrderDetails = () => {
                                                 toast.error("Erreur lors de la génération");
                                             }
                                         }}
-                                        className="w-full py-2.5 bg-purple-600 text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md shadow-purple-100 flex items-center justify-center gap-2"
+                                        className="w-full py-3 bg-[#14213D] text-[#FCA311] rounded-2xl text-[7px] font-black uppercase tracking-widest hover:bg-[#052659] transition-all border border-[#14213D] flex items-center justify-center gap-2"
                                     >
-                                        <FileText size={16} className="opacity-80" />
-                                        Générer
+                                        <FileText size={14} /> Générer
                                     </button>
                                 </div>
                             ) : (
-                                <div className="p-6 border border-gray-100 rounded-2xl flex flex-col items-center text-center gap-4 bg-gray-50/50 opacity-60">
-                                    <div className="p-3 bg-gray-100 text-gray-400 rounded-xl">
+                                <div className="p-8 border border-[#E5E5E5] rounded-[2rem] flex flex-col items-center text-center gap-6 bg-gray-50/50 opacity-40 grayscale">
+                                    <div className="p-4 bg-[#14213D]/5 text-[#14213D] rounded-2xl">
                                         <FileText size={24} />
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-500 text-sm">Bordereau Livraison</h4>
-                                        <p className="text-[9px] text-gray-400 mt-1 uppercase tracking-wider font-bold">Disponible à la livraison</p>
-                                    </div>
+                                    <h4 className="font-black text-[#14213D] text-[10px] uppercase tracking-widest">Bordereau Livraison</h4>
                                     <button
                                         disabled
-                                        className="w-full py-2.5 bg-gray-100 text-gray-400 rounded-lg text-xs font-bold uppercase tracking-widest cursor-not-allowed"
+                                        className="w-full py-4 bg-gray-100 text-gray-400 rounded-2xl text-[9px] font-black uppercase tracking-widest cursor-not-allowed"
                                     >
-                                        Bloqué
+                                        En attente
                                     </button>
                                 </div>
                             )}
@@ -386,48 +360,50 @@ const OrderDetails = () => {
                 {/* Sidebar Info */}
                 <div className="w-full lg:w-80 space-y-6">
                     {/* Customer Info */}
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
-                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-3 flex items-center">
-                            <User size={14} className="mr-2" /> Informations Client
+                    <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-900/10 space-y-8">
+                        <h3 className="text-[10px] font-black text-[#14213D]/30 uppercase tracking-[0.3em] border-b border-[#E5E5E5] pb-5 flex items-center">
+                            <User size={16} className="mr-3 text-[#FCA311]" /> Portefeuille Client
                         </h3>
-                        <div className="space-y-4">
-                            <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold shrink-0">
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-5">
+                                <div className="w-14 h-14 rounded-2xl bg-[#14213D] flex items-center justify-center text-[#FCA311] font-black text-lg border-2 border-[#14213D] shadow-lg">
                                     {order.customer?.firstName?.[0]}{order.customer?.lastName?.[0]}
                                 </div>
                                 <div>
-                                    <p className="font-bold text-gray-900">{order.customer?.firstName} {order.customer?.lastName}</p>
-                                    <p className="text-xs text-gray-500 font-medium lowercase italic">{order.customer?.email}</p>
+                                    <p className="font-black text-[#14213D] uppercase tracking-tight text-[13px]">{order.customer?.firstName} {order.customer?.lastName}</p>
+                                    <p className="text-[10px] text-[#14213D]/40 font-black lowercase truncate max-w-[150px]">{order.customer?.email}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 text-sm text-gray-600">
-                                <Phone size={14} className="text-gray-400" />
-                                <span>{order.customer?.phone}</span>
-                            </div>
-                            {order.customer?.company && (
-                                <div className="flex items-center gap-3 text-sm text-gray-600">
-                                    <Building2 size={14} className="text-gray-400" />
-                                    <span>{order.customer?.company}</span>
+                            <div className="space-y-3 pt-2">
+                                <div className="flex items-center gap-4 text-[11px] text-[#14213D] font-black uppercase tracking-tight">
+                                    <Phone size={14} className="text-[#FCA311]" />
+                                    <span>{order.customer?.phone}</span>
                                 </div>
-                            )}
+                                {order.customer?.company && (
+                                    <div className="flex items-center gap-4 text-[11px] text-[#14213D] font-black uppercase tracking-tight">
+                                        <Building2 size={14} className="text-[#FCA311]" />
+                                        <span>{order.customer?.company}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="pt-4 space-y-3">
-                            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center">
-                                <MapPin size={12} className="mr-2" /> Adresse de Facturation
+                        <div className="pt-6 border-t border-[#E5E5E5] space-y-4">
+                            <h4 className="text-[10px] font-black text-[#14213D]/30 uppercase tracking-[0.2em] flex items-center">
+                                <MapPin size={14} className="mr-3 text-[#FCA311]" /> Destination Finale
                             </h4>
-                            <p className="text-xs text-gray-600 leading-relaxed font-medium">
+                            <p className="text-[11px] text-[#14213D] font-black leading-[1.8] uppercase tracking-tight">
                                 {order.customer?.address}<br />
-                                {order.customer?.zipCode}, {order.customer?.city}<br />
+                                {order.customer?.zipCode} {order.customer?.city}<br />
                                 {order.customer?.country}
                             </p>
                         </div>
                     </div>
 
                     {/* Action Menu */}
-                    <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800 space-y-6">
-                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-white/5 pb-3">Statut Commande</h3>
-                        <div className="grid grid-cols-1 gap-2">
+                    <div className="bg-[#14213D] p-10 rounded-[2.5rem] shadow-2xl shadow-[#14213D]/30 space-y-8 border-b-8 border-[#FCA311]">
+                        <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] border-b border-white/5 pb-5">Pilotage Logistique</h3>
+                        <div className="grid grid-cols-1 gap-3">
                             {[
                                 { id: 'validation', label: '1. Validation Administrative' },
                                 { id: 'pending', label: '2. En attente paiement' },
@@ -440,27 +416,31 @@ const OrderDetails = () => {
                                     key={step.id}
                                     onClick={() => handleUpdateStatus(step.id)}
                                     disabled={updating || order.status === step.id}
-                                    className={`w-full py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${order.status === step.id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 border border-indigo-500' : 'text-slate-400 hover:bg-white/5 border border-transparent hover:border-white/10'}`}
+                                    className={`w-full py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all ${order.status === step.id 
+                                        ? 'bg-[#FCA311] text-[#14213D] shadow-xl shadow-[#FCA311]/20 scale-[1.02]' 
+                                        : 'text-white/40 hover:bg-white/5 border border-white/5 hover:border-white/20'}`}
                                 >
                                     {step.label}
                                 </button>
                             ))}
-                            <div className="h-px bg-white/5 my-2" />
+                            <div className="h-px bg-white/5 my-4" />
                             <button
                                 onClick={() => handleUpdateStatus('cancelled')}
                                 disabled={updating || order.status === 'cancelled'}
-                                className={`w-full py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${order.status === 'cancelled' ? 'bg-red-600 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 hover:text-red-400 hover:bg-red-900/20 border border-transparent hover:border-red-900/30'}`}
+                                className={`w-full py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all ${order.status === 'cancelled' 
+                                    ? 'bg-red-600 text-white shadow-xl shadow-red-600/20' 
+                                    : 'text-red-500/50 hover:text-red-500 hover:bg-red-500/10 border border-transparent'}`}
                             >
-                                Annuler la commande
+                                Annuler le dossier
                             </button>
                             {isSuperAdmin && (
-                                <div className="pt-4 mt-4 border-t border-white/5">
+                                <div className="pt-6 mt-4 border-t border-white/5">
                                     <button
                                         onClick={handleDeleteOrder}
                                         disabled={updating}
-                                        className="w-full py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-white/5 text-red-500 border border-red-500/20 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all flex items-center justify-center gap-2"
+                                        className="w-full py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest bg-white/5 text-red-500 border border-red-500/20 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-3"
                                     >
-                                        <Trash2 size={12} /> Supprimer Définitvement
+                                        <Trash2 size={14} /> Suppression Définitive
                                     </button>
                                 </div>
                             )}

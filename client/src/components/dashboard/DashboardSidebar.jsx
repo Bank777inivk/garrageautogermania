@@ -17,7 +17,7 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Tableau de bord', path: '/dashboard' },
-    { icon: Package, label: 'Mes Acquisitions', path: '/dashboard/orders' },
+    { icon: Package, label: 'Mes Commandes', path: '/dashboard/orders' },
     { icon: History, label: 'Historique', path: '/dashboard/history' },
     { icon: Compass, label: 'Suivi Livraison', path: '/dashboard/tracking' },
     { icon: FileText, label: 'Facturation', path: '/dashboard/billing' },
@@ -27,23 +27,21 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
   ];
 
   return (
-    <div className={`w-80 bg-slate-900 text-slate-300 h-screen flex flex-col border-r border-white/5 shadow-2xl transition-all duration-300 overflow-hidden ${className}`}>
-      {/* Super Compact Logo Area */}
-      <div className="px-8 py-6 border-b border-white/5 bg-slate-950/20">
-        <Link to="/" onClick={onItemClick} className="flex items-center justify-center group">
-          <div className="bg-white p-2.5 rounded-xl shadow-xl shadow-black/20 group-hover:scale-105 transition-all duration-500">
-            <img
-              src="/logo.webp"
-              alt="Garrage Pro"
-              className="h-10 w-auto object-contain"
-            />
+    <div className={`w-80 flex flex-col transition-all duration-300 overflow-hidden ${className} bg-[#021024] border-r border-white/5 shadow-2xl`}
+    >
+
+      {/* Logo Area */}
+      <div className="px-8 py-7 border-b border-white/5 flex items-center justify-between bg-[#021024]">
+        <Link to="/" onClick={onItemClick} className="flex items-center justify-start group">
+          <div className="bg-white p-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.1)] group-hover:scale-105 transition-all duration-500">
+            <img src="/logo.webp" alt="Garrage" className="h-9 w-auto object-contain" />
           </div>
         </Link>
       </div>
 
-      {/* Main Navigation - High Density */}
-      <nav className="px-5 py-4 space-y-0.5 flex-1">
-        <p className="px-4 text-[7px] font-black text-slate-500 uppercase tracking-[0.3em] mb-3">ESPACE CLIENT</p>
+      {/* Navigation */}
+      <nav className="px-4 py-6 space-y-0.5 flex-1">
+        <p className="px-4 text-[7px] font-black uppercase tracking-[0.35em] mb-4" style={{ color: '#5483B3' }}>Navigation</p>
         {navItems.map((item) => (
           <NavLink
             key={item.label}
@@ -51,20 +49,32 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
             onClick={onItemClick}
             end={item.path === '/dashboard'}
             className={({ isActive }) =>
-              `flex items-center px-4 py-1.5 rounded-xl transition-all duration-300 group relative ${isActive
-                ? 'bg-white/5 text-white shadow-inner border-l-2 border-red-600 rounded-l-none'
-                : 'text-slate-500 hover:text-white hover:bg-white/5'
+              `flex items-center px-4 py-2.5 rounded-xl transition-all duration-300 group relative ${isActive
+                ? 'border-l-2 shadow-[inset_4px_0_20px_rgba(252,163,17,0.08)]'
+                : 'hover:bg-[#FCA311]/5'
               }`
+            }
+            style={({ isActive }) => isActive
+              ? { backgroundColor: 'rgba(252, 163, 17, 0.05)', borderLeftColor: '#FCA311', color: '#ffffff' }
+              : { color: 'rgba(255, 255, 255, 0.4)' }
             }
           >
             {({ isActive }) => (
               <>
-                <div className={`p-1.5 rounded-lg transition-all duration-500 ${isActive ? 'bg-red-700 text-white shadow-[0_0_15px_rgba(185,28,28,0.3)]' : 'bg-slate-800 group-hover:bg-slate-700'}`}>
+                <div
+                  className="p-1.5 rounded-lg transition-all duration-500"
+                  style={isActive
+                    ? { backgroundColor: 'rgba(255, 255, 255, 0.05)', color: '#ffffff' }
+                    : { backgroundColor: 'rgba(255, 255, 255, 0.02)', color: 'rgba(255, 255, 255, 0.3)' }
+                  }
+                >
                   <item.icon size={13} />
                 </div>
-                <span className={`ml-3 font-bold text-[10px] uppercase tracking-wider transition-all duration-300 ${isActive ? 'translate-x-0.5' : 'group-hover:translate-x-0.5'}`}>{item.label}</span>
+                <span className={`ml-3 font-black text-[10px] uppercase tracking-wider transition-all duration-300 ${isActive ? 'translate-x-0.5 text-white' : 'group-hover:translate-x-0.5 group-hover:text-white'}`}>
+                  {item.label}
+                </span>
                 {isActive && (
-                  <div className="ml-auto w-1 h-1 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                  <div className="ml-auto w-1 h-1 bg-[#FCA311] rounded-full shadow-[0_0_10px_rgba(252,163,17,0.8)] animate-pulse" />
                 )}
               </>
             )}
@@ -72,33 +82,41 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
         ))}
       </nav>
 
-      {/* Extreme Compact Support - Single Line */}
-      <div className="px-5 mb-2">
+      {/* Priority Help */}
+      <div className="px-5 mb-3">
         <Link
           to="/dashboard/support"
-          className="w-full py-2.5 bg-gradient-to-r from-slate-800 to-slate-900 hover:from-white/5 hover:to-white/10 text-white rounded-xl transition-all flex items-center justify-center gap-2 border border-white/5 group shadow-lg"
+          className="w-full py-3 rounded-xl transition-all flex items-center justify-center gap-2 border group relative overflow-hidden"
+          style={{ 
+            background: 'linear-gradient(135deg, rgba(252, 163, 17, 0.1) 0%, rgba(252, 163, 17, 0.05) 100%)', 
+            borderColor: 'rgba(252, 163, 17, 0.2)', 
+            color: '#FCA311' 
+          }}
         >
-          <Zap size={10} className="text-amber-500 animate-pulse" />
+          <div className="absolute inset-0 bg-[#FCA311]/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+          <Zap size={11} className="transition-transform group-hover:scale-110" />
           <span className="text-[8px] font-black uppercase tracking-widest">Aide Prioritaire</span>
         </Link>
       </div>
 
-      {/* Bottom Actions - Dense */}
-      <div className="px-5 pb-6 pt-2 border-t border-white/5">
+      {/* Bottom Links */}
+      <div className="px-5 pb-6 pt-3 space-y-0.5" style={{ borderTop: '1px solid rgba(193,232,255,0.1)' }}>
         <Link
           to="/"
           onClick={onItemClick}
-          className="flex items-center px-4 py-2 text-slate-500 hover:text-white rounded-xl transition-all group"
+          className="flex items-center px-4 py-2.5 rounded-xl transition-all group hover:bg-white/5"
+          style={{ color: 'rgba(193,232,255,0.45)' }}
         >
-          <Home size={13} className="mr-3 text-slate-600 group-hover:text-red-500" />
-          <span className="font-bold text-[9px] uppercase tracking-wider">Boutique</span>
+          <Home size={13} className="mr-3 group-hover:text-white transition-colors" style={{ color: '#7DA0CA' }} />
+          <span className="font-black text-[9px] uppercase tracking-wider">Boutique</span>
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center px-4 py-2 text-slate-500 hover:text-red-500 rounded-xl transition-all group"
+          className="w-full flex items-center px-4 py-2.5 rounded-xl transition-all group hover:bg-red-500/10"
+          style={{ color: 'rgba(193,232,255,0.45)' }}
         >
-          <LogOut size={13} className="mr-3 text-slate-600 group-hover:text-red-500" />
-          <span className="font-bold text-[9px] uppercase tracking-wider">Déconnexion</span>
+          <LogOut size={13} className="mr-3 group-hover:text-red-400 transition-colors" style={{ color: '#7DA0CA' }} />
+          <span className="font-black text-[9px] uppercase tracking-wider group-hover:text-red-400 transition-colors">Déconnexion</span>
         </button>
       </div>
     </div>
