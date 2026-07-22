@@ -53,8 +53,14 @@ const drawHeader = (doc, settings, title) => {
     doc.setFontSize(7);
     doc.setTextColor(...grayColor);
     let legalInfo = [];
-    if (settings?.siret) legalInfo.push(`SIRET: ${settings.siret}`);
-    if (settings?.tva) legalInfo.push(`TVA: ${settings.tva}`);
+    if (settings?.siret) {
+        const siretLabel = settings.siret.toUpperCase().includes('HRB') ? 'REGISTRE' : 'SIRET';
+        legalInfo.push(`${siretLabel}: ${settings.siret}`);
+    }
+    if (settings?.tva) {
+        const tvaLabel = settings.tva.toUpperCase().includes('DE') ? 'TVA (USt-IdNr.)' : 'TVA';
+        legalInfo.push(`${tvaLabel}: ${settings.tva}`);
+    }
     if (legalInfo.length > 0) {
         doc.text(legalInfo.join("  |  "), 20, subtitleY + 4);
     }
@@ -135,8 +141,10 @@ const drawFooter = (doc, settings) => {
 
     doc.setFontSize(7);
     doc.setTextColor(...grayColor);
+    const siretLabel = settings?.siret?.toUpperCase().includes('HRB') ? 'REGISTRE' : 'SIRET';
+    const tvaLabel = settings?.tva?.toUpperCase().includes('DE') ? 'TVA (USt-IdNr.)' : 'TVA';
     const footerLines = [
-        `${settings?.companyName} • SIRET: ${settings?.siret || 'N/A'} • TVA: ${settings?.tva || 'N/A'}`,
+        `${settings?.companyName} • ${siretLabel}: ${settings?.siret || 'N/A'} • ${tvaLabel}: ${settings?.tva || 'N/A'}`,
         `${settings?.address || ''}, ${settings?.city || ''}  •  ${settings?.phone || ''}  •  ${settings?.email || ''}`
     ];
     doc.text(footerLines[0], pageWidth / 2, pageHeight - 20, { align: 'center' });

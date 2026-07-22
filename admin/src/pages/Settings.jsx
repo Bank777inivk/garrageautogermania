@@ -600,27 +600,27 @@ const Settings = () => {
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">
-                                                            <label className="text-[9px] md:text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">N° SIRET</label>
+                                                            <label className="text-[9px] md:text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">N° de Registre (HRB) / SIRET</label>
                                                             <div className="flex items-center gap-4 px-4 py-3 bg-white border border-[#E5E5E5] rounded-2xl focus-within:ring-2 focus-within:ring-[#FCA311] transition-all">
                                                                 <Hash size={18} className="text-[#14213D]/20" />
                                                                 <input
                                                                     type="text"
                                                                     value={settings.siret}
                                                                     onChange={(e) => setSettings({ ...settings, siret: e.target.value })}
-                                                                    placeholder="123 456 789 00012"
+                                                                    placeholder="HRB 13667 (ou SIRET)"
                                                                     className="flex-1 bg-transparent border-none p-0 text-sm font-bold text-[#14213D]"
                                                                 />
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">
-                                                            <label className="text-[9px] md:text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">TVA Intracommunautaire</label>
+                                                            <label className="text-[9px] md:text-[10px] font-black text-[#14213D]/40 uppercase tracking-widest ml-1">TVA Intracommunautaire (USt-IdNr.)</label>
                                                             <div className="flex items-center gap-4 px-4 py-3 bg-white border border-[#E5E5E5] rounded-2xl focus-within:ring-2 focus-within:ring-[#FCA311] transition-all">
                                                                 <Globe size={18} className="text-[#14213D]/20" />
                                                                 <input
                                                                     type="text"
                                                                     value={settings.tva}
                                                                     onChange={(e) => setSettings({ ...settings, tva: e.target.value })}
-                                                                    placeholder="FR 12 345678901"
+                                                                    placeholder="DE 12 345678901 (ou FR...)"
                                                                     className="flex-1 bg-transparent border-none p-0 text-sm font-bold text-[#14213D]"
                                                                 />
                                                             </div>

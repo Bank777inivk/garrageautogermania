@@ -101,7 +101,10 @@ const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false
                 <p>Document Officiel et Certifié</p>
                 {(settings.siret || settings.tva) && (
                     <p className="text-[#FCA311]">
-                        {[settings.siret && `SIRET: ${settings.siret}`, settings.tva && `TVA: ${settings.tva}`].filter(Boolean).join("  |  ")}
+                        {[
+                            settings.siret && `${settings.siret.toUpperCase().includes('HRB') ? 'REGISTRE' : 'SIRET'}: ${settings.siret}`, 
+                            settings.tva && `${settings.tva.toUpperCase().includes('DE') ? 'TVA (USt-IdNr.)' : 'TVA'}: ${settings.tva}`
+                        ].filter(Boolean).join("  |  ")}
                     </p>
                 )}
             </div>

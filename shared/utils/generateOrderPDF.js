@@ -240,8 +240,10 @@ export const generateOrderPDF = async (order, settings = null) => {
   // Footer
   doc.setFontSize(8);
   doc.setTextColor(...grayColor);
-  doc.text(`${companyName} - SIRET : ${siret}`, pageWidth / 2, 280, { align: "center" });
-  doc.text(`TVA Intracommunautaire : ${tva}`, pageWidth / 2, 285, { align: "center" });
+  const siretLabel = siret.toUpperCase().includes('HRB') ? 'REGISTRE' : 'SIRET';
+  const tvaLabel = tva.toUpperCase().includes('DE') ? 'TVA (USt-IdNr.)' : 'TVA Intracommunautaire';
+  doc.text(`${companyName} - ${siretLabel} : ${siret}`, pageWidth / 2, 280, { align: "center" });
+  doc.text(`${tvaLabel} : ${tva}`, pageWidth / 2, 285, { align: "center" });
 
   // Save
   doc.save(`Bon_Commande_${order.orderNumber}.pdf`);
