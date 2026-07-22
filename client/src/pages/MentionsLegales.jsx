@@ -115,7 +115,7 @@ const MentionsLegales = () => {
           <section className="space-y-3 text-xs leading-relaxed text-slate-500">
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-900">5. Hébergement du site</h3>
             <p>
-              Ce site internet est hébergé par Firebase (Google Cloud Platform), fourni par Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, États-Unis.
+              Ce site internet est hébergé par Hostinger, dont le siège social est situé Hostinger International Ltd., 61 Lordou Vironos Street, 6023 Larnaca, Chypre (accessible via https://www.hostinger.fr).
             </p>
           </section>
 
