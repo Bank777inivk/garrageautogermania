@@ -26,6 +26,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import PublicTracking from './pages/PublicTracking';
 import Favorites from './pages/dashboard/Favorites';
+import MentionsLegales from './pages/MentionsLegales';
+import Confidentialite from './pages/Confidentialite';
 import './i18n';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -68,6 +70,8 @@ function App() {
           <Route path="a-propos" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="suivi-livraison" element={<PublicTracking />} />
+          <Route path="mentions-legales" element={<MentionsLegales />} />
+          <Route path="confidentialite" element={<Confidentialite />} />
         </Route>
 
         {/* Dashboard Client Routes */}
