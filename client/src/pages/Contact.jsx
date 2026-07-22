@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 
 const Contact = () => {
+  const { settings, fetchSettings } = useClientVehicleStore();
+
+  useEffect(() => {
+    if (!settings) {
+      fetchSettings();
+    }
+  }, [settings, fetchSettings]);
   return (
     <div className="bg-white min-h-screen py-12 md:py-24">
       <div className="container mx-auto px-4 sm:px-6">
@@ -20,10 +28,16 @@ const Contact = () => {
                   <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-amber-600">
                     <Phone size={20} />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Téléphone</p>
-                    <p className="text-slate-900 font-bold text-base md:text-lg">+49 178 123 4567</p>
-                    <p className="text-gray-500 text-xs mt-1 font-medium italic">Lun - Sam : 9h - 19h</p>
+                    {settings ? (
+                      <>
+                        <p className="text-slate-900 font-bold text-base md:text-lg animate-fade-in text-left">{settings.phone}</p>
+                        <p className="text-gray-500 text-xs mt-1 font-medium italic text-left">Lun - Sam : 9h - 19h</p>
+                      </>
+                    ) : (
+                      <div className="h-5 bg-gray-200 animate-pulse rounded w-36 mt-1"></div>
+                    )}
                   </div>
                 </div>
 
@@ -31,9 +45,13 @@ const Contact = () => {
                   <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-amber-600">
                     <Mail size={20} />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Email</p>
-                    <p className="text-slate-900 font-bold text-base md:text-lg">contact@auto-import-pro.com</p>
+                    {settings ? (
+                      <p className="text-slate-900 font-bold text-base md:text-lg animate-fade-in text-left">{settings.email}</p>
+                    ) : (
+                      <div className="h-5 bg-gray-200 animate-pulse rounded w-48 mt-1"></div>
+                    )}
                   </div>
                 </div>
 
@@ -41,10 +59,27 @@ const Contact = () => {
                   <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mr-4 text-amber-600">
                     <MapPin size={20} />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Adresse</p>
-                    <p className="text-slate-900 font-bold text-base md:text-lg">123 Avenue de l'Automobile</p>
-                    <p className="text-gray-500 text-xs mt-1 font-medium uppercase tracking-tighter">75008 Paris, France</p>
+                    {settings ? (
+                      settings.address ? (
+                        <p className="text-slate-900 font-bold text-base md:text-lg animate-fade-in text-left whitespace-pre-line">
+                          {settings.address}
+                        </p>
+                      ) : (
+                        <>
+                          <p className="text-slate-900 font-bold text-base md:text-lg animate-fade-in text-left">{settings.addressDetails?.street}</p>
+                          <p className="text-gray-500 text-xs mt-1 font-medium uppercase tracking-tighter animate-fade-in text-left">
+                            {settings.addressDetails?.zip || ''} {settings.addressDetails?.city || ''}, {settings.addressDetails?.country || ''}
+                          </p>
+                        </>
+                      )
+                    ) : (
+                      <div className="space-y-2 mt-1">
+                        <div className="h-5 bg-gray-200 animate-pulse rounded w-48"></div>
+                        <div className="h-4 bg-gray-200 animate-pulse rounded w-32"></div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

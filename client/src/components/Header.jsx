@@ -6,6 +6,7 @@ import LanguageSelector from './LanguageSelector';
 import { useTranslation } from 'react-i18next';
 import useCartStore from '@shared/store/useCartStore';
 import useAuthStore from '@shared/store/useAuthStore';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 import CartDrawer from './CartDrawer';
 import ScrollingTicker from './ScrollingTicker';
 
@@ -16,6 +17,13 @@ const Header = () => {
   const { t } = useTranslation();
   const { getTotalItems, getTotalPrice, toggleCart } = useCartStore();
   const { user } = useAuthStore();
+  const { settings, fetchSettings } = useClientVehicleStore();
+
+  useEffect(() => {
+    if (!settings) {
+      fetchSettings();
+    }
+  }, [settings, fetchSettings]);
 
   // Handle scroll effect for shadow/height
   useEffect(() => {
@@ -57,10 +65,14 @@ const Header = () => {
 
           {/* Left Side: Contact Info */}
           <div className="flex items-center space-x-6 shrink-0">
-            <a href="tel:+491781234567" className="flex items-center hover:text-white transition-colors">
-              <Phone size={14} className="mr-2 text-amber-500" />
-              <span className="font-medium tracking-wide">+49 178 123 4567</span>
-            </a>
+            {settings ? (
+              <a href={`tel:${settings.phone ? settings.phone.replace(/\s+/g, '') : ''}`} className="flex items-center hover:text-white transition-colors animate-fade-in">
+                <Phone size={14} className="mr-2 text-amber-500" />
+                <span className="font-medium tracking-wide">{settings.phone}</span>
+              </a>
+            ) : (
+              <div className="w-28 h-3.5 bg-slate-800 animate-pulse rounded"></div>
+            )}
             <span className="flex items-center">
               <Clock size={14} className="mr-2 text-amber-500" />
               <span>Lun - Sam : 9h - 19h</span>

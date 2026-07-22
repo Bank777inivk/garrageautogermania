@@ -14,7 +14,7 @@ import { toast } from 'react-hot-toast';
 import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
 
 const VehicleCard = ({ vehicle, layout = 'grid' }) => {
-    const { t } = useTranslation();
+    useTranslation();
     const { addToCart, items: cartItems } = useCartStore();
     const { toggleFavorite, favorites } = useFavoriteStore();
     const { user } = useAuthStore();
@@ -117,7 +117,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
         } else { setShowSharePopup(!showSharePopup); }
     };
 
-    const InlineLoginPopup = () => (
+    const renderInlineLoginPopup = () => (
         <div className="absolute right-0 top-full mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-500 pointer-events-auto w-[280px]">
             <div className="bg-white border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-2xl p-5 relative overflow-hidden group/popup text-left">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-red-50/50 rounded-full blur-3xl -mr-16 -mt-16 transition-transform group-hover/popup:scale-125 duration-700" />
@@ -143,7 +143,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
         </div>
     );
 
-    const FavoriteFeedbackPopup = () => (
+    const renderFavoriteFeedbackPopup = () => (
         <div className="absolute right-0 top-full mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-500 pointer-events-none w-[220px]">
             <div className="bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.3)] rounded-2xl p-3 relative overflow-hidden text-left">
                 <div className="flex items-center gap-3 relative z-10">
@@ -160,7 +160,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
         </div>
     );
 
-    const SharePopup = () => {
+    const renderSharePopup = () => {
         const shareUrl = `${window.location.origin}/vehicule/${vehicle.id}`;
         const shareText = `Découvrez cette ${vehicle.brand} ${vehicle.model} sur GARRAGE PRO GERMANIA`;
         const copyToClipboard = async (e) => { e.preventDefault(); e.stopPropagation(); try { await navigator.clipboard.writeText(shareUrl); toast.success("Lien copié !"); setShowSharePopup(false); } catch (err) { console.error("Failed to copy:", err); } };
@@ -190,7 +190,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
             </div>
         );
     };
-    const StatusPopup = () => {
+    const renderStatusPopup = () => {
         const isUserReserved = pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold';
         return (
             <div className={`absolute right-0 -bottom-2 translate-y-full z-40 animate-in fade-in slide-in-from-top-3 duration-500 pointer-events-auto w-[280px]`}>
@@ -219,7 +219,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
         );
     };
 
-    const CartSuccessPopup = ({ isDuplicate }) => (
+    const renderCartSuccessPopup = (isDuplicate) => (
         <div className={`absolute right-0 -bottom-2 translate-y-full z-40 animate-in fade-in slide-in-from-top-3 duration-500 pointer-events-auto w-[240px]`}>
             <div className="bg-slate-900 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl p-3 relative overflow-hidden text-left">
                 <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-600/20 rounded-full blur-2xl -mr-10 -mt-10" />
@@ -269,12 +269,12 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                     <div className="absolute top-2 right-2 z-40 flex flex-row-reverse sm:flex-col gap-2">
                         <div className="relative">
                             <button onClick={handleToggleFavorite} className={`p-2 rounded-full backdrop-blur-md shadow-lg transition-all border ${isFavorite ? 'bg-red-600 text-white border-red-500' : 'bg-white/80 text-slate-900 border-white/50 hover:bg-white'}`}><Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} /></button>
-                            {showPopup && <InlineLoginPopup />}
-                            {showFavoriteFeedback && <FavoriteFeedbackPopup />}
+                            {showPopup && renderInlineLoginPopup()}
+                            {showFavoriteFeedback && renderFavoriteFeedbackPopup()}
                         </div>
                         <div className="relative">
                             <button onClick={handleShare} className="p-2 bg-white/80 backdrop-blur-md text-slate-900 rounded-full shadow-lg border border-white/50 hover:bg-white transition-all"><Share2 size={16} /></button>
-                            {showSharePopup && <SharePopup />}
+                            {showSharePopup && renderSharePopup()}
                         </div>
                     </div>
 
@@ -361,8 +361,8 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                             >
                                 <ShoppingCart size={14} />
                             </button>
-                            {showStatusPopup && <StatusPopup />}
-                            {showCartPopup && <CartSuccessPopup isDuplicate={cartItems.some(item => item.id === vehicle.id)} />}
+                            {showStatusPopup && renderStatusPopup()}
+                            {showCartPopup && renderCartSuccessPopup(cartItems.some(item => item.id === vehicle.id))}
                         </div>
                     </div>
                 </div>
@@ -410,12 +410,12 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                 <div className="absolute top-4 right-4 z-40 flex flex-row-reverse sm:flex-col gap-2">
                     <div className="relative">
                         <button onClick={handleToggleFavorite} className={`p-2.5 rounded-full backdrop-blur-md shadow-lg transition-all border ${isFavorite ? 'bg-red-600 text-white border-red-500' : 'bg-white/80 text-slate-900 border-white/50 hover:bg-white'}`}><Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} /></button>
-                        {showPopup && <InlineLoginPopup />}
-                        {showFavoriteFeedback && <FavoriteFeedbackPopup />}
+                        {showPopup && renderInlineLoginPopup()}
+                        {showFavoriteFeedback && renderFavoriteFeedbackPopup()}
                     </div>
                     <div className="relative">
                         <button onClick={handleShare} className="p-2.5 bg-white/80 backdrop-blur-md text-slate-900 rounded-full shadow-lg border border-white/50 hover:bg-white transition-all"><Share2 size={18} /></button>
-                        {showSharePopup && <SharePopup />}
+                        {showSharePopup && renderSharePopup()}
                     </div>
                 </div>
 
@@ -469,8 +469,8 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                         >
                             <ShoppingCart size={16} />
                         </button>
-                        {showStatusPopup && <StatusPopup />}
-                        {showCartPopup && <CartSuccessPopup isDuplicate={cartItems.some(item => item.id === vehicle.id)} />}
+                        {showStatusPopup && renderStatusPopup()}
+                        {showCartPopup && renderCartSuccessPopup(cartItems.some(item => item.id === vehicle.id))}
                     </div>
                 </div>
             </div>

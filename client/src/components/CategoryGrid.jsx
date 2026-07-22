@@ -57,8 +57,6 @@ const categories = [
   { name: 'Volvo', image: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?q=80&w=1000&auto=format&fit=crop', slug: 'Volvo' }
 ];
 
-export { categories }; // Export pour réutilisation
-
 const CategoryGrid = () => {
   const { t } = useTranslation();
 

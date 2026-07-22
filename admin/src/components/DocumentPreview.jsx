@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
 import { FileText, FileCheck, Eye, Zap } from 'lucide-react';
 
-const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false }) => {
+const dummyOrder = {
+    orderNumber: '5420',
+    createdAt: { seconds: Date.now() / 1000 },
+    subtotal: 13616,
+    discountPercent: 15,
+    discountAmount: 2042,
+    shipping: 0,
+    total: 11574,
+    paymentOption: 'deposit',
+    amountToPayNow: 3472,
+    customer: {
+        firstName: 'Jean',
+        lastName: 'Dupont',
+        email: 'jean.dupont@email.com',
+        address: '12 rue de la Paix',
+        zipCode: '75002',
+        city: 'Paris',
+        country: 'France',
+        phone: '+33 6 12 34 56 78'
+    },
+    items: [
+        {
+            brand: 'Nissan',
+            model: 'Quisquai',
+            id: 'JIY95XZC',
+            price: 13616,
+            discount: 15,
+            image: 'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&q=80&w=300'
+        }
+    ]
+};
 
-    const dummyOrder = {
-        orderNumber: '5420',
-        createdAt: { seconds: Date.now() / 1000 },
-        subtotal: 13616,
-        discountPercent: 15,
-        discountAmount: 2042,
-        shipping: 0,
-        total: 11574,
-        paymentOption: 'deposit',
-        amountToPayNow: 3472,
-        customer: {
-            firstName: 'Jean',
-            lastName: 'Dupont',
-            email: 'jean.dupont@email.com',
-            address: '12 rue de la Paix',
-            zipCode: '75002',
-            city: 'Paris',
-            country: 'France',
-            phone: '+33 6 12 34 56 78'
-        },
-        items: [
-            {
-                brand: 'Nissan',
-                model: 'Quisquai',
-                id: 'JIY95XZC',
-                price: 13616,
-                discount: 15,
-                image: 'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&q=80&w=300'
-            }
-        ]
-    };
+const DocumentPreview = ({ settings, docType, setDocType, fullScreenMode = false }) => {
 
     const isContract = docType === 'contract';
     const isReceipt = docType === 'receipt';

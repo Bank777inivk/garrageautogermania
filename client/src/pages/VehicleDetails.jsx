@@ -15,8 +15,7 @@ import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
 
 const VehicleDetails = () => {
   const { id } = useParams();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+  useTranslation();
   const { currentVehicle, loading, error, fetchVehicleById, pendingVehicleIds, settings, fetchSettings } = useClientVehicleStore();
   const { addToCart, items: cartItems } = useCartStore();
   const { toggleFavorite, favorites } = useFavoriteStore();
@@ -127,7 +126,7 @@ const VehicleDetails = () => {
   };
 
   // Sub-components for popups
-  const InlineLoginPopup = () => (
+  const renderInlineLoginPopup = () => (
     <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 animate-in fade-in slide-in-from-top-2 duration-500 w-[300px]">
       <div className="bg-white border border-slate-200 shadow-xl rounded-3xl p-6 relative overflow-hidden text-left">
         <div className="flex items-start gap-4 relative z-10">
@@ -152,7 +151,7 @@ const VehicleDetails = () => {
     </div>
   );
 
-  const FavoriteFeedbackPopup = () => (
+  const renderFavoriteFeedbackPopup = () => (
     <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 animate-in fade-in slide-in-from-top-4 duration-500 pointer-events-none w-[200px]">
       <div className="bg-slate-900 border border-white/10 shadow-xl rounded-2xl p-4 flex items-center gap-3">
         <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg">
@@ -166,7 +165,7 @@ const VehicleDetails = () => {
     </div>
   );
 
-  const StatusPopup = () => {
+  const renderStatusPopup = () => {
     const isUserReserved = pendingVehicleIds.includes(vehicle.id) && vehicle.status !== 'sold';
     return (
       <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-4 z-50 animate-in fade-in slide-in-from-bottom-2 duration-500 w-[300px]">
@@ -195,7 +194,7 @@ const VehicleDetails = () => {
     );
   };
 
-  const CartSuccessPopup = ({ isDuplicate }) => (
+  const renderCartSuccessPopup = (isDuplicate) => (
     <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-4 z-50 animate-in fade-in slide-in-from-bottom-2 duration-500 w-[240px]">
       <div className="bg-slate-900 border border-white/10 shadow-2xl rounded-2xl p-3 relative overflow-hidden text-left">
         <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-600/20 rounded-full blur-2xl -mr-10 -mt-10" />
@@ -217,7 +216,7 @@ const VehicleDetails = () => {
     </div>
   );
 
-  const SharePopup = () => {
+  const renderSharePopup = () => {
     const shareUrl = window.location.href;
     const copyToClipboard = async () => { try { await navigator.clipboard.writeText(shareUrl); toast.success("Lien copié !"); setShowSharePopup(false); } catch { } };
     return (
@@ -367,14 +366,14 @@ const VehicleDetails = () => {
                   <button onClick={handleToggleFavorite} className={`p-3 rounded-2xl shadow-xl transition-all border ${isFavorite ? 'bg-red-600 text-white border-red-500' : 'bg-white text-slate-900 border-slate-100 hover:bg-slate-50'}`}>
                     <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
                   </button>
-                  {showLoginPopup && <InlineLoginPopup />}
-                  {showFavoriteFeedback && <FavoriteFeedbackPopup />}
+                  {showLoginPopup && renderInlineLoginPopup()}
+                  {showFavoriteFeedback && renderFavoriteFeedbackPopup()}
                 </div>
                 <div className="relative">
                   <button onClick={handleShare} className="p-3 bg-white text-slate-900 rounded-2xl shadow-xl border border-slate-100 hover:bg-slate-50 transition-all">
                     <Share2 size={18} />
                   </button>
-                  {showSharePopup && <SharePopup />}
+                  {showSharePopup && renderSharePopup()}
                 </div>
               </div>
 
@@ -545,44 +544,52 @@ const VehicleDetails = () => {
                     >
                       {pendingVehicleIds.includes(vehicle.id) ? 'Déjà réservé' : 'Commander'}
                     </button>
-                    {showStatusPopup && <StatusPopup />}
-                    {showCartPopup && <CartSuccessPopup isDuplicate={cartItems.some(item => item.id === vehicle.id)} />}
+                    {showStatusPopup && renderStatusPopup()}
+                    {showCartPopup && renderCartSuccessPopup(cartItems.some(item => item.id === vehicle.id))}
                   </div>
 
-                {/* Appeler — bloqué si vendu/réservé */}
-                {vehicle.status === 'available' ? (
-                  <a href="tel:+491781234567" className="w-full py-4 bg-amber-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95">
-                    <Phone size={16} /> Appeler
-                  </a>
-                ) : (
-                  <button onClick={() => setShowStatusPopup(true)} className="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
-                    <Phone size={16} /> Appeler
-                  </button>
-                )}
+                  {/* Appeler — bloqué si vendu/réservé */}
+                 {vehicle.status === 'available' ? (
+                   settings ? (
+                     <a href={`tel:${settings.phone ? settings.phone.replace(/\s+/g, '') : ''}`} className="w-full py-4 bg-amber-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 animate-fade-in animate-in fade-in duration-500">
+                       <Phone size={16} /> Appeler
+                     </a>
+                   ) : (
+                     <div className="w-full h-[52px] bg-amber-600/50 animate-pulse rounded-2xl"></div>
+                   )
+                 ) : (
+                   <button onClick={() => setShowStatusPopup(true)} className="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
+                     <Phone size={16} /> Appeler
+                   </button>
+                 )}
 
-                {/* WhatsApp — bloqué si vendu/réservé */}
-                {vehicle.status === 'available' ? (
-                  <a
-                    href={`https://wa.me/491781234567?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par le véhicule ${vehicle.brand} ${vehicle.model} (${vehicle.year}) — Réf. #${vehicle._id?.slice(-6) || ''}. Pouvez-vous me donner plus d'informations ?`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-4 bg-[#25D366] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#1ebe5d] transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-                      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.857L.057 23.57a.75.75 0 0 0 .928.928l5.713-1.475A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.513-5.223-1.404l-.374-.218-3.892 1.003 1.003-3.892-.218-.374A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
-                    </svg>
-                    WhatsApp
-                  </a>
-                ) : (
-                  <button onClick={() => setShowStatusPopup(true)} className="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-                      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.857L.057 23.57a.75.75 0 0 0 .928.928l5.713-1.475A11.94 11.94 0 0 0 12 24c6-5.373 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.513-5.223-1.404l-.374-.218-3.892 1.003 1.003-3.892-.218-.374A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
-                    </svg>
-                    WhatsApp
-                  </button>
-                )}
+                 {/* WhatsApp — bloqué si vendu/réservé */}
+                 {vehicle.status === 'available' ? (
+                   settings ? (
+                     <a
+                       href={`https://wa.me/${settings.phone ? settings.phone.replace(/\D/g, '') : ''}?text=${encodeURIComponent(`Bonjour, je suis intéressé(e) par le véhicule ${vehicle.brand} ${vehicle.model} (${vehicle.year}) — Réf. #${vehicle._id?.slice(-6) || ''}. Pouvez-vous me donner plus d'informations ?`)}`}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className="w-full py-4 bg-[#25D366] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#1ebe5d] transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 animate-fade-in animate-in fade-in duration-500"
+                     >
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                         <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.857L.057 23.57a.75.75 0 0 0 .928.928l5.713-1.475A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.513-5.223-1.404l-.374-.218-3.892 1.003 1.003-3.892-.218-.374A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
+                       </svg>
+                       WhatsApp
+                     </a>
+                   ) : (
+                     <div className="w-full h-[52px] bg-[#25D366]/50 animate-pulse rounded-2xl"></div>
+                   )
+                 ) : (
+                   <button onClick={() => setShowStatusPopup(true)} className="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                       <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.857L.057 23.57a.75.75 0 0 0 .928.928l5.713-1.475A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.513-5.223-1.404l-.374-.218-3.892 1.003 1.003-3.892-.218-.374A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
+                     </svg>
+                     WhatsApp
+                   </button>
+                 )}
               </div>
 
               <div className="mt-6 pt-6 border-t border-slate-100 space-y-2">

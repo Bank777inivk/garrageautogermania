@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const appRoot = resolve(__dirname, app);
 
   // Load env file based on `mode` in the app directory.
-  const env = loadEnv(mode, appRoot, '');
+  loadEnv(mode, appRoot, '');
 
   return {
     root: appRoot, // Set root to client/ or admin/ folder

@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Phone, Mail, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 
 const Footer = () => {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+  const { settings, fetchSettings } = useClientVehicleStore();
+
+  useEffect(() => {
+    if (!settings) {
+      fetchSettings();
+    }
+  }, [settings, fetchSettings]);
+
   const [openSections, setOpenSections] = useState({
     links: false,
     brands: false
@@ -89,20 +98,38 @@ const Footer = () => {
           <div className="col-span-2 lg:col-span-1 flex flex-col items-center sm:items-start pt-8 lg:pt-0">
             <h4 className="text-[10px] font-black mb-6 font-montserrat uppercase tracking-[0.2em] text-white/90">{t('nav.contact', 'Contact')}</h4>
             <ul className="space-y-4 text-[12px] text-gray-400 font-medium">
-              <li className="flex items-start justify-center sm:justify-start">
+              <li className="flex items-start justify-center sm:justify-start min-h-[40px]">
                 <MapPin size={16} className="mr-3 text-amber-600 flex-shrink-0 mt-0.5" />
-                <span className="leading-relaxed">
-                  123 Avenue des Champs-Élysées<br />
-                  75008 Paris, France
-                </span>
+                {settings ? (
+                  <span className="leading-relaxed animate-fade-in text-left whitespace-pre-line">
+                    {settings.address || `${settings.addressDetails?.street || ''}\n${settings.addressDetails?.zip || ''} ${settings.addressDetails?.city || ''}, ${settings.addressDetails?.country || ''}`}
+                  </span>
+                ) : (
+                  <div className="space-y-2 py-1 w-44">
+                    <div className="h-3 bg-slate-800 animate-pulse rounded w-full"></div>
+                    <div className="h-3 bg-slate-800 animate-pulse rounded w-3/4"></div>
+                  </div>
+                )}
               </li>
-              <li className="flex items-center justify-center sm:justify-start">
+              <li className="flex items-center justify-center sm:justify-start h-6">
                 <Phone size={16} className="mr-3 text-amber-600 flex-shrink-0" />
-                <a href="tel:+33123456789" className="hover:text-white transition-colors">+33 1 23 45 67 89</a>
+                {settings ? (
+                  <a href={`tel:${settings.phone ? settings.phone.replace(/\s+/g, '') : ''}`} className="hover:text-white transition-colors animate-fade-in">
+                    {settings.phone}
+                  </a>
+                ) : (
+                  <div className="h-3 bg-slate-800 animate-pulse rounded w-28"></div>
+                )}
               </li>
-              <li className="flex items-center justify-center sm:justify-start">
+              <li className="flex items-center justify-center sm:justify-start h-6">
                 <Mail size={16} className="mr-3 text-amber-600 flex-shrink-0" />
-                <a href="mailto:contact@garragepro.com" className="hover:text-white transition-colors text-[11px] sm:text-[12px]">contact@garragepro.com</a>
+                {settings ? (
+                  <a href={`mailto:${settings.email || ''}`} className="hover:text-white transition-colors text-[11px] sm:text-[12px] animate-fade-in">
+                    {settings.email}
+                  </a>
+                ) : (
+                  <div className="h-3 bg-slate-800 animate-pulse rounded w-36"></div>
+                )}
               </li>
             </ul>
           </div>
