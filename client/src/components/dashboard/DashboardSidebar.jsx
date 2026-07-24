@@ -31,17 +31,17 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
     >
 
       {/* Logo Area */}
-      <div className="px-8 py-7 border-b border-white/5 flex items-center justify-between bg-[#021024]">
+      <div className="px-8 py-3.5 md:py-7 border-b border-white/5 flex items-center justify-between bg-[#021024]">
         <Link to="/" onClick={onItemClick} className="flex items-center justify-start group">
-          <div className="bg-white p-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.1)] group-hover:scale-105 transition-all duration-500">
-            <img src="/logo.webp" alt="Garrage" className="h-9 w-auto object-contain" />
+          <div className="bg-white p-2 md:p-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.1)] group-hover:scale-105 transition-all duration-500">
+            <img src="/logo.webp" alt="Garrage" className="h-7 md:h-9 w-auto object-contain" />
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="px-4 py-6 space-y-0.5 flex-1">
-        <p className="px-4 text-[7px] font-black uppercase tracking-[0.35em] mb-4" style={{ color: '#5483B3' }}>Navigation</p>
+      <nav className="px-4 py-3 md:py-6 space-y-0.5 flex-1 overflow-y-auto">
+        <p className="px-4 text-[7px] font-black uppercase tracking-[0.35em] mb-2 md:mb-4" style={{ color: '#5483B3' }}>Navigation</p>
         {navItems.map((item) => (
           <NavLink
             key={item.label}
@@ -49,28 +49,28 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
             onClick={onItemClick}
             end={item.path === '/dashboard'}
             className={({ isActive }) =>
-              `flex items-center px-4 py-2.5 rounded-xl transition-all duration-300 group relative ${isActive
+              `flex items-center px-4 py-1.5 md:py-2.5 rounded-xl transition-all duration-300 group relative ${isActive
                 ? 'border-l-2 shadow-[inset_4px_0_20px_rgba(252,163,17,0.08)]'
                 : 'hover:bg-[#FCA311]/5'
               }`
             }
             style={({ isActive }) => isActive
-              ? { backgroundColor: 'rgba(252, 163, 17, 0.05)', borderLeftColor: '#FCA311', color: '#ffffff' }
+              ? { backgroundColor: 'rgba(252, 16, 17, 0.05)', borderLeftColor: '#FCA311', color: '#ffffff' }
               : { color: 'rgba(255, 255, 255, 0.4)' }
             }
           >
             {({ isActive }) => (
               <>
                 <div
-                  className="p-1.5 rounded-lg transition-all duration-500"
+                  className="p-1 md:p-1.5 rounded-lg transition-all duration-500"
                   style={isActive
                     ? { backgroundColor: 'rgba(255, 255, 255, 0.05)', color: '#ffffff' }
                     : { backgroundColor: 'rgba(255, 255, 255, 0.02)', color: 'rgba(255, 255, 255, 0.3)' }
                   }
                 >
-                  <item.icon size={13} />
+                  <item.icon size={12} />
                 </div>
-                <span className={`ml-3 font-black text-[10px] uppercase tracking-wider transition-all duration-300 ${isActive ? 'translate-x-0.5 text-white' : 'group-hover:translate-x-0.5 group-hover:text-white'}`}>
+                <span className={`ml-2.5 md:ml-3 font-black text-[9px] md:text-[10px] uppercase tracking-wider transition-all duration-300 ${isActive ? 'translate-x-0.5 text-white' : 'group-hover:translate-x-0.5 group-hover:text-white'}`}>
                   {item.label}
                 </span>
                 {isActive && (
@@ -83,10 +83,10 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
       </nav>
 
       {/* Priority Help */}
-      <div className="px-5 mb-3">
+      <div className="px-5 mb-2.5 md:mb-3">
         <Link
           to="/dashboard/support"
-          className="w-full py-3 rounded-xl transition-all flex items-center justify-center gap-2 border group relative overflow-hidden"
+          className="w-full py-2.5 md:py-3 rounded-xl transition-all flex items-center justify-center gap-2 border group relative overflow-hidden"
           style={{ 
             background: 'linear-gradient(135deg, rgba(252, 163, 17, 0.1) 0%, rgba(252, 163, 17, 0.05) 100%)', 
             borderColor: 'rgba(252, 163, 17, 0.2)', 
@@ -100,11 +100,11 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
       </div>
 
       {/* Bottom Links */}
-      <div className="px-5 pb-6 pt-3 space-y-0.5" style={{ borderTop: '1px solid rgba(193,232,255,0.1)' }}>
+      <div className="px-5 pb-3.5 pt-2 md:pb-6 md:pt-3 space-y-0.5" style={{ borderTop: '1px solid rgba(193,232,255,0.1)' }}>
         <Link
           to="/"
           onClick={onItemClick}
-          className="flex items-center px-4 py-2.5 rounded-xl transition-all group hover:bg-white/5"
+          className="flex items-center px-4 py-1.5 md:py-2.5 rounded-xl transition-all group hover:bg-white/5"
           style={{ color: 'rgba(193,232,255,0.45)' }}
         >
           <Home size={13} className="mr-3 group-hover:text-white transition-colors" style={{ color: '#7DA0CA' }} />
@@ -112,7 +112,7 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center px-4 py-2.5 rounded-xl transition-all group hover:bg-red-500/10"
+          className="w-full flex items-center px-4 py-1.5 md:py-2.5 rounded-xl transition-all group hover:bg-red-500/10"
           style={{ color: 'rgba(193,232,255,0.45)' }}
         >
           <LogOut size={13} className="mr-3 group-hover:text-red-400 transition-colors" style={{ color: '#7DA0CA' }} />
