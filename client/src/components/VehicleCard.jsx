@@ -245,7 +245,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
         return (
             <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 flex flex-col sm:flex-row group/card min-h-[140px] sm:min-h-[280px] relative overflow-visible">
                 {/* Fixed Image Container (No overflow-hidden on the outer column to allow popups) */}
-                <div className="relative w-full sm:w-[240px] md:w-[320px] lg:w-[380px] aspect-video sm:aspect-square md:aspect-video flex-shrink-0 z-20">
+                <div className="relative w-full sm:w-[240px] md:w-[320px] lg:w-[380px] h-[280px] sm:h-auto sm:aspect-square md:aspect-video flex-shrink-0 z-20">
                     {/* Inner Image (Clipped for zoom effects) */}
                     <div className="absolute inset-0 overflow-hidden rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none bg-slate-100">
                         <Link to={`/vehicule/${vehicle.id}`} className="block w-full h-full relative">
@@ -374,7 +374,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
     return (
         <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 flex flex-col group/card hover:-translate-y-1 h-full relative overflow-visible">
             {/* Image Area Column/Section */}
-            <div className="relative h-64 shrink-0 z-20">
+            <div className="relative h-[280px] sm:h-64 shrink-0 z-20">
                 {/* Inner Image (Clipped) */}
                 <div className="absolute inset-0 overflow-hidden rounded-t-2xl bg-slate-100">
                     <Link to={`/vehicule/${vehicle.id}`} className="block w-full h-full relative">
