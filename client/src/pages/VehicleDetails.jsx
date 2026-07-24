@@ -328,7 +328,7 @@ const VehicleDetails = () => {
           <div className="space-y-6">
 
             {/* MAIN IMAGE WITH MAGNIFIER (Reduced sized) */}
-            <div className="relative bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100 aspect-[4/3] cursor-crosshair">
+            <div className="relative bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-100 aspect-[4/3] cursor-zoom-in">
 
               {/* PROMO badge overlay */}
               {vehicle.discount > 0 && (
@@ -341,6 +341,7 @@ const VehicleDetails = () => {
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setIsZooming(true)}
                 onMouseLeave={() => setIsZooming(false)}
+                onClick={() => setShowLightbox(true)}
                 ref={imageRef}
               >
                 <img
