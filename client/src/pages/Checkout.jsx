@@ -277,7 +277,7 @@ const Checkout = () => {
           {/* Left Column: Billing Details */}
           <div className="lg:col-span-2 space-y-10">
             <div className="bg-white p-6 sm:p-10 rounded-3xl shadow-xl shadow-gray-100 border border-gray-100">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-10">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-4 mb-10 gap-3">
                 <h2 className="text-[12px] font-bold font-montserrat text-slate-900 uppercase tracking-[0.1em] flex items-center">
                   <User className="mr-3 text-amber-600 flex-shrink-0" size={16} />
                   {t('checkout.billingDetails', 'Informations de Facturation')}
