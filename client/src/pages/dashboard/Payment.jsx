@@ -17,6 +17,23 @@ const Payment = () => {
   const [isSwitchingMode, setIsSwitchingMode] = useState(false);
   const [settings, setSettings] = useState(null);
   
+  const [generatingDoc, setGeneratingDoc] = useState(null);
+
+  const handleDownload = async (docType, pdfFunc) => {
+    if (generatingDoc) return;
+    setGeneratingDoc(docType);
+    const toastId = toast.loading("Génération du PDF en cours...");
+    try {
+      await pdfFunc(order, settings);
+      toast.success("Document téléchargé avec succès !", { id: toastId });
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast.error("Erreur lors de la génération. Veuillez réessayer.", { id: toastId });
+    } finally {
+      setGeneratingDoc(null);
+    }
+  };
+
   // Modal state
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
@@ -180,8 +197,9 @@ const Payment = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* 1. Facture Proforma */}
           <button
-            onClick={() => generateInvoicePDF(order, settings)}
-            className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95"
+            onClick={() => handleDownload('invoice', generateInvoicePDF)}
+            disabled={generatingDoc !== null}
+            className={`flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#FCA311] transition-colors">
@@ -192,13 +210,18 @@ const Payment = () => {
                 <p className="text-[8px] text-slate-400 font-bold uppercase">Détaillée</p>
               </div>
             </div>
-            <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
+            {generatingDoc === 'invoice' ? (
+              <Loader2 size={14} className="text-[#FCA311] animate-spin" />
+            ) : (
+              <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
+            )}
           </button>
 
           {/* 2. Contrat de Vente */}
           <button
-            onClick={() => generateContractPDF(order, settings)}
-            className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95"
+            onClick={() => handleDownload('contract', generateContractPDF)}
+            disabled={generatingDoc !== null}
+            className={`flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#FCA311] transition-colors">
@@ -209,14 +232,19 @@ const Payment = () => {
                 <p className="text-[8px] text-slate-400 font-bold uppercase">Signature</p>
               </div>
             </div>
-            <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
+            {generatingDoc === 'contract' ? (
+              <Loader2 size={14} className="text-[#FCA311] animate-spin" />
+            ) : (
+              <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
+            )}
           </button>
 
           {/* 3. Reçu de Paiement (Visible if paid) */}
           {isPaid ? (
             <button
-              onClick={() => generatePaymentReceiptPDF(order, settings)}
-              className="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-2xl hover:bg-white hover:border-emerald-500 transition-all group shadow-sm active:scale-95"
+              onClick={() => handleDownload('receipt', generatePaymentReceiptPDF)}
+              disabled={generatingDoc !== null}
+              className={`flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-2xl hover:bg-white hover:border-emerald-500 transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white border border-emerald-100 flex items-center justify-center text-emerald-500 transition-colors">
@@ -229,7 +257,11 @@ const Payment = () => {
                   </p>
                 </div>
               </div>
-              <Download size={14} className="text-emerald-300 group-hover:text-emerald-600 group-hover:-translate-y-1 transition-transform" />
+              {generatingDoc === 'receipt' ? (
+                <Loader2 size={14} className="text-emerald-500 animate-spin" />
+              ) : (
+                <Download size={14} className="text-emerald-300 group-hover:text-emerald-600 group-hover:-translate-y-1 transition-transform" />
+              )}
             </button>
           ) : (
             <div className="flex items-center justify-between p-4 bg-slate-50/50 border border-dashed border-slate-200 rounded-2xl opacity-60 grayscale cursor-not-allowed">
@@ -248,8 +280,9 @@ const Payment = () => {
           {/* 4. Bordereau de Livraison (Visible if logistics or further) */}
           {['logistics', 'transit', 'concierge', 'delivered', 'completed'].includes(order.status) ? (
             <button
-              onClick={() => generateDeliverySlipPDF(order, settings)}
-              className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95"
+              onClick={() => handleDownload('delivery', generateDeliverySlipPDF)}
+              disabled={generatingDoc !== null}
+              className={`flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#FCA311] transition-colors">
@@ -260,7 +293,11 @@ const Payment = () => {
                   <p className="text-[8px] text-slate-400 font-bold uppercase">Bordereau</p>
                 </div>
               </div>
-              <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
+              {generatingDoc === 'delivery' ? (
+                <Loader2 size={14} className="text-[#FCA311] animate-spin" />
+              ) : (
+                <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
+              )}
             </button>
           ) : (
             <div className="flex items-center justify-between p-4 bg-slate-50/50 border border-dashed border-slate-200 rounded-2xl opacity-60 grayscale cursor-not-allowed">
