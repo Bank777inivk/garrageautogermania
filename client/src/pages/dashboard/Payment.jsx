@@ -177,7 +177,7 @@ const Payment = () => {
   return (
     <div className="max-w-4xl mx-auto flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-20 mt-6">
       {/* --- DOCUMENT PORTAL --- */}
-      <div className="order-2 md:order-1 bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
+      <div className="bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#14213D] text-[#FCA311] rounded-xl flex items-center justify-center shadow-lg shadow-[#14213D]/10">
@@ -315,7 +315,7 @@ const Payment = () => {
         </div>
       </div>
 
-      <div className="order-3 md:order-2 flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4">
         <button
           onClick={() => navigate('/dashboard/billing')}
           className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white rounded-xl border border-slate-900/10 shadow-sm"
@@ -327,7 +327,7 @@ const Payment = () => {
 
       {isPaid ? (
         // --- SUCCESS PAYMENT SCREEN ---
-        <div className="order-1 md:order-3 bg-[#020617] p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden md:mt-8">
+        <div className="bg-[#020617] p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden md:mt-8">
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
           <div className="absolute -inset-1/2 bg-gradient-to-tr from-emerald-500/20 via-transparent to-transparent blur-3xl rounded-full"></div>
 
@@ -381,7 +381,7 @@ const Payment = () => {
         </div>
       ) : (
         // --- PENDING PAYMENT SCREEN ---
-        <div className="order-1 md:order-3 bg-white rounded-[2rem] border border-slate-900/10 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-[2rem] border border-slate-900/10 overflow-hidden shadow-sm">
           {/* Header - Minimalist */}
           <div className="p-6 md:p-10 border-b border-slate-50 text-center">
             <div className="bg-slate-50 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-6 border border-slate-100">
