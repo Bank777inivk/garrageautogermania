@@ -428,7 +428,7 @@ const Payment = () => {
               </div>
               
               <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.3em] mb-4">Montant à régler immédiatement</p>
-              <p className="text-6xl font-black text-slate-900 tracking-tighter mb-4">{(order.amountToPayNow || order.total)?.toLocaleString()}€</p>
+              <p className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter mb-4">{(order.amountToPayNow || order.total)?.toLocaleString()}€</p>
               
               {order.status === 'pending' && (
                 <div className="flex flex-col items-center gap-2">
@@ -493,7 +493,7 @@ const Payment = () => {
               <div className="p-7 bg-white rounded-2xl border border-slate-900/10 hover:border-slate-200 transition-all shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="w-full md:w-auto">
                   <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-2">IBAN SEPA</p>
-                  <p className="font-black text-slate-900 font-mono text-lg tracking-tight">DE56 1001 1001 2176 5100 26</p>
+                  <p className="font-black text-slate-900 font-mono text-xs sm:text-lg tracking-tight">DE56 1001 1001 2176 5100 26</p>
                 </div>
                 <button
                   onClick={() => copyToClipboard("DE56 1001 1001 2176 5100 26")}
