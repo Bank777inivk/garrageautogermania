@@ -175,9 +175,9 @@ const Payment = () => {
   const isPaid = ['logistics', 'transit', 'concierge', 'delivered', 'completed'].includes(order.status);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-20 mt-6">
+    <div className="max-w-4xl mx-auto flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-20 mt-6">
       {/* --- DOCUMENT PORTAL --- */}
-      <div className="bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
+      <div className="order-2 md:order-1 bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#14213D] text-[#FCA311] rounded-xl flex items-center justify-center shadow-lg shadow-[#14213D]/10">
@@ -315,7 +315,7 @@ const Payment = () => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
+      <div className="order-3 md:order-2 flex justify-between items-center mb-4">
         <button
           onClick={() => navigate('/dashboard/billing')}
           className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white rounded-xl border border-slate-900/10 shadow-sm"
@@ -327,7 +327,7 @@ const Payment = () => {
 
       {isPaid ? (
         // --- SUCCESS PAYMENT SCREEN ---
-        <div className="bg-[#020617] p-10 md:p-16 rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden mt-8">
+        <div className="order-1 md:order-3 bg-[#020617] p-6 md:p-16 rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-white/10 text-center relative overflow-hidden md:mt-8">
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
           <div className="absolute -inset-1/2 bg-gradient-to-tr from-emerald-500/20 via-transparent to-transparent blur-3xl rounded-full"></div>
 
@@ -381,9 +381,9 @@ const Payment = () => {
         </div>
       ) : (
         // --- PENDING PAYMENT SCREEN ---
-        <div className="bg-white rounded-[2rem] border border-slate-900/10 overflow-hidden shadow-sm">
+        <div className="order-1 md:order-3 bg-white rounded-[2rem] border border-slate-900/10 overflow-hidden shadow-sm">
           {/* Header - Minimalist */}
-          <div className="p-10 border-b border-slate-50 text-center">
+          <div className="p-6 md:p-10 border-b border-slate-50 text-center">
             <div className="bg-slate-50 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-6 border border-slate-100">
               <Building2 size={24} className="text-slate-400" />
             </div>
@@ -393,7 +393,7 @@ const Payment = () => {
             </p>
           </div>
 
-          <div className="p-8 md:p-12">
+          <div className="p-4 md:p-12">
             {/* Acquisition Cycle Guide - MOVED TO TOP */}
             <div className="mb-12 pb-10 border-b border-slate-100">
               <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center justify-center gap-3 mb-8">
@@ -420,7 +420,7 @@ const Payment = () => {
             </div>
 
             {/* Financial Summary - Grounded */}
-            <div className="bg-slate-50 rounded-3xl border border-slate-900/10 p-10 mb-10 text-center relative group">
+            <div className="bg-slate-50 rounded-3xl border border-slate-900/10 p-6 md:p-10 mb-10 text-center relative group">
               <div className="absolute top-4 right-6 flex items-center gap-2">
                 <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${order.paymentOption === 'full' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}`}>
                   {order.paymentOption === 'full' ? 'Paiement Intégral' : 'Acompte de 30%'}
@@ -504,7 +504,7 @@ const Payment = () => {
               </div>
 
               {/* Reference - Professional focus */}
-              <div className="p-8 bg-slate-900 rounded-3xl relative overflow-hidden shadow-lg border border-slate-800">
+              <div className="p-6 md:p-8 bg-slate-900 rounded-2xl md:rounded-3xl relative overflow-hidden shadow-lg border border-slate-800">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
                   <div className="text-white w-full md:w-auto">
                     <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2 flex items-center gap-2">
