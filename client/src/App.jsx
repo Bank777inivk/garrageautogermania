@@ -36,6 +36,20 @@ import DashboardLayout from './components/dashboard/DashboardLayout';
 // Debug mode for watermark diagnosis
 window.DEBUG_WATERMARK = true;
 
+const WhatsAppRedirect = () => {
+  useEffect(() => {
+    window.location.href = "https://wa.me/4915255491434";
+  }, []);
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="text-center">
+        <p className="text-sm font-bold text-slate-500 animate-pulse">Redirection vers WhatsApp...</p>
+      </div>
+    </div>
+  );
+};
+
+
 function App() {
   const { user, initializeAuth } = useAuthStore();
   const { fetchUserPendingVehicles } = useClientVehicleStore();
@@ -72,6 +86,7 @@ function App() {
           <Route path="suivi-livraison" element={<PublicTracking />} />
           <Route path="mentions-legales" element={<MentionsLegales />} />
           <Route path="confidentialite" element={<Confidentialite />} />
+          <Route path="whatsapp" element={<WhatsAppRedirect />} />
         </Route>
 
         {/* Dashboard Client Routes */}
