@@ -9,7 +9,7 @@ import BrandSelect from '@shared/components/BrandSelect';
 import {
   Upload, X, Star, Car, DollarSign, Gauge, Settings, Palette,
   Users, DoorOpen, Wind, Check, ChevronDown, Loader2, ArrowLeft, ImagePlus,
-  Wand2, Sparkles, Trash2
+  Wand2, Sparkles, Trash2, Paintbrush, Square, RotateCcw
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { extractVehicleData as extractMistral } from '../../utils/mistral';
@@ -813,10 +813,34 @@ const VehicleForm = () => {
    );
  };
 
+const drawRoundedRect = (ctx, x, y, width, height, radius) => {
+  ctx.beginPath();
+  if (ctx.roundRect) {
+    ctx.roundRect(x, y, width, height, radius);
+  } else {
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+};
+
 const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
   const canvasRef = React.useRef(null);
   const containerRef = React.useRef(null);
   const [saving, setSaving] = useState(false);
+  
+  // Modes: 'rect' (Cadre / Plaque Pro) vs 'brush' (Pinceau Libre)
+  const [mode, setMode] = useState('rect');
+  const [brushType, setBrushType] = useState('blur'); // 'blur' or 'solid'
+  const [brushSize, setBrushSize] = useState(45); // 25, 45, 75
+  
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
@@ -838,52 +862,109 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
     };
   }, [imageUrl]);
 
-  const handleStart = (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    const container = containerRef.current;
-    const rect = container.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-    
-    setIsDrawing(true);
-    setStartPos({ x, y });
-    setCurrentPos({ x, y });
-    setSelection(null);
-  };
-
-  const handleMove = (e) => {
-    if (!isDrawing) return;
-    const container = containerRef.current;
-    const rect = container.getBoundingClientRect();
+  const getCanvasCoords = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0, relX: 0, relY: 0, width: 1, height: 1 };
+    const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     
     const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
     const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
+    return {
+      x,
+      y,
+      relX: x / rect.width,
+      relY: y / rect.height,
+      width: rect.width,
+      height: rect.height
+    };
+  };
+
+  const applyBrushAt = (relX, relY) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const cx = Math.floor(relX * canvas.width);
+    const cy = Math.floor(relY * canvas.height);
     
+    // Scale brush radius accurately based on image natural width
+    const radius = Math.max(15, Math.floor((canvas.width / 1000) * brushSize));
+    
+    if (brushType === 'blur') {
+      const size = Math.max(6, Math.floor(radius / 2.5));
+      const startX = Math.max(0, cx - radius);
+      const startY = Math.max(0, cy - radius);
+      const w = Math.min(canvas.width - startX, radius * 2);
+      const h = Math.min(canvas.height - startY, radius * 2);
+      if (w <= 0 || h <= 0) return;
+      
+      const imgData = ctx.getImageData(startX, startY, w, h);
+      const data = imgData.data;
+      
+      for (let r = 0; r < h; r += size) {
+        for (let c = 0; c < w; c += size) {
+          const dx = (startX + c + size / 2) - cx;
+          const dy = (startY + r + size / 2) - cy;
+          if (dx * dx + dy * dy <= radius * radius * 1.3) {
+            const pr = Math.min(r, h - 1);
+            const pc = Math.min(c, w - 1);
+            const idx = (pr * Math.floor(w) + pc) * 4;
+            ctx.fillStyle = `rgba(${data[idx]}, ${data[idx+1]}, ${data[idx+2]}, ${data[idx+3] / 255})`;
+            ctx.fillRect(startX + c, startY + r, Math.min(size, w - c), Math.min(size, h - r));
+          }
+        }
+      }
+    } else {
+      // Dark matte cover brush
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#14213D';
+      ctx.fill();
+    }
+  };
+
+  const handleStart = (e) => {
+    if (e.cancelable) e.preventDefault();
+    const { x, y, relX, relY } = getCanvasCoords(e);
+    
+    setIsDrawing(true);
+    setStartPos({ x, y });
     setCurrentPos({ x, y });
+    
+    if (mode === 'rect') {
+      setSelection(null);
+    } else if (mode === 'brush') {
+      applyBrushAt(relX, relY);
+    }
+  };
+
+  const handleMove = (e) => {
+    if (!isDrawing) return;
+    const { x, y, relX, relY } = getCanvasCoords(e);
+    setCurrentPos({ x, y });
+    
+    if (mode === 'brush') {
+      applyBrushAt(relX, relY);
+    }
   };
 
   const handleEnd = () => {
     if (!isDrawing) return;
     setIsDrawing(false);
     
-    const container = containerRef.current;
-    const rect = container.getBoundingClientRect();
-    
-    // Calculate selection coordinates in percent/relative to canvas size
-    const left = Math.min(startPos.x, currentPos.x) / rect.width;
-    const top = Math.min(startPos.y, currentPos.y) / rect.height;
-    const width = Math.abs(startPos.x - currentPos.x) / rect.width;
-    const height = Math.abs(startPos.y - currentPos.y) / rect.height;
-    
-    if (width > 0.01 && height > 0.01) {
-      setSelection({ left, top, width, height });
+    if (mode === 'rect') {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const left = Math.min(startPos.x, currentPos.x) / rect.width;
+      const top = Math.min(startPos.y, currentPos.y) / rect.height;
+      const width = Math.abs(startPos.x - currentPos.x) / rect.width;
+      const height = Math.abs(startPos.y - currentPos.y) / rect.height;
+      
+      if (width > 0.01 && height > 0.01) {
+        setSelection({ left, top, width, height });
+      }
     }
   };
 
@@ -892,30 +973,109 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
-    // Convert relative coordinates back to canvas scale
     const x = selection.left * canvas.width;
     const y = selection.top * canvas.height;
     const w = selection.width * canvas.width;
     const h = selection.height * canvas.height;
     
-    // Draw professional dark-blue rectangle
-    ctx.fillStyle = '#14213D';
-    ctx.fillRect(x, y, w, h);
+    ctx.save();
+
+    // 1. Drop shadow for authentic 3D integration into car bumper
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = Math.max(6, h * 0.15);
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = Math.max(3, h * 0.06);
+
+    // 2. Outer Euro dealer holder frame (Support de plaque en plastique mat)
+    const outerRadius = Math.max(4, h * 0.12);
+    drawRoundedRect(ctx, x, y, w, h, outerRadius);
     
-    // Draw white metallic border on the mask
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = Math.max(2, h * 0.04);
-    ctx.strokeRect(x, y, w, h);
-    
-    // Draw logo text "GARAGE PRO" in white
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = `bold ${Math.max(10, h * 0.5)}px sans-serif`;
-    ctx.textAlign = 'center';
+    // Charcoal matte gradient finish
+    const frameGrad = ctx.createLinearGradient(x, y, x, y + h);
+    frameGrad.addColorStop(0, '#27272A');
+    frameGrad.addColorStop(0.25, '#18181B');
+    frameGrad.addColorStop(1, '#09090B');
+    ctx.fillStyle = frameGrad;
+    ctx.fill();
+
+    // Reset shadow for inner elements
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Subtle metallic outer edge highlight
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+    ctx.lineWidth = Math.max(1, h * 0.02);
+    ctx.stroke();
+
+    // 3. Inner License Plate Area
+    // Insets: sides top by ~6%, bottom by ~24% to reserve space for bottom dealership lip text
+    const insetX = w * 0.02;
+    const insetTop = h * 0.06;
+    const insetBottom = h * 0.25;
+    const innerX = x + insetX;
+    const innerY = y + insetTop;
+    const innerW = w - (insetX * 2);
+    const innerH = h - insetTop - insetBottom;
+    const innerRadius = Math.max(3, innerH * 0.1);
+
+    drawRoundedRect(ctx, innerX, innerY, innerW, innerH, innerRadius);
+    const plateGrad = ctx.createLinearGradient(innerX, innerY, innerX, innerY + innerH);
+    plateGrad.addColorStop(0, '#1E293B');
+    plateGrad.addColorStop(0.2, '#0F172A');
+    plateGrad.addColorStop(1, '#020617');
+    ctx.fillStyle = plateGrad;
+    ctx.fill();
+
+    // Inner subtle silver trim
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = Math.max(1, innerH * 0.03);
+    ctx.stroke();
+
+    // 4. Center Typography: "GARAGE PRO"
+    // White GARAGE + Golden Orange PRO (#FCA311) with 3D embossed shadow
+    const fontSize = Math.max(11, Math.floor(innerH * 0.52));
+    ctx.font = `900 ${fontSize}px "Arial Black", Impact, sans-serif`;
     ctx.textBaseline = 'middle';
-    ctx.fillText('GARAGE PRO', x + w / 2, y + h / 2, w * 0.9);
     
+    const part1 = "GARAGE ";
+    const part2 = "PRO";
+    const w1 = ctx.measureText(part1).width;
+    const w2 = ctx.measureText(part2).width;
+    const totalW = w1 + w2;
+    const startX = innerX + (innerW - totalW) / 2;
+    const textY = innerY + (innerH * 0.44);
+
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+    ctx.shadowBlur = Math.max(3, innerH * 0.06);
+    ctx.shadowOffsetY = Math.max(1, innerH * 0.03);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'left';
+    ctx.fillText(part1, startX, textY);
+    
+    ctx.fillStyle = '#FCA311'; // Brand Signature Gold
+    ctx.fillText(part2, startX + w1, textY);
+
+    // Subtext inside plate
+    ctx.shadowColor = 'transparent';
+    const subSize = Math.max(7, Math.floor(innerH * 0.16));
+    ctx.font = `bold ${subSize}px sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.textAlign = 'center';
+    ctx.fillText("AUTO EXPORT • DEUTSCHLAND", innerX + innerW / 2, innerY + (innerH * 0.82));
+
+    // 5. Dealer Lip Branding along bottom edge of plastic holder frame
+    const lipCenterY = y + h - (insetBottom * 0.44);
+    const lipSize = Math.max(6, Math.floor(insetBottom * 0.46));
+    ctx.font = `900 ${lipSize}px sans-serif`;
+    ctx.fillStyle = '#E2E8F0';
+    ctx.textAlign = 'center';
+    ctx.fillText("A.P.S. CARS & TRUCKS GMBH   •   GARAGE PRO", x + w / 2, lipCenterY);
+
+    ctx.restore();
     setSelection(null);
-    toast.success("Zone masquée");
+    toast.success("Plaque Pro 3D réaliste appliquée !");
   };
 
   const applyBlur = () => {
@@ -928,7 +1088,6 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
     const w = selection.width * canvas.width;
     const h = selection.height * canvas.height;
     
-    // Pixelation effect
     const size = Math.max(5, Math.floor(h / 8));
     const imgData = ctx.getImageData(x, y, w, h);
     const data = imgData.data;
@@ -949,7 +1108,7 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
     }
     
     setSelection(null);
-    toast.success("Zone floutée");
+    toast.success("Cadre flouté");
   };
 
   const handleReset = () => {
@@ -988,35 +1147,116 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-[2.5rem] border border-[#E5E5E5] w-full max-w-4xl p-8 flex flex-col max-h-[90vh] shadow-2xl animate-fade-in">
-        <div className="flex justify-between items-center mb-6">
+      <div className="bg-white rounded-[2.5rem] border border-[#E5E5E5] w-full max-w-5xl p-6 sm:p-8 flex flex-col max-h-[95vh] shadow-2xl animate-fade-in overflow-hidden">
+        <div className="flex justify-between items-start sm:items-center gap-4 mb-4">
           <div>
-            <h3 className="text-lg font-black text-[#14213D] uppercase tracking-wider">Masquer la plaque d'immatriculation</h3>
-            <p className="text-xs font-bold text-[#14213D]/40 uppercase tracking-widest mt-1">Glissez votre doigt/souris pour sélectionner la zone de la plaque</p>
+            <h3 className="text-lg font-black text-[#14213D] uppercase tracking-wider flex items-center gap-2">
+              <Wand2 size={22} className="text-[#FCA311]" />
+              Masquage & Floutage de Plaque
+            </h3>
+            <p className="text-xs font-bold text-[#14213D]/50 uppercase tracking-widest mt-1">
+              Choisissez le Mode Cadre pour la Plaque Pro 3D ou le Mode Pinceau Libre
+            </p>
           </div>
           <button onClick={onClose} className="p-3 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-2xl transition-colors shadow-sm">
             <X size={20} />
           </button>
         </div>
 
-        <div className="relative flex-1 bg-gray-50 rounded-[2rem] border border-[#E5E5E5] overflow-hidden flex items-center justify-center p-4" style={{ minHeight: '350px' }}>
-          <div 
-            ref={containerRef}
-            onMouseDown={handleStart}
-            onMouseMove={handleMove}
-            onMouseUp={handleEnd}
-            onTouchStart={handleStart}
-            onTouchMove={handleMove}
-            onTouchEnd={handleEnd}
-            draggable="false"
-            className="relative select-none cursor-crosshair max-w-full max-h-[50vh] flex items-center justify-center"
-          >
-            <canvas ref={canvasRef} draggable="false" className="max-w-full max-h-[50vh] object-contain pointer-events-none rounded-xl" />
+        {/* Mode Selector & Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 p-2.5 bg-gray-50 rounded-2xl border border-[#E5E5E5]">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => { setMode('rect'); setSelection(null); }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm ${
+                mode === 'rect'
+                  ? 'bg-[#14213D] text-[#FCA311] shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <Square size={15} /> 1. Cadre (Plaque Pro 3D)
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMode('brush'); setSelection(null); }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm ${
+                mode === 'brush'
+                  ? 'bg-[#14213D] text-[#FCA311] shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              <Paintbrush size={15} /> 2. Pinceau Libre
+            </button>
+          </div>
+
+          {mode === 'brush' && (
+            <div className="flex flex-wrap items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200 w-full sm:w-auto justify-end">
+              <span className="text-[10px] font-black text-gray-400 uppercase mr-1">Style :</span>
+              <button
+                type="button"
+                onClick={() => setBrushType('blur')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                  brushType === 'blur' ? 'bg-[#FCA311] text-[#14213D] shadow-sm' : 'bg-white text-gray-600 border border-gray-200'
+                }`}
+              >
+                ✨ Mosaïque
+              </button>
+              <button
+                type="button"
+                onClick={() => setBrushType('solid')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
+                  brushType === 'solid' ? 'bg-[#14213D] text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200'
+                }`}
+              >
+                ⬛ Noir Mat
+              </button>
+              
+              <span className="text-[10px] font-black text-gray-400 uppercase ml-2 mr-1">Taille :</span>
+              {[
+                { label: 'S', size: 25 },
+                { label: 'M', size: 45 },
+                { label: 'L', size: 75 }
+              ].map(b => (
+                <button
+                  key={b.label}
+                  type="button"
+                  onClick={() => setBrushSize(b.size)}
+                  className={`w-8 h-8 rounded-lg text-xs font-black transition-all flex items-center justify-center ${
+                    brushSize === b.size ? 'bg-[#14213D] text-[#FCA311] shadow-sm' : 'bg-white text-gray-600 border border-gray-200'
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Canvas Area */}
+        <div 
+          ref={containerRef}
+          className="relative flex-1 bg-gray-900/5 rounded-[2rem] border border-[#E5E5E5] overflow-hidden flex items-center justify-center p-4 min-h-[350px] max-h-[55vh] select-none"
+        >
+          <div className="relative inline-flex items-center justify-center max-w-full max-h-full">
+            <canvas 
+              ref={canvasRef} 
+              onMouseDown={handleStart}
+              onMouseMove={handleMove}
+              onMouseUp={handleEnd}
+              onTouchStart={handleStart}
+              onTouchMove={handleMove}
+              onTouchEnd={handleEnd}
+              draggable="false" 
+              className={`max-w-full max-h-[50vh] object-contain rounded-xl shadow-lg ${
+                mode === 'brush' ? 'cursor-crosshair' : 'cursor-default'
+              }`} 
+            />
             
-            {/* Draw selection rectangle overlay during dragging */}
-            {isDrawing && (
+            {/* Selection rectangle overlay for rect mode during drag */}
+            {isDrawing && mode === 'rect' && (
               <div 
-                className="absolute border-2 border-dashed border-[#FCA311] bg-[#FCA311]/10 pointer-events-none"
+                className="absolute border-2 border-dashed border-[#FCA311] bg-[#FCA311]/15 pointer-events-none rounded-sm"
                 style={{
                   left: Math.min(startPos.x, currentPos.x),
                   top: Math.min(startPos.y, currentPos.y),
@@ -1026,10 +1266,10 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
               />
             )}
             
-            {/* Current selection rectangle */}
-            {selection && !isDrawing && (
+            {/* Selected rectangle after draw in rect mode */}
+            {selection && !isDrawing && mode === 'rect' && (
               <div 
-                className="absolute border-4 border-[#FCA311] bg-[#FCA311]/5 animate-pulse pointer-events-none"
+                className="absolute border-3 border-[#FCA311] bg-[#FCA311]/10 pointer-events-none rounded-sm shadow-sm animate-pulse"
                 style={{
                   left: `${selection.left * 100}%`,
                   top: `${selection.top * 100}%`,
@@ -1041,38 +1281,49 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mt-6 pt-6 border-t border-[#E5E5E5]">
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={applyMask}
-              disabled={!selection}
-              className="px-5 py-3.5 bg-[#14213D] text-[#FCA311] disabled:opacity-40 hover:bg-slate-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
-            >
-              <Check size={14} strokeWidth={3} /> Masquer (Plaque Pro)
-            </button>
-            <button
-              type="button"
-              onClick={applyBlur}
-              disabled={!selection}
-              className="px-5 py-3.5 bg-gray-100 hover:bg-gray-200 text-[#14213D] disabled:opacity-40 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
-            >
-              <Sparkles size={14} /> Flouter / Pixéliser
-            </button>
+        {/* Action Buttons Bottom Bar */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mt-6 pt-5 border-t border-[#E5E5E5]">
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+            {mode === 'rect' ? (
+              <>
+                <button
+                  type="button"
+                  onClick={applyMask}
+                  disabled={!selection}
+                  className="px-6 py-3.5 bg-[#14213D] text-[#FCA311] disabled:opacity-40 hover:bg-slate-800 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
+                >
+                  <Check size={16} strokeWidth={3} /> 👑 Appliquer Plaque Pro (3D Réaliste)
+                </button>
+                <button
+                  type="button"
+                  onClick={applyBlur}
+                  disabled={!selection}
+                  className="px-5 py-3.5 bg-gray-100 hover:bg-gray-200 text-[#14213D] disabled:opacity-40 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2"
+                >
+                  <Sparkles size={16} /> Flouter le cadre
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 text-xs font-black text-[#14213D] bg-amber-50 px-4 py-3 rounded-xl border border-amber-200 shadow-2xs">
+                <Paintbrush size={16} className="text-[#FCA311]" />
+                Maintenez et glissez sur la photo pour dessiner/flouter en direct !
+              </div>
+            )}
+            
             <button
               type="button"
               onClick={handleReset}
-              className="px-5 py-3.5 bg-white border border-[#E5E5E5] hover:border-red-300 text-red-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+              className="px-5 py-3.5 bg-white border border-[#E5E5E5] hover:border-red-300 text-red-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ml-auto sm:ml-0"
             >
-              Réinitialiser
+              <RotateCcw size={15} /> Réinitialiser
             </button>
           </div>
 
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex gap-2.5 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-none px-6 py-3.5 bg-white border border-[#E5E5E5] hover:bg-gray-50 text-gray-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+              className="flex-1 sm:flex-none px-6 py-3.5 bg-white border border-[#E5E5E5] hover:bg-gray-50 text-gray-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
             >
               Annuler
             </button>
@@ -1080,9 +1331,9 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 sm:flex-none px-8 py-3.5 bg-[#FCA311] text-[#14213D] hover:bg-amber-500 disabled:opacity-50 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2"
+              className="flex-1 sm:flex-none px-8 py-3.5 bg-[#FCA311] text-[#14213D] hover:bg-amber-500 disabled:opacity-50 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2.5"
             >
-              {saving ? <Loader2 className="animate-spin" size={14} /> : <Wand2 size={14} />}
+              {saving ? <Loader2 className="animate-spin" size={16} /> : <Wand2 size={16} />}
               Appliquer & Sauvegarder
             </button>
           </div>
