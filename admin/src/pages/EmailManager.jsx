@@ -337,7 +337,7 @@ const EmailManager = () => {
                     <td>
                       <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 15px; text-transform: uppercase;">Service Commercial & Direction</p>
                       <p style="margin: 4px 0 0; color: #64748b; font-size: 13px; font-weight: 600;">${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}</p>
-                      <p style="margin: 4px 0 0; font-size: 12px;"><a href="https://garrageautogermania.com" style="color: ${smtpConfig.accentColor || '#FCA311'}; text-decoration: none; font-weight: 800;">www.garrageautogermania.com</a> • Support Clients Allemagne</p>
+                      <p style="margin: 4px 0 0; font-size: 12px;"><a href="https://aps-trucks.ms-automobiledeutschland.de" style="color: ${smtpConfig.accentColor || '#FCA311'}; text-decoration: none; font-weight: 800;">aps-trucks.ms-automobiledeutschland.de</a> • Support Clients Allemagne</p>
                     </td>
                   </tr>
                 </table>
@@ -646,7 +646,7 @@ const EmailManager = () => {
                     const v = vehicles.find(v => v.id === selectedVehicleId);
                     if (v) {
                       const name = `${v.brand || v.make} ${v.model}`;
-                      const link = `https://garrageautogermania.com/vehicule/${v.id}`;
+                      const link = `https://aps-trucks.ms-automobiledeutschland.de/vehicule/${v.id}`;
                       setForm(prev => ({
                         ...prev,
                         subject: prev.subject.replace('[MARQUE ET MODÈLE]', name),
