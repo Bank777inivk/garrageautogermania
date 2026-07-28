@@ -103,7 +103,7 @@ A.P.S. CARS & TRUCKS GMBH`
   {
     id: 'tpl_4',
     title: '💬 Réponse Prospect Facebook (Véhicule Spécifique)',
-    subject: 'Votre demande pour le véhicule [MARQUE ET MODÈLE] - A.P.S. CARS & TRUCKS GMBH',
+    subject: 'Votre demande pour le véhicule [MARQUE ET MODÈLE]',
     body: `Bonjour,
 
 Nous vous remercions pour l'intérêt que vous portez au véhicule [MARQUE ET MODÈLE] suite à votre message sur notre page Facebook.
