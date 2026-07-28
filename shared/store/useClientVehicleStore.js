@@ -37,6 +37,15 @@ const useClientVehicleStore = create((set, get) => ({
   },
 
   fetchVehicleById: async (id) => {
+    // Check cache first to avoid slow loading screen when navigating from catalogue
+    const cachedVehicles = get().vehicles;
+    const existingVehicle = cachedVehicles?.find(v => v.id === id);
+    
+    if (existingVehicle) {
+      set({ currentVehicle: existingVehicle, loading: false, error: null });
+      return;
+    }
+
     set({ loading: true, error: null, currentVehicle: null });
     try {
       const docRef = doc(db, 'vehicles', id);
