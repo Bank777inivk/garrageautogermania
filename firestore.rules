@@ -93,7 +93,7 @@ service cloud.firestore {
     // RÈGLES POUR LA COLLECTION 'SETTINGS' (PARAMÈTRES GLOBAUX)
     // ============================================================================
     match /settings/{settingId} {
-      allow read: if isAuthenticated() || isAdmin();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
