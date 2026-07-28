@@ -4,10 +4,18 @@ import { LayoutDashboard, Package, User, LogOut, Home, FileText, Compass, Histor
 import useAuthStore from '@shared/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 
 const DashboardSidebar = ({ className = "", onItemClick }) => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+  const { settings, fetchSettings } = useClientVehicleStore();
+
+  React.useEffect(() => {
+    if (!settings) {
+      fetchSettings();
+    }
+  }, [settings, fetchSettings]);
 
   const handleLogout = async () => {
     await logout();
@@ -34,7 +42,7 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
       <div className="px-8 py-3.5 md:py-7 border-b border-white/5 flex items-center justify-between bg-[#021024]">
         <Link to="/" onClick={onItemClick} className="flex items-center justify-start group">
           <div className="bg-white p-2 md:p-2.5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.1)] group-hover:scale-105 transition-all duration-500">
-            <img src="/logo.webp" alt="Garrage" className="h-7 md:h-9 w-auto object-contain" />
+            <img src={settings?.logoUrl || "/logo.webp"} alt="Garage" className="h-7 md:h-9 w-auto object-contain" />
           </div>
         </Link>
       </div>

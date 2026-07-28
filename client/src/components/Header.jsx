@@ -120,11 +120,10 @@ const Header = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-center">
 
-            {/* Logo - Enlarged and Imposing */}
             <Link to="/" className="flex items-center group">
               <img
-                src="/logo.webp"
-                alt="Garrage Pro"
+                src={settings?.logoUrl || "/logo.webp"}
+                alt="Garage Pro"
                 className="h-16 md:h-28 w-auto object-contain transition-transform group-hover:scale-105"
               />
             </Link>
