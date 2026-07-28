@@ -317,6 +317,10 @@ const EmailManager = () => {
   <title>${subject || "Message Professionnel"}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b132b; color: #1e293b; -webkit-font-smoothing: antialiased;">
+  <!-- Hidden Preheader Text for Gmail/Apple Mail Snippet -->
+  <div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all; font-size: 0px; line-height: 0px; color: transparent;">
+    ${plainTextBody ? plainTextBody.substring(0, 150).replace(/\n/g, ' ') : ''}...
+  </div>
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0b132b; padding: 35px 15px;">
     <tr>
       <td align="center">
