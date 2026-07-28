@@ -93,6 +93,9 @@ const VehicleForm = () => {
   const [aiAgent, setAiAgent] = useState('mistral');
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [errors, setErrors] = useState({});
+  const [blurModalOpen, setBlurModalOpen] = useState(false);
+  const [blurTargetIndex, setBlurTargetIndex] = useState(null);
+  const [blurTargetUrl, setBlurTargetUrl] = useState('');
 
   const [formData, setFormData] = useState({
     brand: '',
@@ -744,6 +747,18 @@ const VehicleForm = () => {
                       )}
                       <button
                         type="button"
+                        onClick={() => {
+                          setBlurTargetUrl(img);
+                          setBlurTargetIndex(idx);
+                          setBlurModalOpen(true);
+                        }}
+                        className="w-12 h-12 bg-white text-[#14213D] rounded-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                        title="Masquer la plaque"
+                      >
+                        <Wand2 size={20} />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => removeImage(idx)}
                         className="w-12 h-12 bg-white text-red-600 rounded-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
                         title="Supprimer"
@@ -778,8 +793,297 @@ const VehicleForm = () => {
             {(loading || uploading) && <Loader2 className="animate-spin" size={20} />}
             {isEdit ? 'Enregistrer les modifications' : 'Mettre en ligne le véhicule'}
           </button>
+         </div>
+       </form>
+      {blurModalOpen && (
+        <PlateBlurModal
+          imageUrl={blurTargetUrl}
+          onClose={() => setBlurModalOpen(false)}
+          onSave={(newUrl) => {
+            setImages(prev => {
+              const updated = [...prev];
+              updated[blurTargetIndex] = newUrl;
+              return updated;
+            });
+            setBlurModalOpen(false);
+          }}
+        />
+      )}
+     </div>
+   );
+ };
+
+const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
+  const canvasRef = React.useRef(null);
+  const containerRef = React.useRef(null);
+  const [saving, setSaving] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
+  const [selection, setSelection] = useState(null);
+
+  // Load image to canvas
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imageUrl;
+    img.onload = () => {
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0, 0);
+    };
+  }, [imageUrl]);
+
+  const handleStart = (e) => {
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    
+    setIsDrawing(true);
+    setStartPos({ x, y });
+    setCurrentPos({ x, y });
+    setSelection(null);
+  };
+
+  const handleMove = (e) => {
+    if (!isDrawing) return;
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+    const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
+    
+    setCurrentPos({ x, y });
+  };
+
+  const handleEnd = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+    
+    // Calculate selection coordinates in percent/relative to canvas size
+    const left = Math.min(startPos.x, currentPos.x) / rect.width;
+    const top = Math.min(startPos.y, currentPos.y) / rect.height;
+    const width = Math.abs(startPos.x - currentPos.x) / rect.width;
+    const height = Math.abs(startPos.y - currentPos.y) / rect.height;
+    
+    if (width > 0.01 && height > 0.01) {
+      setSelection({ left, top, width, height });
+    }
+  };
+
+  const applyMask = () => {
+    if (!selection) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    // Convert relative coordinates back to canvas scale
+    const x = selection.left * canvas.width;
+    const y = selection.top * canvas.height;
+    const w = selection.width * canvas.width;
+    const h = selection.height * canvas.height;
+    
+    // Draw professional dark-blue rectangle
+    ctx.fillStyle = '#14213D';
+    ctx.fillRect(x, y, w, h);
+    
+    // Draw white metallic border on the mask
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = Math.max(2, h * 0.04);
+    ctx.strokeRect(x, y, w, h);
+    
+    // Draw logo text "GARAGE PRO" in white
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `bold ${Math.max(10, h * 0.5)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('GARAGE PRO', x + w / 2, y + h / 2, w * 0.9);
+    
+    setSelection(null);
+    toast.success("Zone masquée");
+  };
+
+  const applyBlur = () => {
+    if (!selection) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    const x = selection.left * canvas.width;
+    const y = selection.top * canvas.height;
+    const w = selection.width * canvas.width;
+    const h = selection.height * canvas.height;
+    
+    // Pixelation effect
+    const size = Math.max(5, Math.floor(h / 8));
+    const imgData = ctx.getImageData(x, y, w, h);
+    const data = imgData.data;
+    
+    for (let r = 0; r < h; r += size) {
+      for (let c = 0; c < w; c += size) {
+        const pr = Math.min(r, h - 1);
+        const pc = Math.min(c, w - 1);
+        const i = (pr * Math.floor(w) + pc) * 4;
+        const red = data[i];
+        const green = data[i + 1];
+        const blue = data[i + 2];
+        const alpha = data[i + 3];
+        
+        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha / 255})`;
+        ctx.fillRect(x + c, y + r, Math.min(size, w - c), Math.min(size, h - r));
+      }
+    }
+    
+    setSelection(null);
+    toast.success("Zone floutée");
+  };
+
+  const handleReset = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imageUrl;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+      setSelection(null);
+      toast.success("Image réinitialisée");
+    };
+  };
+
+  const handleSave = () => {
+    const canvas = canvasRef.current;
+    setSaving(true);
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        setSaving(false);
+        return;
+      }
+      const file = new File([blob], "blurred_license_plate.jpg", { type: "image/jpeg" });
+      try {
+        const newUrl = await uploadToCloudinary(file);
+        onSave(newUrl);
+        toast.success("Photo principale mise à jour avec succès !");
+      } catch (err) {
+        toast.error("Erreur de sauvegarde sur Cloudinary");
+      } finally {
+        setSaving(false);
+      }
+    }, 'image/jpeg', 0.92);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-[2.5rem] border border-[#E5E5E5] w-full max-w-4xl p-8 flex flex-col max-h-[90vh] shadow-2xl animate-fade-in">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-lg font-black text-[#14213D] uppercase tracking-wider">Masquer la plaque d'immatriculation</h3>
+            <p className="text-xs font-bold text-[#14213D]/40 uppercase tracking-widest mt-1">Glissez votre doigt/souris pour sélectionner la zone de la plaque</p>
+          </div>
+          <button onClick={onClose} className="p-3 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-2xl transition-colors shadow-sm">
+            <X size={20} />
+          </button>
         </div>
-      </form>
+
+        <div className="relative flex-1 bg-gray-50 rounded-[2rem] border border-[#E5E5E5] overflow-hidden flex items-center justify-center p-4" style={{ minHeight: '350px' }}>
+          <div 
+            ref={containerRef}
+            onMouseDown={handleStart}
+            onMouseMove={handleMove}
+            onMouseUp={handleEnd}
+            onTouchStart={handleStart}
+            onTouchMove={handleMove}
+            onTouchEnd={handleEnd}
+            className="relative select-none cursor-crosshair max-w-full max-h-[50vh] flex items-center justify-center"
+          >
+            <canvas ref={canvasRef} className="max-w-full max-h-[50vh] object-contain pointer-events-none rounded-xl" />
+            
+            {/* Draw selection rectangle overlay during dragging */}
+            {isDrawing && (
+              <div 
+                className="absolute border-2 border-dashed border-[#FCA311] bg-[#FCA311]/10 pointer-events-none"
+                style={{
+                  left: Math.min(startPos.x, currentPos.x),
+                  top: Math.min(startPos.y, currentPos.y),
+                  width: Math.abs(startPos.x - currentPos.x),
+                  height: Math.abs(startPos.y - currentPos.y)
+                }}
+              />
+            )}
+            
+            {/* Current selection rectangle */}
+            {selection && !isDrawing && (
+              <div 
+                className="absolute border-4 border-[#FCA311] bg-[#FCA311]/5 animate-pulse pointer-events-none"
+                style={{
+                  left: `${selection.left * 100}%`,
+                  top: `${selection.top * 100}%`,
+                  width: `${selection.width * 100}%`,
+                  height: `${selection.height * 100}%`
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mt-6 pt-6 border-t border-[#E5E5E5]">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={applyMask}
+              disabled={!selection}
+              className="px-5 py-3.5 bg-[#14213D] text-[#FCA311] disabled:opacity-40 hover:bg-slate-800 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
+            >
+              <Check size={14} strokeWidth={3} /> Masquer (Plaque Pro)
+            </button>
+            <button
+              type="button"
+              onClick={applyBlur}
+              disabled={!selection}
+              className="px-5 py-3.5 bg-gray-100 hover:bg-gray-200 text-[#14213D] disabled:opacity-40 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
+            >
+              <Sparkles size={14} /> Flouter / Pixéliser
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-5 py-3.5 bg-white border border-[#E5E5E5] hover:border-red-300 text-red-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+            >
+              Réinitialiser
+            </button>
+          </div>
+
+          <div className="flex gap-2 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 sm:flex-none px-6 py-3.5 bg-white border border-[#E5E5E5] hover:bg-gray-50 text-gray-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+            >
+              Annuler
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 sm:flex-none px-8 py-3.5 bg-[#FCA311] text-[#14213D] hover:bg-amber-500 disabled:opacity-50 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2"
+            >
+              {saving ? <Loader2 className="animate-spin" size={14} /> : <Wand2 size={14} />}
+              Appliquer & Sauvegarder
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
