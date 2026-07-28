@@ -297,13 +297,14 @@ const EmailManager = () => {
     let formattedBody = plainTextBody ? plainTextBody.replace(/\n/g, '<br/>') : '';
 
     // Auto-convert vehicle links to beautiful HTML buttons
+    // Auto-convert vehicle links to beautiful HTML buttons (minimalist style)
     formattedBody = formattedBody.replace(
       /(?:Lien du véhicule\s*:\s*)?(https:\/\/aps-trucks\.ms-automobiledeutschland\.de\/vehicule\/[^<\s]+)/gi,
       `<br/>
        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 20px 0;">
          <tr>
-           <td align="center">
-             <a href="$1" style="background-color: ${smtpConfig.accentColor || '#FCA311'}; color: #050A19; padding: 16px 36px; font-weight: 900; text-decoration: none; border-radius: 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; display: inline-block; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">Voir la Fiche du Véhicule</a>
+           <td align="left">
+             <a href="$1" style="background-color: #0f172a; color: #ffffff; padding: 14px 28px; font-weight: 700; text-decoration: none; border-radius: 6px; font-size: 14px; display: inline-block; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Consulter la fiche du véhicule</a>
            </td>
          </tr>
        </table>
@@ -316,58 +317,48 @@ const EmailManager = () => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${subject || "Message Professionnel"}</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b132b; color: #1e293b; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #334155; -webkit-font-smoothing: antialiased;">
   <!-- Hidden Preheader Text for Gmail/Apple Mail Snippet -->
   <div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all; font-size: 0px; line-height: 0px; color: transparent;">
     ${plainTextBody ? plainTextBody.substring(0, 150).replace(/\n/g, ' ') : ''}...
   </div>
-  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0b132b; padding: 35px 15px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 40px 15px;">
     <tr>
       <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
           <!-- Header -->
           <tr>
-            <td style="background-color: ${smtpConfig.headerBg || '#14213D'}; padding: 35px 40px; text-align: center;">
-              <h1 style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: 2px; color: ${smtpConfig.headerText || '#FFFFFF'}; text-transform: uppercase;">
+            <td style="padding: 35px 40px 25px; border-bottom: 1px solid #f1f5f9; text-align: left;">
+              <h1 style="margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; color: #0f172a; text-transform: uppercase;">
                 ${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}
               </h1>
-              <p style="margin: 6px 0 0; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 2.5px; text-transform: uppercase;">
+              <p style="margin: 4px 0 0; font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase;">
                 Importation Automobile d'Exception • Allemagne
               </p>
             </td>
           </tr>
-          <!-- Accent Gold / Blue Strip -->
-          <tr>
-            <td style="height: 5px; background-color: ${smtpConfig.accentColor || '#FCA311'};"></td>
-          </tr>
           <!-- Body Content -->
           <tr>
-            <td style="padding: 45px 40px 35px; line-height: 1.7; font-size: 15px; color: #334155;">
+            <td style="padding: 35px 40px; line-height: 1.6; font-size: 15px; color: #334155;">
               ${formattedBody}
             </td>
           </tr>
           <!-- Signature block -->
           <tr>
-            <td style="padding: 0 40px 40px;">
-              <div style="border-top: 1px solid #e2e8f0; padding-top: 25px; margin-top: 15px;">
-                <table width="100%" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td>
-                      <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 15px; text-transform: uppercase;">Service Commercial & Direction</p>
-                      <p style="margin: 4px 0 0; color: #64748b; font-size: 13px; font-weight: 600;">${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}</p>
-                      <p style="margin: 4px 0 0; font-size: 12px;"><a href="https://aps-trucks.ms-automobiledeutschland.de" style="color: ${smtpConfig.accentColor || '#FCA311'}; text-decoration: none; font-weight: 800;">aps-trucks.ms-automobiledeutschland.de</a> • Support Clients Allemagne</p>
-                    </td>
-                  </tr>
-                </table>
+            <td style="padding: 0 40px 35px;">
+              <div style="padding-top: 25px; border-top: 1px solid #f1f5f9;">
+                <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">Service Commercial & Direction</p>
+                <p style="margin: 4px 0 0; color: #475569; font-size: 13px;">${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}</p>
+                <p style="margin: 4px 0 0; font-size: 12px;"><a href="https://aps-trucks.ms-automobiledeutschland.de" style="color: #0f172a; text-decoration: underline; font-weight: 600;">aps-trucks.ms-automobiledeutschland.de</a></p>
               </div>
             </td>
           </tr>
           <!-- Footer Disclaimer -->
           <tr>
-            <td style="background-color: #090e1d; padding: 30px 40px; text-align: center; color: #94a3b8; font-size: 11px;">
-              <p style="margin: 0 0 10px; font-weight: 800; color: #e2e8f0; letter-spacing: 1px;">${smtpConfig.footerTitle || 'SERVICE PROFESSIONNEL A.P.S. CARS & TRUCKS GMBH'}</p>
-              <p style="margin: 0; line-height: 1.5; font-size: 10px; color: #64748b;">${smtpConfig.footerContent || "Ce courriel et ses pièces jointes sont confidentiels et établis à l'attention exclusive de ses destinataires."}</p>
-              <p style="margin: 15px 0 0; font-size: 9px; color: #475569;">Pour ne plus recevoir nos e-mails, veuillez nous répondre avec "STOP" ou nous contacter via notre site web.</p>
+            <td style="background-color: #f8fafc; padding: 25px 40px; text-align: left; border-top: 1px solid #e2e8f0;">
+              <p style="margin: 0 0 8px; font-weight: 700; color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">${smtpConfig.footerTitle || 'A.P.S. CARS & TRUCKS GMBH'}</p>
+              <p style="margin: 0; line-height: 1.5; font-size: 10px; color: #94a3b8;">${smtpConfig.footerContent || "Ce courriel et ses pièces jointes sont confidentiels et établis à l'attention exclusive de ses destinataires."}</p>
+              <p style="margin: 10px 0 0; font-size: 9px; color: #cbd5e1;">Pour ne plus recevoir nos e-mails, veuillez nous répondre avec "STOP".</p>
             </td>
           </tr>
         </table>
