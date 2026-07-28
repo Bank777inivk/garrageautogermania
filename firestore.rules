@@ -114,6 +114,22 @@ service cloud.firestore {
       allow read: if isAuthenticated() || isAdmin();
       allow write: if isAdmin();
     }
+
+    match /email_templates/{templateId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /email_history/{historyId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /deleted_clients/{clientId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /smtp_settings/{settingId} {
+      allow read, write: if isAdmin();
+    }
     
     // Par défaut, refuser tout accès aux autres collections non définies
     match /{document=**} {
