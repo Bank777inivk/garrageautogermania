@@ -9,7 +9,7 @@ import BrandSelect from '@shared/components/BrandSelect';
 import {
   Upload, X, Star, Car, DollarSign, Gauge, Settings, Palette,
   Users, DoorOpen, Wind, Check, ChevronDown, Loader2, ArrowLeft, ImagePlus,
-  Wand2, Sparkles, Trash2, Paintbrush, Square, RotateCcw
+  Wand2, Sparkles, Trash2, Paintbrush, Square, RotateCcw, Move, RotateCw, Maximize2, Sliders, Zap
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { extractVehicleData as extractMistral } from '../../utils/mistral';
@@ -807,6 +807,9 @@ const VehicleForm = () => {
             });
             setBlurModalOpen(false);
           }}
+          onSaveCloudinaryUrl={(tempUrl, permanentUrl) => {
+            setImages(prev => prev.map((img, i) => (img === tempUrl || i === blurTargetIndex) ? permanentUrl : img));
+          }}
         />
       )}
      </div>
@@ -831,26 +834,41 @@ const drawRoundedRect = (ctx, x, y, width, height, radius) => {
   }
 };
 
-const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
+const PlateBlurModal = ({ imageUrl, onClose, onSave, onSaveCloudinaryUrl }) => {
   const canvasRef = React.useRef(null);
   const containerRef = React.useRef(null);
-  const [saving, setSaving] = useState(false);
+  const baseCanvasRef = React.useRef(document.createElement('canvas'));
   
-  // Modes: 'rect' (Cadre / Plaque Pro) vs 'brush' (Pinceau Libre)
-  const [mode, setMode] = useState('rect');
+  const [saving, setSaving] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isBaked, setIsBaked] = useState(false);
+  
+  // Modes: 'transform' (Cadre & Torsion 3D) vs 'brush' (Pinceau Libre)
+  const [mode, setMode] = useState('transform');
   const [brushType, setBrushType] = useState('blur'); // 'blur' or 'solid'
-  const [brushSize, setBrushSize] = useState(45); // 25, 45, 75
+  const [brushSize, setBrushSize] = useState(45);
+  
+  // Transform State for Photoshop Studio mode
+  const [transform, setTransform] = useState({
+    x: 0.5,       // Relative center X
+    y: 0.65,      // Relative center Y
+    w: 0.28,      // Relative width
+    h: 0.075,     // Relative height
+    rotate: 0,    // Rotation degrees (-60 to 60)
+    skewX: 0,     // Skew X / Torsion horizontale (-60 to 60)
+    skewY: 0      // Skew Y / Torsion verticale (-45 to 45)
+  });
   
   const [isDrawing, setIsDrawing] = useState(false);
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
-  const [selection, setSelection] = useState(null);
+  const [isDraggingPlate, setIsDraggingPlate] = useState(false);
 
-  // Load image to canvas
+  // Load image to canvas & offscreen baseCanvas
   React.useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
     const ctx = canvas.getContext('2d');
+    const baseCtx = baseCanvas.getContext('2d');
     
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -858,9 +876,178 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
     img.onload = () => {
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
+      baseCanvas.width = img.naturalWidth;
+      baseCanvas.height = img.naturalHeight;
+      baseCtx.drawImage(img, 0, 0);
       ctx.drawImage(img, 0, 0);
+      setImageLoaded(true);
+      setIsBaked(false);
     };
   }, [imageUrl]);
+
+  const drawPlateOnCanvas = (ctx, tf, isPreview, canvasWidth, canvasHeight) => {
+    const cx = tf.x * canvasWidth;
+    const cy = tf.y * canvasHeight;
+    const w = tf.w * canvasWidth;
+    const h = tf.h * canvasHeight;
+
+    ctx.save();
+    
+    // Translate to center of where plate should be
+    ctx.translate(cx, cy);
+    
+    // Rotate
+    const rad = (tf.rotate * Math.PI) / 180;
+    ctx.rotate(rad);
+    
+    // Skew / Torsion (transform: a=1, b=tan(skewY), c=tan(skewX), d=1, e=0, f=0)
+    const skewXRad = (tf.skewX * Math.PI) / 180;
+    const skewYRad = (tf.skewY * Math.PI) / 180;
+    ctx.transform(1, Math.tan(skewYRad), Math.tan(skewXRad), 1, 0, 0);
+    
+    const x = -w / 2;
+    const y = -h / 2;
+
+    // Realistic drop shadow
+    if (!isPreview) {
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.75)';
+      ctx.shadowBlur = Math.max(8, h * 0.18);
+      ctx.shadowOffsetX = Math.max(1, h * 0.03);
+      ctx.shadowOffsetY = Math.max(3, h * 0.08);
+    } else {
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetY = 3;
+    }
+
+    // Outer European plastic dealer frame (Support mat anthracite)
+    const outerRadius = Math.max(4, h * 0.12);
+    drawRoundedRect(ctx, x, y, w, h, outerRadius);
+    
+    const frameGrad = ctx.createLinearGradient(x, y, x, y + h);
+    frameGrad.addColorStop(0, '#27272A');
+    frameGrad.addColorStop(0.25, '#18181B');
+    frameGrad.addColorStop(1, '#09090B');
+    ctx.fillStyle = frameGrad;
+    ctx.fill();
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    // Metallic outer edge rim
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+    ctx.lineWidth = Math.max(1, h * 0.02);
+    ctx.stroke();
+
+    // Inner Plate inset
+    const insetX = w * 0.018;
+    const insetTop = h * 0.06;
+    const insetBottom = h * 0.25;
+    const innerX = x + insetX;
+    const innerY = y + insetTop;
+    const innerW = w - (insetX * 2);
+    const innerH = h - insetTop - insetBottom;
+    const innerRadius = Math.max(3, innerH * 0.1);
+
+    drawRoundedRect(ctx, innerX, innerY, innerW, innerH, innerRadius);
+    const plateGrad = ctx.createLinearGradient(innerX, innerY, innerX, innerY + innerH);
+    plateGrad.addColorStop(0, '#1E293B');
+    plateGrad.addColorStop(0.2, '#0F172A');
+    plateGrad.addColorStop(1, '#020617');
+    ctx.fillStyle = plateGrad;
+    ctx.fill();
+
+    // Inner silver trim border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = Math.max(1, innerH * 0.03);
+    ctx.stroke();
+
+    // Center Typography: GARAGE PRO
+    const fontSize = Math.max(11, Math.floor(innerH * 0.52));
+    ctx.font = `900 ${fontSize}px "Arial Black", Impact, sans-serif`;
+    ctx.textBaseline = 'middle';
+    
+    const part1 = "GARAGE ";
+    const part2 = "PRO";
+    const w1 = ctx.measureText(part1).width;
+    const w2 = ctx.measureText(part2).width;
+    const totalW = w1 + w2;
+    const startX = innerX + (innerW - totalW) / 2;
+    const textY = innerY + (innerH * 0.44);
+
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+    ctx.shadowBlur = Math.max(3, innerH * 0.06);
+    ctx.shadowOffsetY = Math.max(1, innerH * 0.03);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.textAlign = 'left';
+    ctx.fillText(part1, startX, textY);
+    
+    ctx.fillStyle = '#FCA311';
+    ctx.fillText(part2, startX + w1, textY);
+
+    // Subtext inside plate
+    ctx.shadowColor = 'transparent';
+    const subSize = Math.max(7, Math.floor(innerH * 0.16));
+    ctx.font = `bold ${subSize}px sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.textAlign = 'center';
+    ctx.fillText("AUTO EXPORT • DEUTSCHLAND", innerX + innerW / 2, innerY + (innerH * 0.82));
+
+    // Dealer Lip Branding along bottom plastic strip
+    const lipCenterY = y + h - (insetBottom * 0.44);
+    const lipSize = Math.max(6, Math.floor(insetBottom * 0.46));
+    ctx.font = `900 ${lipSize}px sans-serif`;
+    ctx.fillStyle = '#E2E8F0';
+    ctx.textAlign = 'center';
+    ctx.fillText("A.P.S. CARS & TRUCKS GMBH   •   GARAGE PRO", x + w / 2, lipCenterY);
+
+    // If preview mode, draw Photoshop transform frame around the plate with corner handles
+    if (isPreview) {
+      ctx.strokeStyle = '#00E5FF';
+      ctx.lineWidth = Math.max(1.5, Math.min(3, canvasWidth * 0.003));
+      ctx.setLineDash([6, 5]);
+      drawRoundedRect(ctx, x - 3, y - 3, w + 6, h + 6, outerRadius);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const handleSize = Math.max(8, Math.min(14, canvasWidth * 0.012));
+      ctx.fillStyle = '#FCA311';
+      ctx.strokeStyle = '#14213D';
+      ctx.lineWidth = 2;
+      [
+        [x - 3, y - 3],
+        [x + w + 3, y - 3],
+        [x + w + 3, y + h + 3],
+        [x - 3, y + h + 3]
+      ].forEach(([hx, hy]) => {
+        ctx.fillRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize);
+        ctx.strokeRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize);
+      });
+    }
+
+    ctx.restore();
+  };
+
+  // Real-time canvas render loop on transform or mode change
+  React.useEffect(() => {
+    if (!imageLoaded) return;
+    const canvas = canvasRef.current;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    // Clear & restore from baseCanvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(baseCanvas, 0, 0);
+    
+    // Draw live transformed plate in studio mode
+    if (mode === 'transform' && !isBaked) {
+      drawPlateOnCanvas(ctx, transform, true, canvas.width, canvas.height);
+    }
+  }, [mode, transform, imageLoaded, isBaked]);
 
   const getCanvasCoords = (e) => {
     const canvas = canvasRef.current;
@@ -883,12 +1070,13 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
 
   const applyBrushAt = (relX, relY) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
     const ctx = canvas.getContext('2d');
+    const baseCtx = baseCanvas.getContext('2d');
     const cx = Math.floor(relX * canvas.width);
     const cy = Math.floor(relY * canvas.height);
     
-    // Scale brush radius accurately based on image natural width
     const radius = Math.max(15, Math.floor((canvas.width / 1000) * brushSize));
     
     if (brushType === 'blur') {
@@ -912,278 +1100,213 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
             const idx = (pr * Math.floor(w) + pc) * 4;
             ctx.fillStyle = `rgba(${data[idx]}, ${data[idx+1]}, ${data[idx+2]}, ${data[idx+3] / 255})`;
             ctx.fillRect(startX + c, startY + r, Math.min(size, w - c), Math.min(size, h - r));
+            baseCtx.fillStyle = ctx.fillStyle;
+            baseCtx.fillRect(startX + c, startY + r, Math.min(size, w - c), Math.min(size, h - r));
           }
         }
       }
     } else {
-      // Dark matte cover brush
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.fillStyle = '#14213D';
       ctx.fill();
+      
+      baseCtx.beginPath();
+      baseCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+      baseCtx.fillStyle = '#14213D';
+      baseCtx.fill();
     }
   };
 
   const handleStart = (e) => {
     if (e.cancelable) e.preventDefault();
-    const { x, y, relX, relY } = getCanvasCoords(e);
+    const { relX, relY } = getCanvasCoords(e);
     
-    setIsDrawing(true);
-    setStartPos({ x, y });
-    setCurrentPos({ x, y });
-    
-    if (mode === 'rect') {
-      setSelection(null);
+    if (mode === 'transform') {
+      setIsDraggingPlate(true);
+      setIsBaked(false);
+      setTransform(prev => ({ ...prev, x: relX, y: relY }));
     } else if (mode === 'brush') {
+      setIsDrawing(true);
       applyBrushAt(relX, relY);
     }
   };
 
   const handleMove = (e) => {
-    if (!isDrawing) return;
-    const { x, y, relX, relY } = getCanvasCoords(e);
-    setCurrentPos({ x, y });
-    
-    if (mode === 'brush') {
+    const { relX, relY } = getCanvasCoords(e);
+    if (mode === 'transform' && isDraggingPlate) {
+      setTransform(prev => ({ ...prev, x: relX, y: relY }));
+    } else if (mode === 'brush' && isDrawing) {
       applyBrushAt(relX, relY);
     }
   };
 
   const handleEnd = () => {
-    if (!isDrawing) return;
     setIsDrawing(false);
-    
-    if (mode === 'rect') {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const left = Math.min(startPos.x, currentPos.x) / rect.width;
-      const top = Math.min(startPos.y, currentPos.y) / rect.height;
-      const width = Math.abs(startPos.x - currentPos.x) / rect.width;
-      const height = Math.abs(startPos.y - currentPos.y) / rect.height;
-      
-      if (width > 0.01 && height > 0.01) {
-        setSelection({ left, top, width, height });
-      }
-    }
+    setIsDraggingPlate(false);
   };
 
-  const applyMask = () => {
-    if (!selection) return;
+  // Graver la plaque transformée sur l'image de base (sans les poignées bleues)
+  const bakePlateToCanvas = () => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
+    const baseCtx = baseCanvas.getContext('2d');
     
-    const x = selection.left * canvas.width;
-    const y = selection.top * canvas.height;
-    const w = selection.width * canvas.width;
-    const h = selection.height * canvas.height;
-    
-    ctx.save();
-
-    // 1. Drop shadow for authentic 3D integration into car bumper
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-    ctx.shadowBlur = Math.max(6, h * 0.15);
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = Math.max(3, h * 0.06);
-
-    // 2. Outer Euro dealer holder frame (Support de plaque en plastique mat)
-    const outerRadius = Math.max(4, h * 0.12);
-    drawRoundedRect(ctx, x, y, w, h, outerRadius);
-    
-    // Charcoal matte gradient finish
-    const frameGrad = ctx.createLinearGradient(x, y, x, y + h);
-    frameGrad.addColorStop(0, '#27272A');
-    frameGrad.addColorStop(0.25, '#18181B');
-    frameGrad.addColorStop(1, '#09090B');
-    ctx.fillStyle = frameGrad;
-    ctx.fill();
-
-    // Reset shadow for inner elements
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetY = 0;
-
-    // Subtle metallic outer edge highlight
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-    ctx.lineWidth = Math.max(1, h * 0.02);
-    ctx.stroke();
-
-    // 3. Inner License Plate Area
-    // Insets: sides top by ~6%, bottom by ~24% to reserve space for bottom dealership lip text
-    const insetX = w * 0.02;
-    const insetTop = h * 0.06;
-    const insetBottom = h * 0.25;
-    const innerX = x + insetX;
-    const innerY = y + insetTop;
-    const innerW = w - (insetX * 2);
-    const innerH = h - insetTop - insetBottom;
-    const innerRadius = Math.max(3, innerH * 0.1);
-
-    drawRoundedRect(ctx, innerX, innerY, innerW, innerH, innerRadius);
-    const plateGrad = ctx.createLinearGradient(innerX, innerY, innerX, innerY + innerH);
-    plateGrad.addColorStop(0, '#1E293B');
-    plateGrad.addColorStop(0.2, '#0F172A');
-    plateGrad.addColorStop(1, '#020617');
-    ctx.fillStyle = plateGrad;
-    ctx.fill();
-
-    // Inner subtle silver trim
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
-    ctx.lineWidth = Math.max(1, innerH * 0.03);
-    ctx.stroke();
-
-    // 4. Center Typography: "GARAGE PRO"
-    // White GARAGE + Golden Orange PRO (#FCA311) with 3D embossed shadow
-    const fontSize = Math.max(11, Math.floor(innerH * 0.52));
-    ctx.font = `900 ${fontSize}px "Arial Black", Impact, sans-serif`;
-    ctx.textBaseline = 'middle';
-    
-    const part1 = "GARAGE ";
-    const part2 = "PRO";
-    const w1 = ctx.measureText(part1).width;
-    const w2 = ctx.measureText(part2).width;
-    const totalW = w1 + w2;
-    const startX = innerX + (innerW - totalW) / 2;
-    const textY = innerY + (innerH * 0.44);
-
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-    ctx.shadowBlur = Math.max(3, innerH * 0.06);
-    ctx.shadowOffsetY = Math.max(1, innerH * 0.03);
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.textAlign = 'left';
-    ctx.fillText(part1, startX, textY);
-    
-    ctx.fillStyle = '#FCA311'; // Brand Signature Gold
-    ctx.fillText(part2, startX + w1, textY);
-
-    // Subtext inside plate
-    ctx.shadowColor = 'transparent';
-    const subSize = Math.max(7, Math.floor(innerH * 0.16));
-    ctx.font = `bold ${subSize}px sans-serif`;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-    ctx.textAlign = 'center';
-    ctx.fillText("AUTO EXPORT • DEUTSCHLAND", innerX + innerW / 2, innerY + (innerH * 0.82));
-
-    // 5. Dealer Lip Branding along bottom edge of plastic holder frame
-    const lipCenterY = y + h - (insetBottom * 0.44);
-    const lipSize = Math.max(6, Math.floor(insetBottom * 0.46));
-    ctx.font = `900 ${lipSize}px sans-serif`;
-    ctx.fillStyle = '#E2E8F0';
-    ctx.textAlign = 'center';
-    ctx.fillText("A.P.S. CARS & TRUCKS GMBH   •   GARAGE PRO", x + w / 2, lipCenterY);
-
-    ctx.restore();
-    setSelection(null);
-    toast.success("Plaque Pro 3D réaliste appliquée !");
+    // Draw finalized plate directly onto baseCanvas
+    drawPlateOnCanvas(baseCtx, transform, false, baseCanvas.width, baseCanvas.height);
+    setIsBaked(true);
+    toast.success("👑 Plaque gravée sur la photo selon la perspective !");
   };
 
-  const applyBlur = () => {
-    if (!selection) return;
+  // Flouter selon le rectangle orienté/tordu
+  const applyPerspectiveBlur = () => {
     const canvas = canvasRef.current;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
     const ctx = canvas.getContext('2d');
+    const baseCtx = baseCanvas.getContext('2d');
     
-    const x = selection.left * canvas.width;
-    const y = selection.top * canvas.height;
-    const w = selection.width * canvas.width;
-    const h = selection.height * canvas.height;
-    
-    const size = Math.max(5, Math.floor(h / 8));
-    const imgData = ctx.getImageData(x, y, w, h);
+    ctx.drawImage(baseCanvas, 0, 0);
+    const w = canvas.width;
+    const h = canvas.height;
+    const imgData = ctx.getImageData(0, 0, w, h);
     const data = imgData.data;
     
+    ctx.save();
+    const cx = transform.x * w;
+    const cy = transform.y * h;
+    const plateW = transform.w * w;
+    const plateH = transform.h * h;
+    
+    ctx.translate(cx, cy);
+    ctx.rotate((transform.rotate * Math.PI) / 180);
+    ctx.transform(1, Math.tan((transform.skewY * Math.PI) / 180), Math.tan((transform.skewX * Math.PI) / 180), 1, 0, 0);
+    
+    ctx.beginPath();
+    ctx.rect(-plateW / 2, -plateH / 2, plateW, plateH);
+    ctx.clip();
+    
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    
+    const size = Math.max(6, Math.floor(plateH / 6));
     for (let r = 0; r < h; r += size) {
       for (let c = 0; c < w; c += size) {
-        const pr = Math.min(r, h - 1);
-        const pc = Math.min(c, w - 1);
-        const i = (pr * Math.floor(w) + pc) * 4;
-        const red = data[i];
-        const green = data[i + 1];
-        const blue = data[i + 2];
-        const alpha = data[i + 3];
-        
-        ctx.fillStyle = `rgba(${red},${green},${blue},${alpha / 255})`;
-        ctx.fillRect(x + c, y + r, Math.min(size, w - c), Math.min(size, h - r));
+        if (Math.abs(c - cx) < plateW && Math.abs(r - cy) < plateH) {
+          const i = (r * w + c) * 4;
+          ctx.fillStyle = `rgba(${data[i]},${data[i+1]},${data[i+2]},1)`;
+          ctx.fillRect(c, r, size + 1, size + 1);
+        }
       }
     }
+    ctx.restore();
     
-    setSelection(null);
-    toast.success("Cadre flouté");
+    baseCtx.drawImage(canvas, 0, 0);
+    setIsBaked(true);
+    toast.success("✨ Mosaïque en perspective appliquée !");
   };
 
   const handleReset = () => {
     const canvas = canvasRef.current;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
     const ctx = canvas.getContext('2d');
+    const baseCtx = baseCanvas.getContext('2d');
+    
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = imageUrl;
     img.onload = () => {
+      baseCtx.drawImage(img, 0, 0);
       ctx.drawImage(img, 0, 0);
-      setSelection(null);
+      setIsBaked(false);
       toast.success("Image réinitialisée");
     };
   };
 
-  const handleSave = () => {
+  // ⚡ SAUVEGARDE INSTANTANÉE (RAPIDE) ET UPLOAD EN ARRIÈRE-PLAN
+  const handleInstantSave = () => {
     const canvas = canvasRef.current;
+    const baseCanvas = baseCanvasRef.current;
+    if (!canvas || !baseCanvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const baseCtx = baseCanvas.getContext('2d');
+    
+    // If user is in transform mode and hasn't explicitly clicked "graver", bake it cleanly before saving!
+    if (mode === 'transform' && !isBaked) {
+      drawPlateOnCanvas(baseCtx, transform, false, baseCanvas.width, baseCanvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(baseCanvas, 0, 0);
+    }
+
     setSaving(true);
+    
+    // 1. GÉNÉRATION INSTANTANÉE EN LOCAL DE L'IMAGE POUR AFFICHAGE IMMÉDIAT DANS LA GALERIE (< 20 ms)
+    const instantDataUrl = canvas.toDataURL('image/jpeg', 0.93);
+    if (onSave) {
+      onSave(instantDataUrl);
+    }
+    toast.success("⚡ Modifications appliquées instantanément ! Synchronisation Cloud en arrière-plan...");
+    onClose(); // Fermeture instantanée de la fenêtre sans faire patienter l'utilisateur !
+
+    // 2. SYNCHRONISATION CLOUD EN ARRIÈRE-PLAN (ZÉRO ATTENTE POUR L'UTILISATEUR)
     canvas.toBlob(async (blob) => {
-      if (!blob) {
-        setSaving(false);
-        return;
-      }
+      if (!blob) return;
       const file = new File([blob], "blurred_license_plate.jpg", { type: "image/jpeg" });
       try {
-        const newUrl = await uploadToCloudinary(file);
-        onSave(newUrl);
-        toast.success("Photo principale mise à jour avec succès !");
+        const permanentUrl = await uploadToCloudinary(file);
+        if (onSaveCloudinaryUrl) {
+          onSaveCloudinaryUrl(instantDataUrl, permanentUrl);
+        }
+        toast.success("☁️ Photo synchronisée en toute sécurité sur Cloudinary !");
       } catch (err) {
-        toast.error("Erreur de sauvegarde sur Cloudinary");
-      } finally {
-        setSaving(false);
+        console.error("Erreur de synchronisation Cloudinary en arrière-plan :", err);
       }
-    }, 'image/jpeg', 0.92);
+    }, 'image/jpeg', 0.93);
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-[2.5rem] border border-[#E5E5E5] w-full max-w-5xl p-6 sm:p-8 flex flex-col max-h-[95vh] shadow-2xl animate-fade-in overflow-hidden">
-        <div className="flex justify-between items-start sm:items-center gap-4 mb-4">
+    <div className="fixed inset-0 z-[100] bg-slate-900/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+      <div className="bg-white rounded-[2.5rem] border border-[#E5E5E5] w-full max-w-5xl p-6 sm:p-8 flex flex-col max-h-[96vh] shadow-2xl animate-fade-in my-auto overflow-hidden">
+        
+        {/* Header */}
+        <div className="flex justify-between items-start sm:items-center gap-4 mb-3">
           <div>
-            <h3 className="text-lg font-black text-[#14213D] uppercase tracking-wider flex items-center gap-2">
-              <Wand2 size={22} className="text-[#FCA311]" />
-              Masquage & Floutage de Plaque
+            <h3 className="text-lg sm:text-xl font-black text-[#14213D] uppercase tracking-wider flex items-center gap-2.5">
+              <Sliders size={22} className="text-[#FCA311]" />
+              Studio de Plaque & Torsion Perspective
             </h3>
-            <p className="text-xs font-bold text-[#14213D]/50 uppercase tracking-widest mt-1">
-              Choisissez le Mode Cadre pour la Plaque Pro 3D ou le Mode Pinceau Libre
+            <p className="text-xs font-bold text-[#14213D]/60 uppercase tracking-widest mt-0.5">
+              Orientez et tordez votre plaque en 3D (style Photoshop) ou peignez en libre
             </p>
           </div>
-          <button onClick={onClose} className="p-3 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-2xl transition-colors shadow-sm">
+          <button onClick={onClose} className="p-3 bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-2xl transition-colors shadow-2xs">
             <X size={20} />
           </button>
         </div>
 
-        {/* Mode Selector & Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 p-2.5 bg-gray-50 rounded-2xl border border-[#E5E5E5]">
-          <div className="flex items-center gap-2">
+        {/* Mode Selector Tabs */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 p-2 bg-gray-100/90 rounded-2xl border border-[#E5E5E5]">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => { setMode('rect'); setSelection(null); }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm ${
-                mode === 'rect'
-                  ? 'bg-[#14213D] text-[#FCA311] shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              onClick={() => { setMode('transform'); setIsBaked(false); }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs ${
+                mode === 'transform'
+                  ? 'bg-[#14213D] text-[#FCA311] shadow-md scale-102'
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
-              <Square size={15} /> 1. Cadre (Plaque Pro 3D)
+              <Move size={15} className="text-[#FCA311]" /> 1. Studio Torsion & Perspective 3D
             </button>
             <button
               type="button"
-              onClick={() => { setMode('brush'); setSelection(null); }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-sm ${
+              onClick={() => { setMode('brush'); }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs ${
                 mode === 'brush'
-                  ? 'bg-[#14213D] text-[#FCA311] shadow-md'
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-[#14213D] text-[#FCA311] shadow-md scale-102'
+                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
               <Paintbrush size={15} /> 2. Pinceau Libre
@@ -1191,7 +1314,7 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
           </div>
 
           {mode === 'brush' && (
-            <div className="flex flex-wrap items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200 w-full sm:w-auto justify-end">
+            <div className="flex flex-wrap items-center gap-2 ml-auto justify-end">
               <span className="text-[10px] font-black text-gray-400 uppercase mr-1">Style :</span>
               <button
                 type="button"
@@ -1233,10 +1356,136 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
           )}
         </div>
 
+        {/* Studio Controls Panel for Transform Mode */}
+        {mode === 'transform' && !isBaked && (
+          <div className="bg-slate-900 text-white p-4 rounded-[1.75rem] mb-4 border border-slate-800 shadow-lg animate-fade-in flex flex-col gap-3">
+            <div className="flex items-center justify-between text-xs font-black text-[#FCA311] uppercase tracking-wider pb-2 border-b border-slate-800">
+              <span className="flex items-center gap-2">
+                <Sliders size={16} /> Réglages Perspective "Style Photoshop"
+              </span>
+              <span className="text-[11px] font-bold text-slate-300">
+                💡 Astuce : Glissez le cadre sur la photo avec votre doigt ou souris pour positionner !
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold">
+              {/* Torsion Horizontale / Perspective (Le plus important pour tordre) */}
+              <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <div className="flex justify-between items-center mb-1.5 text-amber-300 font-extrabold">
+                  <span>📐 Torsion (Perspective X) :</span>
+                  <span className="bg-slate-900 px-2 py-0.5 rounded text-[#FCA311]">{transform.skewX}°</span>
+                </div>
+                <input
+                  type="range"
+                  min="-60"
+                  max="60"
+                  value={transform.skewX}
+                  onChange={(e) => setTransform(prev => ({ ...prev, skewX: parseInt(e.target.value) }))}
+                  className="w-full accent-[#FCA311] cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>Gauche (-60°)</span>
+                  <button type="button" onClick={() => setTransform(prev => ({ ...prev, skewX: 0 }))} className="hover:text-white">0°</button>
+                  <span>Droite (+60°)</span>
+                </div>
+              </div>
+
+              {/* Rotation / Inclinaison */}
+              <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <div className="flex justify-between items-center mb-1.5 text-amber-300 font-extrabold">
+                  <span className="flex items-center gap-1"><RotateCw size={13} /> Rotation :</span>
+                  <span className="bg-slate-900 px-2 py-0.5 rounded text-[#FCA311]">{transform.rotate}°</span>
+                </div>
+                <input
+                  type="range"
+                  min="-60"
+                  max="60"
+                  value={transform.rotate}
+                  onChange={(e) => setTransform(prev => ({ ...prev, rotate: parseInt(e.target.value) }))}
+                  className="w-full accent-[#FCA311] cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>-60°</span>
+                  <button type="button" onClick={() => setTransform(prev => ({ ...prev, rotate: 0 }))} className="hover:text-white">0°</button>
+                  <span>+60°</span>
+                </div>
+              </div>
+
+              {/* Torsion Verticale / Perspective Y */}
+              <div className="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <div className="flex justify-between items-center mb-1.5 text-amber-300 font-extrabold">
+                  <span>📐 Torsion Verticale (Y) :</span>
+                  <span className="bg-slate-900 px-2 py-0.5 rounded text-[#FCA311]">{transform.skewY}°</span>
+                </div>
+                <input
+                  type="range"
+                  min="-45"
+                  max="45"
+                  value={transform.skewY}
+                  onChange={(e) => setTransform(prev => ({ ...prev, skewY: parseInt(e.target.value) }))}
+                  className="w-full accent-[#FCA311] cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>Haut (-45°)</span>
+                  <button type="button" onClick={() => setTransform(prev => ({ ...prev, skewY: 0 }))} className="hover:text-white">0°</button>
+                  <span>Bas (+45°)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Size sliders & quick action */}
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-slate-800 text-xs">
+              <div className="flex flex-wrap items-center gap-4 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-300 font-bold">Largeur :</span>
+                  <input
+                    type="range"
+                    min="0.10"
+                    max="0.75"
+                    step="0.01"
+                    value={transform.w}
+                    onChange={(e) => setTransform(prev => ({ ...prev, w: parseFloat(e.target.value) }))}
+                    className="w-28 accent-[#FCA311] cursor-pointer"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-300 font-bold">Hauteur :</span>
+                  <input
+                    type="range"
+                    min="0.03"
+                    max="0.25"
+                    step="0.005"
+                    value={transform.h}
+                    onChange={(e) => setTransform(prev => ({ ...prev, h: parseFloat(e.target.value) }))}
+                    className="w-28 accent-[#FCA311] cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={bakePlateToCanvas}
+                  className="px-4 py-2 bg-amber-500 hover:bg-[#FCA311] text-[#14213D] font-black uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center gap-1.5"
+                >
+                  <Check size={16} strokeWidth={3} /> Graver Plaque Pro
+                </button>
+                <button
+                  type="button"
+                  onClick={applyPerspectiveBlur}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 border border-slate-700"
+                >
+                  <Sparkles size={15} className="text-[#FCA311]" /> Mosaïque 3D
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Canvas Area */}
         <div 
           ref={containerRef}
-          className="relative flex-1 bg-gray-900/5 rounded-[2rem] border border-[#E5E5E5] overflow-hidden flex items-center justify-center p-4 min-h-[350px] max-h-[55vh] select-none"
+          className="relative flex-1 bg-gray-900/5 rounded-[2rem] border border-[#E5E5E5] overflow-hidden flex items-center justify-center p-3 sm:p-4 min-h-[320px] max-h-[50vh] select-none"
         >
           <div className="relative inline-flex items-center justify-center max-w-full max-h-full">
             <canvas 
@@ -1248,93 +1497,50 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
               onTouchMove={handleMove}
               onTouchEnd={handleEnd}
               draggable="false" 
-              className={`max-w-full max-h-[50vh] object-contain rounded-xl shadow-lg ${
-                mode === 'brush' ? 'cursor-crosshair' : 'cursor-default'
+              className={`max-w-full max-h-[46vh] object-contain rounded-xl shadow-lg transition-shadow ${
+                mode === 'brush' ? 'cursor-crosshair' : 'cursor-move'
               }`} 
             />
-            
-            {/* Selection rectangle overlay for rect mode during drag */}
-            {isDrawing && mode === 'rect' && (
-              <div 
-                className="absolute border-2 border-dashed border-[#FCA311] bg-[#FCA311]/15 pointer-events-none rounded-sm"
-                style={{
-                  left: Math.min(startPos.x, currentPos.x),
-                  top: Math.min(startPos.y, currentPos.y),
-                  width: Math.abs(startPos.x - currentPos.x),
-                  height: Math.abs(startPos.y - currentPos.y)
-                }}
-              />
-            )}
-            
-            {/* Selected rectangle after draw in rect mode */}
-            {selection && !isDrawing && mode === 'rect' && (
-              <div 
-                className="absolute border-3 border-[#FCA311] bg-[#FCA311]/10 pointer-events-none rounded-sm shadow-sm animate-pulse"
-                style={{
-                  left: `${selection.left * 100}%`,
-                  top: `${selection.top * 100}%`,
-                  width: `${selection.width * 100}%`,
-                  height: `${selection.height * 100}%`
-                }}
-              />
-            )}
           </div>
         </div>
 
         {/* Action Buttons Bottom Bar */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mt-6 pt-5 border-t border-[#E5E5E5]">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-center mt-5 pt-4 border-t border-[#E5E5E5]">
           <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-            {mode === 'rect' ? (
-              <>
-                <button
-                  type="button"
-                  onClick={applyMask}
-                  disabled={!selection}
-                  className="px-6 py-3.5 bg-[#14213D] text-[#FCA311] disabled:opacity-40 hover:bg-slate-800 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md flex items-center gap-2"
-                >
-                  <Check size={16} strokeWidth={3} /> 👑 Appliquer Plaque Pro (3D Réaliste)
-                </button>
-                <button
-                  type="button"
-                  onClick={applyBlur}
-                  disabled={!selection}
-                  className="px-5 py-3.5 bg-gray-100 hover:bg-gray-200 text-[#14213D] disabled:opacity-40 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2"
-                >
-                  <Sparkles size={16} /> Flouter le cadre
-                </button>
-              </>
-            ) : (
-              <div className="flex items-center gap-2 text-xs font-black text-[#14213D] bg-amber-50 px-4 py-3 rounded-xl border border-amber-200 shadow-2xs">
-                <Paintbrush size={16} className="text-[#FCA311]" />
-                Maintenez et glissez sur la photo pour dessiner/flouter en direct !
-              </div>
-            )}
-            
             <button
               type="button"
               onClick={handleReset}
-              className="px-5 py-3.5 bg-white border border-[#E5E5E5] hover:border-red-300 text-red-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ml-auto sm:ml-0"
+              className="px-5 py-3.5 bg-white border border-[#E5E5E5] hover:border-red-300 text-red-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 w-full sm:w-auto justify-center shadow-2xs"
             >
-              <RotateCcw size={15} /> Réinitialiser
+              <RotateCcw size={15} /> Réinitialiser photo
             </button>
+            {isBaked && mode === 'transform' && (
+              <button
+                type="button"
+                onClick={() => setIsBaked(false)}
+                className="px-5 py-3.5 bg-slate-900 text-amber-400 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 w-full sm:w-auto justify-center"
+              >
+                <Sliders size={15} /> Modifier position / torsion
+              </button>
+            )}
           </div>
 
-          <div className="flex gap-2.5 w-full sm:w-auto">
+          <div className="flex gap-3 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-none px-6 py-3.5 bg-white border border-[#E5E5E5] hover:bg-gray-50 text-gray-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+              className="flex-1 sm:flex-none px-6 py-3.5 bg-white border border-[#E5E5E5] hover:bg-gray-50 text-gray-600 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
             >
               Annuler
             </button>
             <button
               type="button"
-              onClick={handleSave}
+              onClick={handleInstantSave}
               disabled={saving}
-              className="flex-1 sm:flex-none px-8 py-3.5 bg-[#FCA311] text-[#14213D] hover:bg-amber-500 disabled:opacity-50 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2.5"
+              className="flex-1 sm:flex-none px-8 py-3.5 bg-linear-to-r from-[#FCA311] to-amber-400 text-[#14213D] hover:opacity-95 disabled:opacity-50 rounded-xl text-xs sm:text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-[#FCA311]/20 flex items-center justify-center gap-2.5 transform hover:scale-101"
             >
-              {saving ? <Loader2 className="animate-spin" size={16} /> : <Wand2 size={16} />}
-              Appliquer & Sauvegarder
+              <Zap size={18} className="text-[#14213D] fill-[#14213D]" />
+              ⚡ Appliquer & Sauvegarder (Rapide)
             </button>
           </div>
         </div>
