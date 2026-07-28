@@ -112,7 +112,7 @@ Chez A.P.S. CARS & TRUCKS GMBH, nous sommes spécialisés dans l'importation sé
 
 Pour découvrir toutes les caractéristiques techniques, les options détaillées ainsi qu'une galerie de photos complètes, nous vous invitons à consulter sa fiche officielle sécurisée en cliquant sur le lien ci-dessous :
 
-👉 [LIEN DU VÉHICULE]
+Lien du véhicule : [LIEN DU VÉHICULE]
 
 Si ce modèle correspond à vos attentes, un de nos conseillers experts est à votre entière disposition par téléphone ou par e-mail pour finaliser votre dossier d'importation.
 
@@ -349,6 +349,7 @@ const EmailManager = () => {
             <td style="background-color: #090e1d; padding: 30px 40px; text-align: center; color: #94a3b8; font-size: 11px;">
               <p style="margin: 0 0 10px; font-weight: 800; color: #e2e8f0; letter-spacing: 1px;">${smtpConfig.footerTitle || 'SERVICE PROFESSIONNEL A.P.S. CARS & TRUCKS GMBH'}</p>
               <p style="margin: 0; line-height: 1.5; font-size: 10px; color: #64748b;">${smtpConfig.footerContent || "Ce courriel et ses pièces jointes sont confidentiels et établis à l'attention exclusive de ses destinataires."}</p>
+              <p style="margin: 15px 0 0; font-size: 9px; color: #475569;">Pour ne plus recevoir nos e-mails, veuillez nous répondre avec "STOP" ou nous contacter via notre site web.</p>
             </td>
           </tr>
         </table>
@@ -364,6 +365,11 @@ const EmailManager = () => {
     if (e && e.preventDefault) e.preventDefault();
     if (!form.to || !form.subject || !form.body) {
       toast.error("Veuillez remplir le destinataire, l'objet et le corps du message.");
+      return;
+    }
+
+    if (form.subject.includes('[MARQUE ET MODÈLE]') || form.body.includes('[MARQUE ET MODÈLE]') || form.body.includes('[LIEN DU VÉHICULE]')) {
+      toast.error("⚠️ Attention : Vous n'avez pas remplacé les variables du véhicule (cliquez sur 'Injecter les infos du véhicule' ou modifiez le texte manuellement).");
       return;
     }
 
