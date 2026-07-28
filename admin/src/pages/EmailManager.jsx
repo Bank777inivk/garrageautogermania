@@ -110,7 +110,7 @@ Nous vous remercions pour l'intérêt que vous portez au véhicule [MARQUE ET MO
 
 Chez A.P.S. CARS & TRUCKS GMBH, nous sommes spécialisés dans l'importation sécurisée de véhicules Premium depuis l'Allemagne et l'Europe. Ce véhicule est en excellent état, son kilométrage est certifié et il a passé notre inspection avec succès.
 
-Pour découvrir toutes les caractéristiques techniques, les options détaillées ainsi qu'une galerie de photos complètes, nous vous invitons à consulter sa fiche officielle sécurisée en cliquant sur le lien ci-dessous :
+Pour découvrir toutes les caractéristiques techniques, les options détaillées ainsi qu'une galerie de photos complètes, nous vous invitons à consulter sa fiche officielle sécurisée ci-dessous :
 
 Lien du véhicule : [LIEN DU VÉHICULE]
 
