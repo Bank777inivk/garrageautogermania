@@ -28,12 +28,27 @@ const Promotions = () => {
     });
 
     useEffect(() => {
-        const q = query(collection(db, 'promotions'), orderBy('createdAt', 'desc'));
+        // Remove 'orderBy' constraint from Firestore query. 
+        // This prevents Firestore from silently ignoring promotions that lack the 'createdAt' field or failing if the index is missing!
+        const q = collection(db, 'promotions');
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const promos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Intelligent robust sorting on the client side
+            promos.sort((a, b) => {
+                const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt instanceof Date ? a.createdAt.getTime() : (a.createdAt || 0));
+                const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt instanceof Date ? b.createdAt.getTime() : (b.createdAt || 0));
+                return dateB - dateA; // Descending
+            });
+
             setPromotions(promos);
             setLoading(false);
+        }, (error) => {
+            console.error("Erreur critique de récupération des promotions:", error);
+            toast.error("Échec de synchronisation des promotions.");
+            setLoading(false);
         });
+        
         return () => unsubscribe();
     }, []);
 

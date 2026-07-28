@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '@shared/firebase/config';
-import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import {
     Users,
     Search,
@@ -25,13 +25,67 @@ const Clients = () => {
     const [filter, setFilter] = useState('all'); // all, active, blocked
 
     useEffect(() => {
-        const q = query(collection(db, 'clients'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const clientList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setClients(clientList);
-            setLoading(false);
-        });
-        return () => unsubscribe();
+        const fetchAllClients = async () => {
+            const clientsRef = collection(db, 'clients');
+            
+            // Remove orderBy from query to avoid missing documents lacking 'createdAt' and index errors
+            const unsubscribe = onSnapshot(clientsRef, async (snapshot) => {
+                const clientMap = new Map();
+                
+                // 1. Process formal registered clients
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    clientMap.set(data.email || docSnap.id, { id: docSnap.id, ...data, isGuest: false });
+                });
+                
+                // 2. Intelligently fetch buyers from orders who might not have registered an account
+                try {
+                    const ordersSnap = await getDocs(collection(db, 'orders'));
+                    ordersSnap.forEach(docSnap => {
+                        const order = docSnap.data();
+                        const email = order.email || order.clientEmail || order?.customer?.email;
+                        // If buyer is not already in our registered clients list
+                        if (email && !clientMap.has(email)) {
+                            let fullName = order.name || order.clientName || order?.customer?.name || 'Client';
+                            let parts = fullName.split(' ');
+                            
+                            clientMap.set(email, {
+                                id: `guest_${docSnap.id}`,
+                                firstName: parts[0] || 'Client',
+                                lastName: parts.slice(1).join(' ') || 'Invité',
+                                email: email,
+                                phone: order.phone || order?.customer?.phone || '-',
+                                createdAt: order.date || order.createdAt || null,
+                                isGuest: true,
+                                blocked: false
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.error("Erreur de récupération des acheteurs invités:", err);
+                }
+                
+                const clientList = Array.from(clientMap.values());
+                
+                // 3. Client-side robust sorting by date (descending)
+                clientList.sort((a, b) => {
+                    const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt instanceof Date ? a.createdAt.getTime() : (a.createdAt || 0));
+                    const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt instanceof Date ? b.createdAt.getTime() : (b.createdAt || 0));
+                    return dateB - dateA;
+                });
+                
+                setClients(clientList);
+                setLoading(false);
+            }, (error) => {
+                console.error("Erreur critique Firestore (Clients):", error);
+                toast.error("Échec de synchronisation des clients");
+                setLoading(false);
+            });
+            
+            return () => unsubscribe();
+        };
+        
+        fetchAllClients();
     }, []);
 
     const handleToggleBlock = async (client) => {
@@ -140,7 +194,9 @@ const Clients = () => {
                                             </div>
                                             <div className="ml-5">
                                                 <div className="font-black text-[#14213D] uppercase tracking-tight text-[11px]">{client.firstName} {client.lastName}</div>
-                                                <div className="text-[9px] text-[#14213D]/40 font-black uppercase tracking-widest mt-1">ID_{client.id.substring(0, 8).toUpperCase()}</div>
+                                                <div className="text-[9px] text-[#14213D]/40 font-black uppercase tracking-widest mt-1">
+                                                    {client.isGuest ? 'ACHETEUR INVITÉ' : `ID_${client.id.substring(0, 8).toUpperCase()}`}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -155,7 +211,13 @@ const Clients = () => {
                                     <td className="px-6 py-6 hidden lg:table-cell">
                                         <div className="flex items-center text-[10px] text-[#14213D]/40 font-black uppercase tracking-widest">
                                             <Calendar className="mr-2 text-[#FCA311]" size={14} />
-                                            {client.createdAt ? new Date(client.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                                            {client.createdAt 
+                                                ? (client.createdAt.seconds 
+                                                    ? new Date(client.createdAt.seconds * 1000).toLocaleDateString('fr-FR')
+                                                    : new Date(client.createdAt).toLocaleDateString('fr-FR') !== 'Invalid Date' 
+                                                        ? new Date(client.createdAt).toLocaleDateString('fr-FR') 
+                                                        : String(client.createdAt))
+                                                : 'N/A'}
                                         </div>
                                     </td>
                                     <td className="px-6 py-6">
@@ -172,28 +234,32 @@ const Clients = () => {
                                     <td className="px-6 py-6 text-right">
                                         <div className="flex justify-end gap-3 transition-opacity">
                                             <a
-                                                href={`/orders?userId=${client.id}`}
+                                                href={`/orders?userId=${client.email}`}
                                                 className="w-10 h-10 flex items-center justify-center bg-white border border-[#E5E5E5] text-[#14213D] rounded-xl hover:bg-[#14213D] hover:text-[#FCA311] transition-all shadow-sm group/btn"
                                                 title="Voir les commandes"
                                             >
                                                 <ShoppingCart size={18} />
                                             </a>
-                                            <button
-                                                onClick={() => handleToggleBlock(client)}
-                                                className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all shadow-sm ${client.blocked 
-                                                    ? 'bg-green-50 border-green-100 text-green-600 hover:bg-green-600 hover:text-white' 
-                                                    : 'bg-orange-50 border-orange-100 text-orange-600 hover:bg-orange-600 hover:text-white'}`}
-                                                title={client.blocked ? "Débloquer" : "Bloquer"}
-                                            >
-                                                {client.blocked ? <UserCheck size={18} /> : <UserX size={18} />}
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteClient(client.id)}
-                                                className="w-10 h-10 flex items-center justify-center bg-white border border-red-100 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
-                                                title="Supprimer"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
+                                            {!client.isGuest && (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleToggleBlock(client)}
+                                                        className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all shadow-sm ${client.blocked 
+                                                            ? 'bg-green-50 border-green-100 text-green-600 hover:bg-green-600 hover:text-white' 
+                                                            : 'bg-orange-50 border-orange-100 text-orange-600 hover:bg-orange-600 hover:text-white'}`}
+                                                        title={client.blocked ? "Débloquer" : "Bloquer"}
+                                                    >
+                                                        {client.blocked ? <UserCheck size={18} /> : <UserX size={18} />}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteClient(client.id)}
+                                                        className="w-10 h-10 flex items-center justify-center bg-white border border-red-100 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                                        title="Supprimer le compte"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
