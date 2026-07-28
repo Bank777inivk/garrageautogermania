@@ -99,6 +99,30 @@ Nous vous remercions sincèrement pour votre confiance et nous réjouissons de v
 Cordialement,
 Service Comptabilité & Administration
 A.P.S. CARS & TRUCKS GMBH`
+  },
+  {
+    id: 'tpl_4',
+    title: '💬 Réponse Prospect Facebook (Premier Contact)',
+    subject: 'Votre demande d\'information Facebook - A.P.S. CARS & TRUCKS GMBH',
+    body: `Bonjour,
+
+Nous vous remercions pour l'intérêt que vous portez à nos véhicules suite à votre message sur notre page Facebook.
+
+Chez A.P.S. CARS & TRUCKS GMBH, nous sommes spécialisés dans l'importation sécurisée de véhicules Premium depuis l'Allemagne, avec une transparence totale et une inspection mécanique rigoureuse.
+
+Afin de pouvoir vous accompagner au mieux et vous proposer les meilleures offres du marché allemand correspondant à vos exigences, pourriez-vous nous préciser vos critères :
+- La marque et le modèle exacts ?
+- Le kilométrage maximum et l'année minimum ?
+- Votre budget estimatif (incluant l'importation) ?
+- Vos options ou couleurs indispensables ?
+
+Dès réception de ces éléments, un de nos conseillers experts lancera une recherche personnalisée et reviendra vers vous avec une sélection de véhicules certifiés.
+
+Dans l'attente de votre retour par e-mail ou par téléphone, nous vous souhaitons une excellente journée.
+
+Cordialement,
+L'équipe Commerciale
+A.P.S. CARS & TRUCKS GMBH`
   }
 ];
 
