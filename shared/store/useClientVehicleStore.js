@@ -63,12 +63,14 @@ const useClientVehicleStore = create((set, get) => ({
   },
 
   fetchFeaturedVehicles: () => {
-    // Only set loading if we don't have vehicles yet to avoid flickering during real-time updates
+    // If we are already listening, don't restart the listener!
+    // This prevents slow loading times when navigating back to the Home page.
+    if (featuredUnsubscribe) return;
+
+    // Only set loading if we don't have vehicles yet
     if (get().featuredVehicles.length === 0) {
       set({ loading: true, error: null });
     }
-
-    if (featuredUnsubscribe) featuredUnsubscribe();
 
     try {
       const q = query(
