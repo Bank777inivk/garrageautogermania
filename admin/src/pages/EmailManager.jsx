@@ -151,20 +151,30 @@ const EmailManager = () => {
     fetchConfig();
   }, []);
 
-  // 2. Fetch clients (from users and orders collections)
+  // 2. Fetch clients (from users/clients and orders collections, minus deleted_clients)
   useEffect(() => {
     const fetchClients = async () => {
       try {
         const emailMap = new Map();
         
-        // Try fetching users
+        // 0. Fetch deleted/hidden clients
+        const deletedEmails = new Set();
         try {
-          const usersSnap = await getDocs(collection(db, 'users'));
-          usersSnap.forEach(d => {
+          const deletedSnap = await getDocs(collection(db, 'deleted_clients'));
+          deletedSnap.forEach(d => deletedEmails.add(d.id));
+        } catch (e) {
+          console.error("Erreur fetch deleted_clients:", e);
+        }
+
+        // Try fetching registered clients
+        try {
+          const clientsSnap = await getDocs(collection(db, 'clients'));
+          clientsSnap.forEach(d => {
             const data = d.data();
-            if (data.email) {
-              const label = data.displayName ? `${data.displayName} (${data.email})` : data.email;
-              emailMap.set(data.email, label);
+            const email = data.email || d.id;
+            if (email && !deletedEmails.has(email)) {
+              const label = data.firstName ? `${data.firstName} ${data.lastName} (${email})` : email;
+              emailMap.set(email, label);
             }
           });
         } catch (e) {
@@ -178,7 +188,7 @@ const EmailManager = () => {
             const data = d.data();
             const email = data.email || data.clientEmail || data.userEmail || data?.customer?.email;
             const name = data.name || data.clientName || data?.customer?.name;
-            if (email && !emailMap.has(email)) {
+            if (email && !emailMap.has(email) && !deletedEmails.has(email)) {
               const label = name ? `${name} - Commande #${d.id.slice(0,6)} (${email})` : `${email} - Commande #${d.id.slice(0,6)}`;
               emailMap.set(email, label);
             }
