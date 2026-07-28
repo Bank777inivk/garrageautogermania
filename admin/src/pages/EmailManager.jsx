@@ -294,7 +294,21 @@ const EmailManager = () => {
 
   // Generate responsive high-end HTML email
   const generateHtmlEmail = (subject, plainTextBody) => {
-    const formattedBody = plainTextBody ? plainTextBody.replace(/\n/g, '<br/>') : '';
+    let formattedBody = plainTextBody ? plainTextBody.replace(/\n/g, '<br/>') : '';
+
+    // Auto-convert vehicle links to beautiful HTML buttons
+    formattedBody = formattedBody.replace(
+      /(?:Lien du véhicule\s*:\s*)?(https:\/\/aps-trucks\.ms-automobiledeutschland\.de\/vehicule\/[^<\s]+)/gi,
+      `<br/>
+       <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 20px 0;">
+         <tr>
+           <td align="center">
+             <a href="$1" style="background-color: ${smtpConfig.accentColor || '#FCA311'}; color: #050A19; padding: 16px 36px; font-weight: 900; text-decoration: none; border-radius: 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; display: inline-block; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">Voir la Fiche du Véhicule</a>
+           </td>
+         </tr>
+       </table>
+       <br/>`
+    );
     return `<!DOCTYPE html>
 <html lang="fr">
 <head>
