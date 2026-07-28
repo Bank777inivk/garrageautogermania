@@ -102,23 +102,21 @@ A.P.S. CARS & TRUCKS GMBH`
   },
   {
     id: 'tpl_4',
-    title: '💬 Réponse Prospect Facebook (Premier Contact)',
-    subject: 'Votre demande d\'information Facebook - A.P.S. CARS & TRUCKS GMBH',
+    title: '💬 Réponse Prospect Facebook (Véhicule Spécifique)',
+    subject: 'Votre demande pour le véhicule [MARQUE ET MODÈLE] - A.P.S. CARS & TRUCKS GMBH',
     body: `Bonjour,
 
-Nous vous remercions pour l'intérêt que vous portez à nos véhicules suite à votre message sur notre page Facebook.
+Nous vous remercions pour l'intérêt que vous portez au véhicule [MARQUE ET MODÈLE] suite à votre message sur notre page Facebook.
 
-Chez A.P.S. CARS & TRUCKS GMBH, nous sommes spécialisés dans l'importation sécurisée de véhicules Premium depuis l'Allemagne, avec une transparence totale et une inspection mécanique rigoureuse.
+Chez A.P.S. CARS & TRUCKS GMBH, nous sommes spécialisés dans l'importation sécurisée de véhicules Premium depuis l'Allemagne. Ce véhicule est en excellent état, son kilométrage est certifié et il a passé notre inspection avec succès.
 
-Afin de pouvoir vous accompagner au mieux et vous proposer les meilleures offres du marché allemand correspondant à vos exigences, pourriez-vous nous préciser vos critères :
-- La marque et le modèle exacts ?
-- Le kilométrage maximum et l'année minimum ?
-- Votre budget estimatif (incluant l'importation) ?
-- Vos options ou couleurs indispensables ?
+Pour découvrir toutes les caractéristiques techniques, les options détaillées ainsi qu'une galerie de photos complètes, nous vous invitons à consulter sa fiche officielle sécurisée en cliquant sur le lien ci-dessous :
 
-Dès réception de ces éléments, un de nos conseillers experts lancera une recherche personnalisée et reviendra vers vous avec une sélection de véhicules certifiés.
+👉 [LIEN DU VÉHICULE]
 
-Dans l'attente de votre retour par e-mail ou par téléphone, nous vous souhaitons une excellente journée.
+Si ce modèle correspond à vos attentes, un de nos conseillers experts est à votre entière disposition par téléphone ou par e-mail pour finaliser votre dossier d'importation.
+
+Dans l'attente de votre retour, nous vous souhaitons une excellente journée.
 
 Cordialement,
 L'équipe Commerciale
@@ -146,6 +144,10 @@ const EmailManager = () => {
   // Clients / Users dropdown list
   const [clients, setClients] = useState([]);
   const [selectedClient, setSelectedClient] = useState('');
+
+  // Vehicles dropdown list
+  const [vehicles, setVehicles] = useState([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState('');
 
   // Email logs & templates
   const [history, setHistory] = useState([]);
@@ -231,6 +233,20 @@ const EmailManager = () => {
       }
     };
     fetchClients();
+
+    const fetchVehicles = async () => {
+      try {
+        const vehiclesSnap = await getDocs(collection(db, 'vehicles'));
+        const vList = [];
+        vehiclesSnap.forEach(d => {
+          vList.push({ id: d.id, ...d.data() });
+        });
+        setVehicles(vList);
+      } catch (e) {
+        console.error("Erreur chargement véhicules :", e);
+      }
+    };
+    fetchVehicles();
   }, []);
 
   // 3. Subscribe to Email History & Custom Templates
@@ -600,8 +616,54 @@ const EmailManager = () => {
               </div>
             </div>
 
-            {/* Row 2 : Subject */}
+            {/* Row 2 : Select Vehicle */}
             <div>
+              <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-2 mt-6 md:mt-4">
+                <span className="text-amber-400">🚗</span>
+                Associer un Véhicule du Garage (Optionnel)
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedVehicleId}
+                  onChange={(e) => {
+                    const vId = e.target.value;
+                    setSelectedVehicleId(vId);
+                  }}
+                  className="w-full bg-[#050A19] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition-all shadow-inner font-semibold"
+                >
+                  <option value="">-- Sélectionner un véhicule dans votre catalogue --</option>
+                  {vehicles.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.brand || v.make} {v.model} - {v.price}€ (Ref: {v.id.slice(0,6)})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {selectedVehicleId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const v = vehicles.find(v => v.id === selectedVehicleId);
+                    if (v) {
+                      const name = `${v.brand || v.make} ${v.model}`;
+                      const link = `https://garrageautogermania.com/vehicule/${v.id}`;
+                      setForm(prev => ({
+                        ...prev,
+                        subject: prev.subject.replace('[MARQUE ET MODÈLE]', name),
+                        body: prev.body.replace('[MARQUE ET MODÈLE]', name).replace('[LIEN DU VÉHICULE]', link)
+                      }));
+                      toast.success(`✅ Données du véhicule ${name} insérées dans l'e-mail !`);
+                    }
+                  }}
+                  className="mt-3 text-xs font-bold text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 px-4 py-2 rounded-xl transition-all border border-amber-400/20"
+                >
+                  ✨ Injecter les infos du véhicule dans l'e-mail
+                </button>
+              )}
+            </div>
+
+            {/* Row 3 : Objet */}
+            <div className="mt-6 md:mt-0">
               <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-2">
                 <FileText size={14} className="text-amber-400" />
                 Objet du mail <span className="text-red-400">*</span>
