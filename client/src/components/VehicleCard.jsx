@@ -254,6 +254,8 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                                     key={idx}
                                     src={applyWatermark(img, effectiveWatermarkId, settings?.watermarkEnabled)}
                                     alt={`${vehicle.brand} ${vehicle.model}`}
+                                    loading={idx === 0 ? "eager" : "lazy"}
+                                    decoding="async"
                                     className={`absolute inset-0 w-full h-full object-cover transform group-hover/card:scale-110 transition-all duration-[2000ms] ease-in-out ${idx === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
                                 />
                             ))}
@@ -383,6 +385,8 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                                 key={idx}
                                 src={applyWatermark(img, effectiveWatermarkId, settings?.watermarkEnabled)}
                                 alt={`${vehicle.brand} ${vehicle.model}`}
+                                loading={idx === 0 ? "eager" : "lazy"}
+                                decoding="async"
                                 className={`absolute inset-0 w-full h-full object-cover transform group-hover/card:scale-110 transition-all duration-[2000ms] ease-in-out ${idx === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
                             />
                         ))}

@@ -2,22 +2,27 @@
  * Utility to apply Cloudinary transformations, specifically watermarks.
  */
 
-export const applyWatermark = (url, watermarkId, enabled = false) => {
+export const applyWatermark = (url, watermarkId, enabled = false, width = 1000) => {
   if (!url || !url.includes('cloudinary.com')) return url;
-  if (!enabled || !watermarkId) return url;
+  
+  // Base optimization: Quality Auto, Format Auto, max width to drastically reduce size and load time
+  const baseOptimization = `q_auto,f_auto,c_limit,w_${width}`;
+
+  if (!enabled || !watermarkId) {
+    if (url.includes('/upload/')) {
+        return url.replace('/upload/', `/upload/${baseOptimization}/`);
+    }
+    return url;
+  }
 
   // Cloudinary public IDs can have folders represented by / which should be : in transformation
-  // Also, we escape URI components in case of spaces (though underscores are preferred)
   const safeId = watermarkId.toString().replace(/\//g, ':');
   
-  // Refined transformation string using fl_layer_apply for maximum compatibility
-  // Positioned at center (g_center) with 50% opacity for better visibility without hiding details
-  const watermarkTransform = `l_${safeId}/c_scale,w_300/fl_layer_apply,g_center,o_50`;
+  // Refined transformation string: base optimization + watermark
+  const watermarkTransform = `${baseOptimization}/l_${safeId}/c_scale,w_300/fl_layer_apply,g_center,o_50`;
   
   if (url.includes('/upload/')) {
     const finalUrl = url.replace('/upload/', `/upload/${watermarkTransform}/`);
-    // Debug log for checking the final URL in the console
-    console.log('[Cloudinary] Watermark URL:', finalUrl);
     return finalUrl;
   }
   
