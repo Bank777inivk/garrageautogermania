@@ -9,7 +9,6 @@ service cloud.firestore {
     }
 
     // Fonction helper pour vérifier si l'utilisateur est un admin
-    // MODIFIÉ : On vérifie si l'email de l'utilisateur existe dans la collection 'admins'
     function isAdmin() {
       return isAuthenticated() && (
         // Super Admin (hardcodé pour éviter de se bloquer soi-même)
@@ -23,7 +22,6 @@ service cloud.firestore {
     // RÈGLES POUR LA COLLECTION 'ADMINS' (GESTION DES ADMINISTRATEURS)
     // ============================================================================
     match /admins/{email} {
-      // Seuls les admins existants peuvent lire ou ajouter de nouveaux admins
       allow read, write: if isAdmin();
     }
 
@@ -31,13 +29,9 @@ service cloud.firestore {
     // RÈGLES POUR LA COLLECTION 'VEHICLES' (VÉHICULES)
     // ============================================================================
     match /vehicles/{vehicleId} {
-      // Lecture (Client & Admin) : Tout le monde peut voir les véhicules
       allow read: if true;
-
-      // Écriture (Temporaire pour le seed : allow create if true)
       allow create: if true; 
       allow update: if isAdmin() || (
-        // Autoriser n'importe qui à incrémenter/décrémenter le compteur de favoris seulement
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['favoritesCount'])
       );
       allow delete: if isAdmin();
@@ -47,10 +41,7 @@ service cloud.firestore {
     // RÈGLES POUR LA COLLECTION 'CATEGORIES' (CATÉGORIES / MARQUES)
     // ============================================================================
     match /categories/{categoryId} {
-      // Lecture (Client & Admin) : Tout le monde peut voir les catégories
       allow read: if true;
-
-      // Écriture (Admin seulement)
       allow write: if isAdmin();
     }
 
@@ -58,29 +49,20 @@ service cloud.firestore {
     // RÈGLES POUR LA COLLECTION 'ORDERS' (COMMANDES)
     // ============================================================================
     match /orders/{orderId} {
-      // Lecture d'un document unique (GET) : Autorisé pour tout le monde (pour la confirmation)
       allow get: if true;
-      
-      // Liste des documents (LIST) : Admin, propriétaire, ou recherche publique (limitée à 1)
       allow list: if isAdmin() || 
                     (request.auth != null && resource.data.userId == request.auth.uid) ||
                     (request.query.limit == 1);
-
-      // Création (Client) : Tout le monde peut créer une commande
       allow create: if true;
-
-      // Modification (Admin ou Propriétaire si en attente)
       allow update: if isAdmin() || (
         request.auth != null && 
         resource.data.userId == request.auth.uid && 
         resource.data.status == 'pending' &&
-        request.resource.data.status == 'pending' && // Ne peut pas changer le statut
+        request.resource.data.status == 'pending' &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'paymentOption', 'discountAmount', 'total', 'amountToPayNow', 'fullPaymentDiscount', 'updatedAt'
         ])
       );
-
-      // Suppression (Admin seulement)
       allow delete: if isAdmin();
     }
 
@@ -115,6 +97,9 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ============================================================================
+    // NOUVELLES RÈGLES AUTORISANT L'ACCÈS AU BACK-OFFICE POUR LES MAILS & SUPPRESSION CLIENTS
+    // ============================================================================
     match /email_templates/{templateId} {
       allow read, write: if isAdmin();
     }

@@ -135,6 +135,9 @@ const Clients = () => {
                         });
                     }
                 }
+                
+                // Suppression en temps réel de l'affichage local !
+                setClients(prev => prev.filter(c => c.id !== id && c.email !== email));
                 toast.success("Client retiré de la liste");
             } catch (error) {
                 console.error("Erreur de suppression:", error);

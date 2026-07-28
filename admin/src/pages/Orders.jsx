@@ -40,15 +40,77 @@ const Orders = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const userIdFilter = searchParams.get('userId');
 
-    // Mettre à jour la recherche de clients à l'arrivée sur la page
     useEffect(() => {
-        const q = query(collection(db, 'clients'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const clientList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setClients(clientList);
-            setLoadingClients(false);
-        });
-        return () => unsubscribe();
+        const fetchAllClients = async () => {
+            const clientsRef = collection(db, 'clients');
+            
+            const unsubscribe = onSnapshot(clientsRef, async (snapshot) => {
+                const clientMap = new Map();
+                
+                // 0. Fetch deleted/hidden clients
+                const deletedEmails = new Set();
+                try {
+                    const { getDocs } = await import('firebase/firestore');
+                    const deletedSnap = await getDocs(collection(db, 'deleted_clients'));
+                    deletedSnap.forEach(d => deletedEmails.add(d.id));
+                } catch (e) {
+                    console.error(e);
+                }
+
+                // 1. Process formal registered clients
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const email = data.email || docSnap.id;
+                    if (!deletedEmails.has(email)) {
+                        clientMap.set(email, { id: docSnap.id, ...data, isGuest: false });
+                    }
+                });
+                
+                // 2. Fetch buyers from orders
+                try {
+                    const { getDocs } = await import('firebase/firestore');
+                    const ordersSnap = await getDocs(collection(db, 'orders'));
+                    ordersSnap.forEach(docSnap => {
+                        const order = docSnap.data();
+                        const email = order.email || order.clientEmail || order?.customer?.email;
+                        if (email && !clientMap.has(email) && !deletedEmails.has(email)) {
+                            let fullName = order.name || order.clientName || order?.customer?.name || 'Client';
+                            let parts = fullName.split(' ');
+                            clientMap.set(email, {
+                                id: `guest_${docSnap.id}`,
+                                firstName: parts[0] || 'Client',
+                                lastName: parts.slice(1).join(' ') || 'Invité',
+                                email: email,
+                                phone: order.phone || order?.customer?.phone || '-',
+                                createdAt: order.date || order.createdAt || null,
+                                isGuest: true,
+                                blocked: false
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.error("Erreur invités:", err);
+                }
+                
+                const clientList = Array.from(clientMap.values());
+                
+                clientList.sort((a, b) => {
+                    const dateA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt instanceof Date ? a.createdAt.getTime() : (a.createdAt || 0));
+                    const dateB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt instanceof Date ? b.createdAt.getTime() : (b.createdAt || 0));
+                    return dateB - dateA;
+                });
+                
+                setClients(clientList);
+                setLoadingClients(false);
+            }, (error) => {
+                console.error("Erreur Firestore (Orders):", error);
+                setLoadingClients(false);
+            });
+            
+            return () => unsubscribe();
+        };
+        
+        fetchAllClients();
     }, []);
 
     // Fetch orders ONLY if a user is selected
@@ -134,7 +196,12 @@ const Orders = () => {
             `${order.customer?.firstName} ${order.customer?.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.customer?.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesUser = userIdFilter ? order.userId === userIdFilter : true;
+        let matchesUser = true;
+        if (userIdFilter) {
+            // Check if userIdFilter matches the formal userId OR any of the guest email fields
+            const orderEmail = order.email || order.clientEmail || order?.customer?.email;
+            matchesUser = order.userId === userIdFilter || orderEmail === userIdFilter;
+        }
 
         if (!matchesUser) return false;
         if (statusFilter === 'all') return matchesSearch;
