@@ -651,12 +651,12 @@ const EmailManager = () => {
                   onClick={() => {
                     const v = vehicles.find(v => v.id === selectedVehicleId);
                     if (v) {
-                      const name = `${v.brand || v.make} ${v.model}`;
+                      const name = `${v.brand || v.make || ''} ${v.model || ''}`.trim();
                       const link = `https://aps-trucks.ms-automobiledeutschland.de/vehicule/${v.id}`;
                       setForm(prev => ({
                         ...prev,
-                        subject: prev.subject.replace('[MARQUE ET MODÈLE]', name),
-                        body: prev.body.replace('[MARQUE ET MODÈLE]', name).replace('[LIEN DU VÉHICULE]', link)
+                        subject: (prev.subject || '').replace(/\[MARQUE ET MODÈLE\]/g, name),
+                        body: (prev.body || '').replace(/\[MARQUE ET MODÈLE\]/g, name).replace(/\[LIEN DU VÉHICULE\]/g, link)
                       }));
                       toast.success(`✅ Données du véhicule ${name} insérées dans l'e-mail !`);
                     }
