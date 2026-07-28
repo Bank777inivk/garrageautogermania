@@ -751,13 +751,22 @@ const EmailManager = () => {
 
               <button
                 type="submit"
-                disabled={sending}
-                className="w-full sm:w-auto px-10 py-4 bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-[#050A19] font-black uppercase tracking-widest text-xs sm:text-sm rounded-2xl shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-3 disabled:opacity-50 transform hover:scale-102"
+                disabled={sending || form.subject.includes('[MARQUE ET MODÈLE]') || form.body.includes('[MARQUE ET MODÈLE]') || form.body.includes('[LIEN DU VÉHICULE]')}
+                className={`w-full sm:w-auto px-10 py-4 font-black uppercase tracking-widest text-xs sm:text-sm rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 transform hover:scale-102 ${
+                  form.subject.includes('[MARQUE ET MODÈLE]') || form.body.includes('[MARQUE ET MODÈLE]') || form.body.includes('[LIEN DU VÉHICULE]')
+                    ? "bg-slate-800 text-red-400 border border-red-500/30 cursor-not-allowed opacity-80"
+                    : "bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-[#050A19] shadow-emerald-500/25 disabled:opacity-50"
+                }`}
               >
                 {sending ? (
                   <>
-                    <Loader2 size={18} className="animate-spin text-[#050A19]" />
+                    <Loader2 size={18} className="animate-spin" />
                     Expédition SMTP en cours...
+                  </>
+                ) : (form.subject.includes('[MARQUE ET MODÈLE]') || form.body.includes('[MARQUE ET MODÈLE]') || form.body.includes('[LIEN DU VÉHICULE]')) ? (
+                  <>
+                    <AlertCircle size={18} />
+                    Remplacez les variables pour envoyer
                   </>
                 ) : (
                   <>
