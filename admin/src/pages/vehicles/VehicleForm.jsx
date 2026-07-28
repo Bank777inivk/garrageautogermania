@@ -839,6 +839,9 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
   }, [imageUrl]);
 
   const handleStart = (e) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const container = containerRef.current;
     const rect = container.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -1005,9 +1008,10 @@ const PlateBlurModal = ({ imageUrl, onClose, onSave }) => {
             onTouchStart={handleStart}
             onTouchMove={handleMove}
             onTouchEnd={handleEnd}
+            draggable="false"
             className="relative select-none cursor-crosshair max-w-full max-h-[50vh] flex items-center justify-center"
           >
-            <canvas ref={canvasRef} className="max-w-full max-h-[50vh] object-contain pointer-events-none rounded-xl" />
+            <canvas ref={canvasRef} draggable="false" className="max-w-full max-h-[50vh] object-contain pointer-events-none rounded-xl" />
             
             {/* Draw selection rectangle overlay during dragging */}
             {isDrawing && (
