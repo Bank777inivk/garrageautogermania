@@ -549,22 +549,7 @@ const VehicleDetails = () => {
                     {showCartPopup && renderCartSuccessPopup(cartItems.some(item => item.id === vehicle.id))}
                   </div>
 
-                  {/* Appeler — bloqué si vendu/réservé */}
-                 {vehicle.status === 'available' ? (
-                   settings ? (
-                     <a href={`tel:${settings.phone ? settings.phone.replace(/\s+/g, '') : ''}`} className="w-full py-4 bg-amber-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-700 transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 animate-fade-in animate-in fade-in duration-500">
-                       <Phone size={16} /> Appeler
-                     </a>
-                   ) : (
-                     <div className="w-full h-[52px] bg-amber-600/50 animate-pulse rounded-2xl"></div>
-                   )
-                 ) : (
-                   <button onClick={() => setShowStatusPopup(true)} className="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
-                     <Phone size={16} /> Appeler
-                   </button>
-                 )}
-
-                 {/* WhatsApp — bloqué si vendu/réservé */}
+                  {/* WhatsApp — bloqué si vendu/réservé */}
                  {vehicle.status === 'available' ? (
                    settings ? (
                      <a
