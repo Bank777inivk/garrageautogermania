@@ -11,7 +11,8 @@ import {
   Percent,
   Image,
   UserCheck,
-  X
+  X,
+  Mail
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -31,6 +32,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { icon: Percent, label: 'Promotions', path: '/promotions' },
     { icon: Image, label: 'Bannières', path: '/banners' },
     { icon: UserCheck, label: 'Administrateurs', path: '/admins' },
+    { icon: Mail, label: 'E-mails Pro', path: '/email' },
     { icon: Settings, label: 'Paramètres', path: '/settings' },
   ];
 

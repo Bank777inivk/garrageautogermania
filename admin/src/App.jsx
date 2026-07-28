@@ -14,6 +14,7 @@ import Orders from './pages/Orders';
 import OrderDetails from './pages/OrderDetails';
 import Promotions from './pages/Promotions';
 import Banners from './pages/Banners';
+import EmailManager from './pages/EmailManager';
 import DocumentExternalPreview from './components/DocumentExternalPreview';
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
             <Route path="promotions" element={<Promotions />} />
             <Route path="banners" element={<Banners />} />
             <Route path="admins" element={<AdminManagement />} />
+            <Route path="email" element={<EmailManager />} />
+            <Route path="email/:tab" element={<EmailManager />} />
             <Route path="settings" element={<Settings />} />
             <Route path="settings/:tab" element={<Settings />} />
             {/* Autres routes admin protégées ici */}
