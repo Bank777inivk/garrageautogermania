@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '@shared/firebase/config';
-import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp, getDocs } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp, getDocs, setDoc } from 'firebase/firestore';
 import {
     Users,
     Search,
@@ -32,10 +32,22 @@ const Clients = () => {
             const unsubscribe = onSnapshot(clientsRef, async (snapshot) => {
                 const clientMap = new Map();
                 
+                // 0. Fetch deleted/hidden clients to exclude them
+                const deletedEmails = new Set();
+                try {
+                    const deletedSnap = await getDocs(collection(db, 'deleted_clients'));
+                    deletedSnap.forEach(d => deletedEmails.add(d.id));
+                } catch (e) {
+                    console.error("Erreur fetch deleted_clients:", e);
+                }
+
                 // 1. Process formal registered clients
                 snapshot.forEach(docSnap => {
                     const data = docSnap.data();
-                    clientMap.set(data.email || docSnap.id, { id: docSnap.id, ...data, isGuest: false });
+                    const email = data.email || docSnap.id;
+                    if (!deletedEmails.has(email)) {
+                        clientMap.set(email, { id: docSnap.id, ...data, isGuest: false });
+                    }
                 });
                 
                 // 2. Intelligently fetch buyers from orders who might not have registered an account
@@ -44,8 +56,8 @@ const Clients = () => {
                     ordersSnap.forEach(docSnap => {
                         const order = docSnap.data();
                         const email = order.email || order.clientEmail || order?.customer?.email;
-                        // If buyer is not already in our registered clients list
-                        if (email && !clientMap.has(email)) {
+                        // If buyer is not already in our registered clients list and not deleted
+                        if (email && !clientMap.has(email) && !deletedEmails.has(email)) {
                             let fullName = order.name || order.clientName || order?.customer?.name || 'Client';
                             let parts = fullName.split(' ');
                             
@@ -105,12 +117,27 @@ const Clients = () => {
         }
     };
 
-    const handleDeleteClient = async (id) => {
-        if (window.confirm("Action irréversible : Supprimer définitivement ce compte client ?")) {
+    const handleDeleteClient = async (id, email, isGuest) => {
+        if (window.confirm("Action irréversible : Voulez-vous masquer/supprimer ce client de la liste ?")) {
             try {
-                await deleteDoc(doc(db, 'clients', id));
-                toast.success("Client supprimé");
+                if (isGuest) {
+                    await setDoc(doc(db, 'deleted_clients', email), {
+                        email: email,
+                        deletedAt: serverTimestamp()
+                    });
+                } else {
+                    await deleteDoc(doc(db, 'clients', id));
+                    // Prevent them from showing up again via their orders
+                    if (email) {
+                        await setDoc(doc(db, 'deleted_clients', email), {
+                            email: email,
+                            deletedAt: serverTimestamp()
+                        });
+                    }
+                }
+                toast.success("Client retiré de la liste");
             } catch (error) {
+                console.error("Erreur de suppression:", error);
                 toast.error("Erreur lors de la suppression");
             }
         }
@@ -241,25 +268,23 @@ const Clients = () => {
                                                 <ShoppingCart size={18} />
                                             </a>
                                             {!client.isGuest && (
-                                                <>
-                                                    <button
-                                                        onClick={() => handleToggleBlock(client)}
-                                                        className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all shadow-sm ${client.blocked 
-                                                            ? 'bg-green-50 border-green-100 text-green-600 hover:bg-green-600 hover:text-white' 
-                                                            : 'bg-orange-50 border-orange-100 text-orange-600 hover:bg-orange-600 hover:text-white'}`}
-                                                        title={client.blocked ? "Débloquer" : "Bloquer"}
-                                                    >
-                                                        {client.blocked ? <UserCheck size={18} /> : <UserX size={18} />}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDeleteClient(client.id)}
-                                                        className="w-10 h-10 flex items-center justify-center bg-white border border-red-100 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
-                                                        title="Supprimer le compte"
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </button>
-                                                </>
+                                                <button
+                                                    onClick={() => handleToggleBlock(client)}
+                                                    className={`w-10 h-10 flex items-center justify-center rounded-xl border transition-all shadow-sm ${client.blocked 
+                                                        ? 'bg-green-50 border-green-100 text-green-600 hover:bg-green-600 hover:text-white' 
+                                                        : 'bg-orange-50 border-orange-100 text-orange-600 hover:bg-orange-600 hover:text-white'}`}
+                                                    title={client.blocked ? "Débloquer" : "Bloquer"}
+                                                >
+                                                    {client.blocked ? <UserCheck size={18} /> : <UserX size={18} />}
+                                                </button>
                                             )}
+                                            <button
+                                                onClick={() => handleDeleteClient(client.id, client.email, client.isGuest)}
+                                                className="w-10 h-10 flex items-center justify-center bg-white border border-red-100 text-red-500 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                                title={client.isGuest ? "Masquer cet acheteur invité" : "Supprimer le compte"}
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
