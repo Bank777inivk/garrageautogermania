@@ -299,7 +299,7 @@ const EmailManager = () => {
     // Auto-convert vehicle links to beautiful HTML buttons
     // Auto-convert vehicle links to beautiful HTML buttons (minimalist style)
     formattedBody = formattedBody.replace(
-      /(?:Lien du véhicule\s*:\s*)?(https:\/\/aps-trucks\.ms-automobiledeutschland\.de\/vehicule\/[^<\s]+)/gi,
+      /(?:Lien du véhicule\s*:\s*)?(https?:\/\/[^\s<]+\/vehicule\/[^<\s]+)/gi,
       `<br/>
        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 20px 0;">
          <tr>
