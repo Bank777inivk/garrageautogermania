@@ -30,12 +30,16 @@ const Footer = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-8 lg:gap-y-12 gap-x-4 mb-16 text-center sm:text-left">
           {/* Company Info - Full width on mobile */}
           <div className="col-span-2 lg:col-span-1 flex flex-col items-center sm:items-start mb-4 lg:mb-0">
-            <Link to="/" className="inline-block mb-6 group transition-transform hover:scale-105">
-              <img
-                src={settings?.logoUrl || "/logo.webp"}
-                alt="Garage Pro"
-                className="h-12 md:h-14 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
-              />
+            <Link to="/" className="inline-block mb-6 group transition-transform hover:scale-105 min-w-[120px] min-h-[48px] md:min-h-[56px]">
+              {settings ? (
+                <img
+                  src={settings.logoUrl || "/logo.webp"}
+                  alt="Garage Pro"
+                  className="h-12 md:h-14 w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+                />
+              ) : (
+                <div className="h-12 md:h-14 w-32 bg-slate-800/50 animate-pulse rounded-lg"></div>
+              )}
             </Link>
             <p className="text-gray-400 text-sm mb-6 leading-relaxed max-w-xs sm:max-w-none">
               {t('footer.description', 'Spécialiste de l\'importation de véhicules premium depuis l\'Allemagne. Nous sélectionnons pour vous les meilleures offres du marché avec garantie et transparence.')}

@@ -120,12 +120,16 @@ const Header = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-center">
 
-            <Link to="/" className="flex items-center group">
-              <img
-                src={settings?.logoUrl || "/logo.webp"}
-                alt="Garage Pro"
-                className="h-16 md:h-28 w-auto object-contain transition-transform group-hover:scale-105"
-              />
+            <Link to="/" className="flex items-center group min-w-[120px] min-h-[64px] md:min-h-[112px]">
+              {settings ? (
+                <img
+                  src={settings.logoUrl || "/logo.webp"}
+                  alt="Garage Pro"
+                  className="h-16 md:h-28 w-auto object-contain transition-transform group-hover:scale-105"
+                />
+              ) : (
+                <div className="h-16 md:h-28 w-32 bg-slate-100 animate-pulse rounded-lg"></div>
+              )}
             </Link>
 
             <nav className="hidden lg:flex items-center space-x-10">
