@@ -9,7 +9,7 @@ import BrandSelect from '@shared/components/BrandSelect';
 import {
   Upload, X, Star, Car, DollarSign, Gauge, Settings, Palette,
   Users, DoorOpen, Wind, Check, ChevronDown, Loader2, ArrowLeft, ImagePlus,
-  Wand2, Sparkles, Trash2, Paintbrush, Square, RotateCcw, Move, RotateCw, Maximize2, Sliders, Zap
+  Wand2, Sparkles, Trash2, Paintbrush, Square, RotateCcw, Move, RotateCw, Maximize2, Sliders, Zap, Download
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { extractVehicleData as extractMistral } from '../../utils/mistral';
@@ -188,6 +188,24 @@ const VehicleForm = () => {
   };
 
   const removeImage = (idx) => setImages(prev => prev.filter((_, i) => i !== idx));
+
+  const handleDownloadImage = async (url, idx) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = `photo-vehicule-${idx + 1}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Erreur de téléchargement", error);
+      window.open(url, '_blank');
+    }
+  };
   const setCoverImage = (idx) => {
     setImages(prev => {
       const newImages = [...prev];
@@ -745,6 +763,14 @@ const VehicleForm = () => {
                           <Star size={20} />
                         </button>
                       )}
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadImage(img, idx)}
+                        className="w-12 h-12 bg-white text-blue-600 rounded-2xl flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                        title="Télécharger"
+                      >
+                        <Download size={20} />
+                      </button>
                       <button
                         type="button"
                         onClick={() => {
