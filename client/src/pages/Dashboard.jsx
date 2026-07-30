@@ -117,146 +117,123 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-12">
-      {/* Minimalist Welcome Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100/80 pb-10">
-        <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight text-slate-900">
-            Excellent choix, {profile?.firstName || user?.displayName?.split(' ')[0] || 'Monsieur'}
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-12 mt-4">
+      {/* Hero Welcome Section */}
+      <div className="bg-[#14213D] rounded-[2rem] p-8 md:p-12 shadow-2xl shadow-[#14213D]/20 border-b-4 border-[#FCA311] relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#FCA311] blur-[150px] opacity-10 rounded-full pointer-events-none"></div>
+        
+        <div className="relative z-10">
+          <p className="text-[#FCA311] font-black text-[10px] uppercase tracking-[0.3em] mb-2">Espace Privé</p>
+          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight">
+            Bienvenue, <span className="text-[#FCA311]">{profile?.firstName || user?.displayName?.split(' ')[0] || 'Monsieur'}</span>
           </h1>
-          <p className="mt-4 font-bold text-[10px] uppercase tracking-widest text-slate-400">
-            Espace Client
+          <p className="text-white/60 mt-4 text-[12px] font-medium max-w-md">
+            Gérez vos acquisitions, suivez vos livraisons et accédez à votre conciergerie dédiée depuis votre espace premium.
           </p>
         </div>
+        
         <Link
           to="/catalogue"
-          className="px-8 py-4 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 group active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_40px_rgba(252,163,17,0.15)] hover:bg-slate-800 border-b-2 border-slate-700 hover:border-[#FCA311] relative overflow-hidden"
+          className="relative z-10 bg-white text-[#14213D] px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 group active:scale-95 hover:bg-[#FCA311] shadow-xl shrink-0"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FCA311]/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-          <span className="relative z-10">Parcourir le catalogue</span>
-          <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform relative z-10" />
+          Parcourir le catalogue
+          <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
 
-      {/* Grounded Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-8 rounded-[2.5rem] bg-white/70 backdrop-blur-xl border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-2 group relative overflow-hidden">
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-slate-200 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-50 group-hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] transition-all">
-              <Package size={20} />
-            </div>
-            <div>
-              <p className="font-bold text-[9px] uppercase tracking-widest text-slate-400 mb-0.5">Total</p>
-              <p className="font-black text-xs uppercase tracking-tight text-slate-900">Commandes</p>
-            </div>
+      {/* Bento Grid Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Total Orders */}
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-slate-900/5 shadow-sm hover:shadow-xl hover:shadow-[#14213D]/5 transition-all group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-bl-[100px] -z-10 group-hover:bg-slate-100 transition-colors"></div>
+          <div className="w-10 h-10 rounded-xl bg-[#14213D]/5 border border-[#14213D]/10 flex items-center justify-center text-[#14213D] mb-6 group-hover:scale-110 transition-transform">
+            <Package size={18} />
           </div>
-          <p className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-900 drop-shadow-sm">{stats.totalOrders}</p>
+          <p className="text-4xl md:text-5xl font-black text-[#14213D] tracking-tighter mb-1">{stats.totalOrders}</p>
+          <p className="font-bold text-[9px] uppercase tracking-[0.2em] text-slate-400">Total Commandes</p>
         </div>
 
-        <div className="p-8 rounded-[2.5rem] bg-white/70 backdrop-blur-xl border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_20px_50px_rgba(252,163,17,0.08)] hover:-translate-y-2 group relative overflow-hidden">
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#FCA311] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-[#FCA311]/5 border border-[#FCA311]/20 flex items-center justify-center text-[#FCA311] group-hover:shadow-[0_0_20px_rgba(252,163,17,0.3)] transition-all">
-              <Clock size={20} />
-            </div>
-            <div>
-              <p className="font-bold text-[9px] uppercase tracking-widest text-slate-400 mb-0.5">Transactions</p>
-              <p className="font-black text-xs uppercase tracking-tight text-slate-900">En cours</p>
-            </div>
+        {/* Active Orders */}
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-[#FCA311]/20 shadow-sm hover:shadow-xl hover:shadow-[#FCA311]/10 transition-all group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[#FCA311]/5 rounded-bl-[100px] -z-10 group-hover:bg-[#FCA311]/10 transition-colors"></div>
+          <div className="w-10 h-10 rounded-xl bg-[#FCA311]/10 border border-[#FCA311]/20 flex items-center justify-center text-[#FCA311] mb-6 group-hover:scale-110 transition-transform">
+            <Clock size={18} />
           </div>
-          <p className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-900 drop-shadow-sm">{stats.activeOrders}</p>
+          <p className="text-4xl md:text-5xl font-black text-[#14213D] tracking-tighter mb-1">{stats.activeOrders}</p>
+          <p className="font-bold text-[9px] uppercase tracking-[0.2em] text-slate-400">En cours</p>
         </div>
 
-        <div className="p-8 rounded-[2.5rem] text-white shadow-[0_30px_60px_rgba(0,0,0,0.3)] transition-all hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] hover:-translate-y-2 group relative overflow-hidden bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024] border border-[#FCA311]/30">
-          {/* Vivid Atmosphere */}
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#FCA311]/15 rounded-full blur-[80px] group-hover:bg-[#FCA311]/25 transition-all duration-1000" />
-          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-[#5483B3]/10 rounded-full blur-[80px] group-hover:bg-[#5483B3]/20 transition-all duration-1000" />
-          
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 group-hover:text-white transition-all">
-                <CheckCircle size={20} />
-              </div>
-              <div>
-                <p className="font-bold text-[9px] uppercase tracking-widest text-slate-400 mb-0.5">Dossiers</p>
-                <p className="font-black text-xs uppercase tracking-tight text-white">Finalisés</p>
-              </div>
-            </div>
-            <p className="text-4xl sm:text-5xl font-black tracking-tighter text-white drop-shadow-lg">{stats.completedOrders}</p>
+        {/* Completed Orders */}
+        <div className="bg-[#14213D] rounded-[2rem] p-6 md:p-8 shadow-xl group relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#FCA311] opacity-10 rounded-full blur-[30px] group-hover:opacity-20 transition-opacity"></div>
+          <div className="relative z-10 w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-[#FCA311] mb-6 group-hover:scale-110 transition-transform">
+            <CheckCircle size={18} />
           </div>
+          <p className="relative z-10 text-4xl md:text-5xl font-black text-white tracking-tighter mb-1">{stats.completedOrders}</p>
+          <p className="relative z-10 font-bold text-[9px] uppercase tracking-[0.2em] text-white/50">Dossiers Finalisés</p>
         </div>
 
-        {/* Favorites Card */}
-        <Link
-          to="/dashboard/favorites"
-          className="p-8 rounded-[2.5rem] bg-white/70 backdrop-blur-xl border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all hover:shadow-[0_20px_50px_rgba(225,29,72,0.05)] hover:-translate-y-2 group relative overflow-hidden block"
-        >
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-          <div className="flex items-center gap-4 mb-8 relative text-rose-500">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(225,29,72,0.2)] transition-all">
-              <Heart size={20} fill={favorites.length > 0 ? "currentColor" : "none"} />
+        {/* Favorites */}
+        <Link to="/dashboard/favorites" className="bg-rose-50 rounded-[2rem] p-6 md:p-8 border border-rose-100 hover:shadow-xl hover:shadow-rose-500/10 transition-all group relative overflow-hidden block cursor-pointer">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white rounded-bl-[100px] -z-10 transition-colors"></div>
+          <div className="flex justify-between items-start mb-6">
+            <div className="w-10 h-10 rounded-xl bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-500 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition-all">
+              <Heart size={18} fill={favorites.length > 0 ? "currentColor" : "none"} />
             </div>
-            <div>
-              <p className="font-bold text-[9px] uppercase tracking-widest text-slate-400 mb-0.5">Sélection</p>
-              <p className="font-black text-xs uppercase tracking-tight text-slate-900">Mes Favoris</p>
-            </div>
+            <ChevronRight size={16} className="text-rose-300 group-hover:translate-x-1 transition-transform group-hover:text-rose-500" />
           </div>
-          <div className="flex items-end justify-between relative">
-            <p className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-900 drop-shadow-sm">{favorites.length}</p>
-            <div className="pb-1 text-[9px] font-black uppercase tracking-widest transition-colors flex items-center gap-1 text-slate-400 group-hover:text-slate-900">
-              Voir tout <ChevronRight size={12} />
-            </div>
-          </div>
+          <p className="text-4xl md:text-5xl font-black text-rose-950 tracking-tighter mb-1">{favorites.length}</p>
+          <p className="font-bold text-[9px] uppercase tracking-[0.2em] text-rose-400">Favoris</p>
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Orders - Minimalist Table-like View */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between px-2">
-            <div>
-              <h2 className="text-lg font-black flex items-center gap-3 uppercase tracking-tight text-slate-900">
-                <Zap size={18} className="text-slate-900" />
-                Dernières Activités
-              </h2>
-            </div>
-            <Link to="/dashboard/orders" className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors flex items-center gap-1">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between px-2 mb-2">
+            <h2 className="text-[11px] font-black flex items-center gap-2 uppercase tracking-[0.3em] text-[#14213D]">
+              <Zap size={14} className="text-[#FCA311] fill-current" />
+              Dernières Activités
+            </h2>
+            <Link to="/dashboard/orders" className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-[#FCA311] transition-colors flex items-center gap-1">
               Voir tout <ChevronRight size={12} />
             </Link>
           </div>
 
-          <div className="rounded-[2rem] bg-white/70 backdrop-blur-xl border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+          <div className="bg-white rounded-[2rem] border border-slate-900/5 shadow-sm overflow-hidden">
             {recentOrders.length === 0 ? (
-              <div className="p-20 text-center space-y-2">
+              <div className="p-16 text-center space-y-2 bg-slate-50">
                 <p className="font-bold text-[10px] uppercase tracking-widest text-slate-400">Aucune activité enregistrée</p>
               </div>
             ) : (
-              <div className="divide-y divide-white/40">
+              <div className="divide-y divide-slate-100">
                 {recentOrders.map((order, index) => (
                   <div 
                     key={order.id} 
-                    className={`p-6 md:p-8 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-white/60 cursor-pointer group/row relative ${index === 0 ? 'border-l-4 border-[#FCA311] shadow-[inset_10px_0_30px_rgba(252,163,17,0.02)]' : ''}`} 
+                    className="p-5 md:p-6 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 cursor-pointer group relative" 
                     onClick={() => navigate(`/dashboard/orders/${order.id}`)}
                   >
-                    <div className="flex items-center gap-5 w-full md:w-auto">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white border border-slate-100 text-slate-500 shadow-sm group-hover/row:border-[#FCA311]/30 group-hover/row:text-[#FCA311] transition-all">
+                    {index === 0 && <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#FCA311]"></div>}
+                    <div className="flex items-center gap-4 w-full md:w-auto">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border shadow-sm transition-all ${index === 0 ? 'bg-[#FCA311]/10 border-[#FCA311]/20 text-[#FCA311]' : 'bg-white border-slate-100 text-slate-400 group-hover:border-[#FCA311]/30 group-hover:text-[#FCA311]'}`}>
                         <Package size={20} />
                       </div>
                       <div>
                         <div className="flex items-center gap-3 mb-1">
-                          <p className="font-black text-sm tracking-tight text-slate-900">Commande #{order.orderNumber}</p>
-                          <div className="shrink-0">{getStatusBadge(order.status)}</div>
+                          <p className="font-black text-sm tracking-tight text-[#14213D]">#{order.orderNumber}</p>
+                          <div className="shrink-0 scale-90 origin-left">{getStatusBadge(order.status)}</div>
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                          {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'} •
-                          <span className="font-black text-slate-900 ml-1.5">{order.total?.toLocaleString()}€</span>
+                          {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'} •
+                          <span className="font-black text-[#14213D] ml-1">{order.total?.toLocaleString()}€</span>
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 w-full md:w-auto justify-end">
-                      <div className="w-10 h-10 rounded-xl bg-white/80 backdrop-blur-sm border border-white/60 shadow-sm flex items-center justify-center text-slate-500 hover:bg-[#052659] hover:text-white hover:border-[#052659] transition-all">
-                        <ChevronRight size={16} />
+                    <div className="hidden md:flex items-center justify-end">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 group-hover:bg-[#14213D] group-hover:text-white transition-all">
+                        <ChevronRight size={14} />
                       </div>
                     </div>
                   </div>
@@ -266,54 +243,53 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Shortcuts - Grounded */}
-        <div className="space-y-6">
-          <h2 className="text-lg font-black uppercase tracking-tight px-2 text-slate-900">
+        {/* Services / Shortcuts */}
+        <div className="space-y-4">
+          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] px-2 text-[#14213D] mb-2">
             Services
           </h2>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="flex flex-col gap-4">
             <Link
               to="/dashboard/profile"
-              className="flex items-center gap-5 p-6 bg-white/70 backdrop-blur-xl border border-white/60 rounded-[1.5rem] transition-all hover:bg-white/90 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group"
+              className="flex items-center gap-4 p-5 bg-white border border-slate-900/5 rounded-[1.5rem] transition-all hover:shadow-lg hover:shadow-[#14213D]/5 hover:border-[#14213D]/10 group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-white/50 border border-white/80 shadow-sm flex items-center justify-center text-slate-500 group-hover:text-[#052659] transition-all">
+              <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-[#14213D] group-hover:bg-[#14213D]/5 transition-all">
                 <User size={18} />
               </div>
               <div className="flex-1">
-                <p className="font-bold uppercase text-[9px] tracking-widest text-slate-400 mb-0.5">Informations</p>
-                <p className="text-sm font-black text-slate-900 tracking-tight">Mon Profil Client</p>
+                <p className="text-sm font-black text-[#14213D] tracking-tight">Mon Profil</p>
+                <p className="font-bold uppercase text-[9px] tracking-[0.2em] text-slate-400">Informations & Sécurité</p>
               </div>
+              <ChevronRight size={14} className="text-slate-300 group-hover:translate-x-1 group-hover:text-[#14213D] transition-all" />
             </Link>
 
             <Link
               to="/dashboard/billing"
-              className="flex items-center gap-5 p-6 bg-white/70 backdrop-blur-xl border border-white/60 rounded-[1.5rem] transition-all hover:bg-white/90 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] group"
+              className="flex items-center gap-4 p-5 bg-white border border-slate-900/5 rounded-[1.5rem] transition-all hover:shadow-lg hover:shadow-[#14213D]/5 hover:border-[#14213D]/10 group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-white/50 border border-white/80 shadow-sm flex items-center justify-center text-slate-500 group-hover:text-[#052659] transition-all">
+              <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:text-[#14213D] group-hover:bg-[#14213D]/5 transition-all">
                 <CreditCard size={18} />
               </div>
               <div className="flex-1">
-                <p className="font-bold uppercase text-[9px] tracking-widest text-slate-400 mb-0.5">Paiements</p>
-                <p className="text-sm font-black text-slate-900 tracking-tight">Factures & Reçus</p>
+                <p className="text-sm font-black text-[#14213D] tracking-tight">Facturation</p>
+                <p className="font-bold uppercase text-[9px] tracking-[0.2em] text-slate-400">Paiements & Reçus</p>
               </div>
+              <ChevronRight size={14} className="text-slate-300 group-hover:translate-x-1 group-hover:text-[#14213D] transition-all" />
             </Link>
 
             <Link
-              to="/contact"
-              className="flex items-center gap-5 p-6 rounded-[1.5rem] transition-all shadow-[0_30px_60px_rgba(0,0,0,0.2)] overflow-hidden relative group bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024] border border-[#FCA311]/30"
+              to="/dashboard/support"
+              className="flex items-center gap-4 p-6 rounded-[1.5rem] transition-all shadow-lg hover:shadow-xl group bg-[#14213D] border-b-2 border-[#FCA311] relative overflow-hidden hover:-translate-y-1"
             >
-              {/* Vivid Atmosphere */}
-              <div className="absolute -right-8 -top-8 w-32 h-32 bg-[#FCA311]/15 rounded-full blur-[40px] group-hover:bg-[#FCA311]/25 transition-all duration-1000" />
-              <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-[#5483B3]/10 rounded-full blur-[40px] group-hover:bg-[#5483B3]/20 transition-all duration-1000" />
-              
-              <div className="relative z-10 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 group-hover:text-white transition-all">
+              <div className="absolute right-0 top-0 w-32 h-32 bg-[#FCA311] blur-[50px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="relative z-10 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-[#FCA311]">
                 <Shield size={18} />
               </div>
               <div className="relative z-10 flex-1">
-                <p className="font-bold uppercase text-[9px] tracking-widest text-slate-400 mb-0.5">Conciergerie</p>
-                <p className="text-sm font-black text-white tracking-tight">Besoin d'aide ?</p>
+                <p className="text-sm font-black text-white tracking-tight">Conciergerie</p>
+                <p className="font-bold uppercase text-[9px] tracking-[0.2em] text-[#FCA311]">Assistance 24/7</p>
               </div>
-              <ChevronRight size={16} className="relative z-10 text-slate-500 group-hover:text-white transition-all group-hover:translate-x-1" />
+              <ChevronRight size={14} className="relative z-10 text-white/50 group-hover:translate-x-1 group-hover:text-white transition-all" />
             </Link>
           </div>
         </div>
