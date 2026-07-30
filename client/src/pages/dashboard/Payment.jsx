@@ -4,7 +4,7 @@ import { db } from '@shared/firebase/config';
 import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
 import useAuthStore from '@shared/store/useAuthStore';
 import { toast } from 'react-hot-toast';
-import { Building2, ArrowLeft, CheckCircle, Copy, Loader2, ShieldCheck, Zap, Info, Download, CheckCircle2, Clock, FileText, FileCheck } from 'lucide-react';
+import { Building2, ArrowLeft, CheckCircle, Copy, Loader2, ShieldCheck, Zap, Info, Download, CheckCircle2, Clock, FileText, FileCheck, Lock } from 'lucide-react';
 import { generatePaymentReceiptPDF, generateContractPDF, generateInvoicePDF, generateDeliverySlipPDF } from '@shared/utils/generateAdminDocuments';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 
@@ -176,8 +176,40 @@ const Payment = () => {
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-20 mt-6">
-      {/* --- DOCUMENT PORTAL --- */}
-      <div className="bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
+      
+      <div className="flex justify-between items-center mb-4">
+        <button
+          onClick={() => navigate('/dashboard/billing')}
+          className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white rounded-xl border border-slate-900/10 shadow-sm"
+        >
+          <ArrowLeft size={14} className="mr-3 group-hover:-translate-x-1 transition-transform" />
+          Retour à la facturation
+        </button>
+      </div>
+
+      {!order.allowPaymentAccess ? (
+        <div className="bg-white p-12 rounded-[2rem] border border-slate-900/10 text-center shadow-sm">
+            <div className="w-20 h-20 bg-slate-50 rounded-2xl mx-auto flex items-center justify-center mb-6 border border-slate-100">
+                <Lock size={32} className="text-slate-300" />
+            </div>
+            <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter mb-4">Accès Restreint</h2>
+            <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest max-w-lg mx-auto leading-relaxed mb-8">
+                Vos documents officiels et vos informations de paiement sont en cours de préparation par notre équipe. 
+                Ils seront disponibles ici très prochainement.
+            </p>
+            <a 
+                href={`https://wa.me/4915214041724?text=${encodeURIComponent(`Bonjour, je souhaiterais obtenir les modalités de paiement pour mon dossier #${order.orderNumber}.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-[#14213D] text-[#FCA311] px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#052659] transition-all shadow-md active:scale-95"
+            >
+                <Info size={16} /> Demander les modalités de paiement
+            </a>
+        </div>
+      ) : (
+        <>
+          {/* --- DOCUMENT PORTAL --- */}
+          <div className="bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#14213D] text-[#FCA311] rounded-xl flex items-center justify-center shadow-lg shadow-[#14213D]/10">
@@ -313,16 +345,6 @@ const Payment = () => {
             </div>
           )}
         </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={() => navigate('/dashboard/billing')}
-          className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white rounded-xl border border-slate-900/10 shadow-sm"
-        >
-          <ArrowLeft size={14} className="mr-3 group-hover:-translate-x-1 transition-transform" />
-          Retour à la facturation
-        </button>
       </div>
 
       {isPaid ? (
@@ -534,6 +556,8 @@ const Payment = () => {
             </div>
           </div>
         </div>
+      )}
+      </>
       )}
 
       {/* Custom Confirmation Modal */}

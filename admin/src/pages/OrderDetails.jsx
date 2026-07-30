@@ -21,7 +21,9 @@ import {
     Mail,
     Phone,
     Building2,
-    Trash2
+    Trash2,
+    Lock,
+    Unlock
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '@shared/store/useAuthStore';
@@ -107,6 +109,24 @@ const OrderDetails = () => {
         } catch (error) {
             console.error("Status update error:", error);
             toast.error("Erreur lors de la mise à jour");
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleTogglePaymentAccess = async () => {
+        setUpdating(true);
+        try {
+            const newValue = !order.allowPaymentAccess;
+            await updateDoc(doc(db, 'orders', id), {
+                allowPaymentAccess: newValue,
+                updatedAt: serverTimestamp()
+            });
+            setOrder(prev => ({ ...prev, allowPaymentAccess: newValue }));
+            toast.success(newValue ? "Accès aux paiements déverrouillé" : "Accès aux paiements bloqué");
+        } catch (error) {
+            console.error("Access toggle error:", error);
+            toast.error("Erreur lors de la mise à jour de l'accès");
         } finally {
             setUpdating(false);
         }
@@ -396,6 +416,30 @@ const OrderDetails = () => {
                                 {order.customer?.address}<br />
                                 {order.customer?.zipCode} {order.customer?.city}<br />
                                 {order.customer?.country}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Acces Client Menu */}
+                    <div className="bg-[#14213D] p-10 rounded-[2.5rem] shadow-2xl shadow-[#14213D]/30 space-y-8 border-b-8 border-[#FCA311]">
+                        <h3 className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] border-b border-white/5 pb-5 flex items-center gap-3">
+                            <Lock size={16} className="text-[#FCA311]" /> Accès Client
+                        </h3>
+                        <div className="flex flex-col gap-4">
+                            <button
+                                onClick={handleTogglePaymentAccess}
+                                disabled={updating}
+                                className={`w-full py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${order.allowPaymentAccess 
+                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30' 
+                                    : 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30'}`}
+                            >
+                                {order.allowPaymentAccess ? <Unlock size={14} /> : <Lock size={14} />}
+                                {order.allowPaymentAccess ? "Bloquer l'accès paiements" : "Débloquer l'accès paiements"}
+                            </button>
+                            <p className="text-[10px] text-white/40 font-medium leading-relaxed">
+                                {order.allowPaymentAccess 
+                                    ? "Le client peut actuellement voir les documents officiels et le RIB pour effectuer son paiement." 
+                                    : "Les documents et le RIB sont masqués. Le client voit un message d'attente sur son espace."}
                             </p>
                         </div>
                     </div>
