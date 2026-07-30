@@ -21,32 +21,43 @@ const Favorites = () => {
     }, [favorites, fetchVehiclesByIds]);
 
     return (
-        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100/80 pb-10">
-                <div>
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight uppercase">
-                        Mes Favoris
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12 mt-6">
+            {/* Header Section - Premium Dark Mode */}
+            <div className="bg-[#14213D] rounded-[2.5rem] p-10 md:p-12 shadow-2xl shadow-[#14213D]/20 border-b-8 border-[#FCA311] relative overflow-hidden flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                <div className="absolute top-0 right-0 w-96 h-96 bg-[#FCA311] blur-[150px] opacity-10 rounded-full"></div>
+                
+                <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
+                            <Heart size={20} className="text-[#FCA311] fill-current" />
+                        </div>
+                        <span className="text-[10px] text-white/50 font-black uppercase tracking-[0.3em] bg-white/5 px-4 py-2 rounded-lg border border-white/5">
+                            Garage Privé
+                        </span>
+                    </div>
+                    <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight uppercase">
+                        Vos <span className="text-[#FCA311]">Favoris</span>
                     </h1>
-                    <p className="text-slate-400 mt-4 font-bold text-[10px] uppercase tracking-widest flex items-center gap-2">
-                        <Heart size={14} className="text-rose-500 fill-current" />
-                        {favorites.length} véhicules enregistrés
+                    <p className="text-white/60 mt-4 font-bold text-[11px] uppercase tracking-widest">
+                        {favorites.length} {favorites.length > 1 ? 'véhicules exceptionnels sélectionnés' : 'véhicule exceptionnel sélectionné'}
                     </p>
                 </div>
+                
                 <Link
                     to="/catalogue"
-                    className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 group active:scale-95 hover:bg-slate-800 shadow-sm hover:shadow-md border border-slate-800 hover:border-[#FCA311]"
+                    className="relative z-10 bg-white text-[#14213D] px-8 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 group active:scale-95 hover:bg-[#FCA311] shadow-xl"
                 >
-                    Continuer mes recherches
-                    <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    Continuer la recherche
+                    <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
             </div>
 
             {/* Content Area */}
             {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <Loader2 className="animate-spin h-10 w-10 text-slate-900" />
-                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Chargement de votre sélection...</p>
+                <div className="flex flex-col items-center justify-center py-32 gap-6 bg-white rounded-[2.5rem] border border-slate-900/5 shadow-sm">
+                    <Loader2 className="animate-spin h-12 w-12 text-[#14213D]" />
+                    <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Chargement de votre collection...</p>
                 </div>
             ) : favorites.length === 0 ? (
                 <div className="bg-[#14213D] rounded-[2.5rem] p-12 md:p-24 text-center shadow-2xl shadow-[#14213D]/20 border-b-8 border-[#FCA311] max-w-4xl mx-auto relative overflow-hidden">
@@ -71,24 +82,34 @@ const Favorites = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-8 max-w-6xl mx-auto">
-                    <div className="flex items-center gap-3 px-2 mb-2">
-                        <div className="h-px flex-1 bg-slate-100"></div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Votre Sélection Premium</span>
-                        <div className="h-px flex-1 bg-slate-100"></div>
+                    <div className="flex items-center gap-4 px-4 mb-4">
+                        <div className="h-px flex-1 bg-slate-900/10"></div>
+                        <span className="text-[10px] font-black text-[#14213D] uppercase tracking-[0.3em] flex items-center gap-2">
+                            <Zap size={14} className="text-[#FCA311] fill-current" />
+                            Collection Exclusive
+                        </span>
+                        <div className="h-px flex-1 bg-slate-900/10"></div>
                     </div>
 
-                    {favoriteVehicles.map(vehicle => (
-                        <div
-                            key={vehicle.id}
-                            className="bg-white/70 backdrop-blur-xl rounded-[2rem] border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:bg-white/90"
-                        >
-                            <VehicleCard vehicle={vehicle} layout="list" />
+                    <div className="space-y-6">
+                        {favoriteVehicles.map(vehicle => (
+                            <div
+                                key={vehicle.id}
+                                className="bg-white rounded-[2rem] border border-slate-900/10 shadow-sm overflow-hidden transition-all hover:shadow-2xl hover:shadow-[#14213D]/10 hover:border-[#FCA311]/50 group relative"
+                            >
+                                <div className="absolute top-0 left-0 w-1 h-full bg-[#FCA311] scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom duration-500 z-10"></div>
+                                <VehicleCard vehicle={vehicle} layout="list" />
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <div className="pt-12 pb-6 text-center">
+                        <div className="inline-flex items-center gap-3 bg-slate-50 px-6 py-3 rounded-xl border border-slate-100">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                            <p className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em]">
+                                Ces véhicules resteront dans votre espace tant qu'ils sont disponibles.
+                            </p>
                         </div>
-                    ))}
-                    <div className="pt-10 text-center">
-                        <p className="text-[#052659]/50 text-[10px] font-bold uppercase tracking-widest italic">
-                            Ces véhicules resteront dans votre espace tant qu'ils sont disponibles.
-                        </p>
                     </div>
                 </div>
             )}
