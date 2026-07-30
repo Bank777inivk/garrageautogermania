@@ -49,21 +49,25 @@ const Favorites = () => {
                     <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Chargement de votre sélection...</p>
                 </div>
             ) : favorites.length === 0 ? (
-                <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] p-12 md:p-24 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-900/10 max-w-4xl mx-auto">
-                    <div className="w-20 h-20 bg-white/50 border border-slate-900/10 shadow-sm rounded-full flex items-center justify-center mx-auto mb-8">
-                        <Heart size={36} className="text-slate-200" />
+                <div className="bg-[#14213D] rounded-[2.5rem] p-12 md:p-24 text-center shadow-2xl shadow-[#14213D]/20 border-b-8 border-[#FCA311] max-w-4xl mx-auto relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-[#FCA311] blur-[100px] opacity-20 rounded-full"></div>
+                    
+                    <div className="relative z-10">
+                        <div className="w-24 h-24 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-10 group hover:scale-105 transition-transform duration-500 shadow-xl backdrop-blur-md">
+                            <Heart size={40} className="text-[#FCA311] group-hover:fill-[#FCA311] transition-colors" />
+                        </div>
+                        <h3 className="text-3xl md:text-4xl font-black text-white mb-6 uppercase tracking-tighter">Votre Sélection est Vide</h3>
+                        <p className="text-slate-400 mb-12 max-w-lg mx-auto text-[11px] md:text-[12px] font-bold uppercase tracking-widest leading-relaxed">
+                            Aucun véhicule premium n'a encore retenu votre attention. Explorez notre catalogue exclusif et ajoutez vos coups de cœur pour comparer et préparer votre prochaine acquisition.
+                        </p>
+                        <Link
+                            to="/catalogue"
+                            className="inline-flex items-center gap-4 bg-white text-[#14213D] px-12 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl hover:bg-[#FCA311] hover:scale-105 active:scale-95 group"
+                        >
+                            <Search size={16} className="group-hover:animate-pulse" /> Découvrir le Catalogue
+                        </Link>
                     </div>
-                    <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-4 uppercase tracking-tight">Votre garage est vide</h3>
-                    <p className="text-slate-400 mb-10 max-w-sm mx-auto text-sm font-medium leading-relaxed">
-                        Vous n'avez pas encore ajouté de véhicules à vos favoris. Parcourez notre catalogue premium pour trouver votre perle rare.
-                    </p>
-                    <Link
-                        to="/catalogue"
-                        className="inline-flex items-center gap-3 bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 group hover:bg-slate-800 border border-slate-800 hover:border-[#FCA311]"
-                    >
-                        Explorer le catalogue
-                        <Zap size={14} className="text-[#FCA311] group-hover:scale-110 transition-transform fill-current" />
-                    </Link>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-8 max-w-6xl mx-auto">
