@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from '@shared/firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 import {
     Headphones,
     MessageCircle,
@@ -13,30 +15,52 @@ import {
 } from 'lucide-react';
 
 const Support = () => {
+    const [settings, setSettings] = useState(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const docRef = doc(db, 'settings', 'documents');
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    setSettings(docSnap.data());
+                }
+            } catch (error) {
+                console.error("Error fetching settings:", error);
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    const whatsappNum = "+4915214041724"; // Format without spaces for links
+    
     const contactMethods = [
         {
             icon: MessageCircle,
             title: "WhatsApp Business",
             desc: "Réponse instantanée pour vos questions urgentes",
-            value: "+49 123 456 789",
+            value: settings?.phone || "+49 152 140 41 724",
             color: "bg-emerald-50 text-emerald-600 border-emerald-100",
-            action: "Ouvrir WhatsApp"
+            action: "Ouvrir WhatsApp",
+            link: `https://wa.me/${whatsappNum}`
         },
         {
             icon: Mail,
             title: "Support Email",
             desc: "Pour les dossiers complexes et documents",
-            value: "support@garrage-pro.de",
+            value: settings?.email || "contact@garrageautogermania.com",
             color: "bg-blue-50 text-blue-600 border-blue-100",
-            action: "Envoyer un mail"
+            action: "Envoyer un mail",
+            link: `mailto:${settings?.email || "contact@garrageautogermania.com"}`
         },
         {
             icon: Phone,
             title: "Ligne Directe",
             desc: "Disponible Lun-Ven, 9h-18h",
-            value: "+33 1 23 45 67 89",
+            value: settings?.phone || "+33 1 23 45 67 89",
             color: "bg-slate-50 text-slate-600 border-slate-100",
-            action: "Appeler maintenant"
+            action: "Appeler maintenant",
+            link: `tel:${settings?.phone?.replace(/\s/g, '') || "+33123456789"}`
         }
     ];
 
@@ -107,9 +131,14 @@ const Support = () => {
                                     <p className="font-black text-[#14213D] text-sm select-all text-center">{method.value}</p>
                                 </div>
                                 
-                                <button className="w-full py-4 bg-[#14213D] text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 hover:bg-[#052659] hover:text-[#FCA311] active:scale-95 shadow-md">
+                                <a 
+                                    href={method.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-4 bg-[#14213D] text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all flex items-center justify-center gap-3 hover:bg-[#052659] hover:text-[#FCA311] active:scale-95 shadow-md"
+                                >
                                     {method.action} <ExternalLink size={14} />
-                                </button>
+                                </a>
                             </div>
                         ))}
 
