@@ -11,11 +11,13 @@ import {
     ShieldCheck,
     Zap,
     HelpCircle,
-    ExternalLink
+    ExternalLink,
+    Loader2
 } from 'lucide-react';
 
 const Support = () => {
     const [settings, setSettings] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -27,12 +29,23 @@ const Support = () => {
                 }
             } catch (error) {
                 console.error("Error fetching settings:", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchSettings();
     }, []);
 
-    const whatsappNum = "+4915214041724"; // Format without spaces for links
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[500px] gap-6 bg-white/50 backdrop-blur-sm rounded-[2.5rem] border border-slate-900/5 shadow-sm mt-6 animate-in fade-in duration-500">
+                <Loader2 className="animate-spin h-12 w-12 text-[#14213D]" />
+                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Chargement de l'assistance premium...</p>
+            </div>
+        );
+    }
+
+    const whatsappNum = settings?.phone?.replace(/\s/g, '') || "+4915214041724"; // Format without spaces for links
     
     const contactMethods = [
         {
