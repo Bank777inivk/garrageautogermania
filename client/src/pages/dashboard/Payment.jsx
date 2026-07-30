@@ -189,21 +189,22 @@ const Payment = () => {
 
       {!order.allowPaymentAccess ? (
         <div className="bg-white p-12 rounded-[2rem] border border-slate-900/10 text-center shadow-sm">
-            <div className="w-20 h-20 bg-slate-50 rounded-2xl mx-auto flex items-center justify-center mb-6 border border-slate-100">
-                <Lock size={32} className="text-slate-300" />
+            <div className="w-20 h-20 bg-[#14213D] rounded-2xl mx-auto flex items-center justify-center mb-8 shadow-lg shadow-[#14213D]/10">
+                <Lock size={32} className="text-[#FCA311]" />
             </div>
-            <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter mb-4">Accès Restreint</h2>
-            <p className="text-slate-500 text-[11px] font-bold uppercase tracking-widest max-w-lg mx-auto leading-relaxed mb-8">
-                Vos documents officiels et vos informations de paiement sont en cours de préparation par notre équipe. 
-                Ils seront disponibles ici très prochainement.
+            <h2 className="text-2xl md:text-3xl font-black text-[#14213D] uppercase tracking-tighter mb-4">
+                Votre véhicule vous attend !
+            </h2>
+            <p className="text-slate-500 text-[11px] md:text-[12px] font-bold uppercase tracking-widest max-w-lg mx-auto leading-relaxed mb-8">
+                Sécurisez votre acquisition dès aujourd'hui. Contactez immédiatement votre conseiller pour obtenir vos modalités de paiement sécurisées et déclencher la livraison de votre nouveau véhicule.
             </p>
             <a 
-                href={`https://wa.me/4915214041724?text=${encodeURIComponent(`Bonjour, je souhaiterais obtenir les modalités de paiement pour mon dossier #${order.orderNumber}.`)}`}
+                href={`https://wa.me/4915214041724?text=${encodeURIComponent(`Bonjour, je souhaiterais obtenir les modalités de paiement pour finaliser mon dossier #${order.orderNumber}.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-[#14213D] text-[#FCA311] px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#052659] transition-all shadow-md active:scale-95"
+                className="inline-flex items-center gap-3 bg-[#14213D] text-[#FCA311] px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#052659] transition-all shadow-xl shadow-[#14213D]/20 active:scale-95 group"
             >
-                <Info size={16} /> Demander les modalités de paiement
+                <Info size={16} className="group-hover:scale-110 transition-transform" /> Obtenir les modalités de paiement
             </a>
         </div>
       ) : (
