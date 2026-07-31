@@ -77,74 +77,74 @@ const Billing = () => {
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-12">
-      {/* Header - Grounded */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
+    <div className="space-y-6 max-w-7xl mx-auto mt-2 pb-12">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Facturation & Finances
           </h1>
-          <p className="text-slate-500 mt-4 font-bold text-[10px] uppercase tracking-[0.2em]">Gestion de vos transactions et archives fiscales</p>
+          <p className="text-sm font-medium text-slate-500 mt-1">Gestion de vos transactions et archives fiscales</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 bg-white border border-slate-200 px-4 py-2 rounded-full shadow-sm">
           <div className="text-right">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status du compte</p>
-            <p className="text-[11px] font-black text-green-600 uppercase tracking-tight">Certifié & Vérifié</p>
+            <p className="text-xs text-slate-500 font-semibold mb-0.5">Status du compte</p>
+            <p className="text-sm font-bold text-emerald-600">Certifié & Vérifié</p>
           </div>
-          <div className="w-px h-8 bg-slate-100 mx-2"></div>
-          <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 text-slate-300 font-black text-xs">
+          <div className="w-px h-8 bg-slate-200 mx-1"></div>
+          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 font-bold text-sm">
             {user?.email?.[0].toUpperCase()}
           </div>
         </div>
       </div>
 
-      {/* Pending Transactions - Grounded Cards */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
-            <Clock size={16} className="text-[#FCA311]" />
+      {/* Pending Transactions */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Clock size={18} className="text-amber-500" />
             Actions en attente
           </h2>
-          <span className="bg-[#FCA311]/10 text-[#FCA311] px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-[#FCA311]/20 shadow-sm">
+          <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-xs font-bold border border-amber-100 shadow-sm">
             {pendingOrders.length} À traiter
           </span>
         </div>
 
         {pendingOrders.length === 0 ? (
-          <div className="bg-white/70 backdrop-blur-xl p-12 rounded-[2rem] border border-white/60 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <div className="w-16 h-16 bg-white/50 border border-white/80 shadow-sm rounded-full flex items-center justify-center mx-auto text-slate-300 mb-4">
-              <CheckCircle size={24} />
+          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm flex flex-col items-center">
+            <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center mx-auto text-slate-400 mb-4">
+              <CheckCircle size={28} />
             </div>
-            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Aucune facture en attente</p>
+            <p className="text-slate-500 font-semibold text-sm">Aucune facture en attente</p>
           </div>
         ) : (
           <div className="grid gap-4">
             {pendingOrders.map(order => (
-              <div key={order.id} className="bg-white/70 backdrop-blur-xl p-6 rounded-3xl border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col md:flex-row justify-between items-center gap-6 hover:bg-white/90 hover:shadow-[0_20px_50px_rgba(252,163,17,0.08)] transition-all group">
-                <div className="flex items-center gap-5 w-full md:w-auto">
-                  <div className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center shadow-md">
-                    <CreditCard size={20} />
+              <div key={order.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6 hover:border-slate-300 transition-all">
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                  <div className="w-14 h-14 bg-slate-50 text-slate-700 border border-slate-100 rounded-2xl flex items-center justify-center shrink-0">
+                    <CreditCard size={24} />
                   </div>
                   <div>
-                    <h3 className="font-black text-slate-900 text-base uppercase tracking-tight">Facture #{order.orderNumber}</h3>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                      Émise le {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : '-'} • <span className="text-slate-900 font-black">{order.total?.toLocaleString()}€</span>
+                    <h3 className="font-bold text-slate-900 text-lg mb-1">Facture #{order.orderNumber}</h3>
+                    <p className="text-sm text-slate-500 font-medium">
+                      Émise le {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : '-'} • <span className="text-slate-900 font-bold">{order.total?.toLocaleString()}€</span>
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-3 w-full md:w-auto">
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                   <button
                     onClick={() => navigate(`/dashboard/payment/${order.id}`)}
-                    className="flex-1 md:flex-none bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 hover:bg-slate-800 border-b-2 border-slate-700 hover:border-[#FCA311]"
+                    className="flex-1 md:flex-none bg-blue-600 text-white px-6 py-2.5 rounded-full font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 hover:bg-blue-700"
                   >
-                    <CreditCard size={14} />
+                    <CreditCard size={16} />
                     Régler maintenant
                   </button>
                   <button
                     onClick={() => navigate(`/dashboard/payment/${order.id}`)}
-                    className="flex-1 md:flex-none px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/60 rounded-xl hover:bg-slate-900 hover:text-[#FCA311]  text-slate-900 font-black text-[9px] uppercase tracking-widest flex items-center justify-center transition-all shadow-sm gap-2"
+                    className="flex-1 md:flex-none px-6 py-2.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 text-slate-700 font-semibold text-sm flex items-center justify-center transition-all gap-2"
                   >
-                    <FileText size={12} className="text-current" />
+                    <FileText size={16} className="text-current" />
                     Facture Proforma
                   </button>
                 </div>
@@ -154,47 +154,44 @@ const Billing = () => {
         )}
       </div>
 
-      {/* Completed Invoices - Professional Table */}
-      <div className="space-y-6 pt-6 ">
-        <div className="flex items-center justify-between px-2">
-          <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
-            <CheckCircle size={16} className="text-green-600" />
-            Historique Archivé
-          </h2>
-          <div className="h-px bg-slate-100 flex-1 mx-6"></div>
-        </div>
+      {/* Completed Invoices */}
+      <div className="space-y-4 pt-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <CheckCircle size={18} className="text-emerald-500" />
+          Historique Archivé
+        </h2>
 
         {completedOrders.length === 0 ? (
-          <div className="bg-white/70 backdrop-blur-xl p-12 rounded-[2rem] border border-white/60 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Aucune archive financière</p>
+          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-sm flex flex-col items-center">
+            <p className="text-slate-500 font-semibold text-sm">Aucune archive financière</p>
           </div>
         ) : (
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             {/* Desktop Table View */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-white/30 border-b border-white/20">
+                <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    <th className="p-5 font-black text-[9px] text-slate-400 uppercase tracking-[0.3em]">Référence</th>
-                    <th className="p-5 font-black text-[9px] text-slate-400 uppercase tracking-[0.3em]">Date Paiement</th>
-                    <th className="p-5 font-black text-[9px] text-slate-400 uppercase tracking-[0.3em]">Montant TTC</th>
-                    <th className="p-5 font-black text-[9px] text-slate-400 uppercase tracking-[0.3em] text-right">Actions</th>
+                    <th className="p-4 px-6 font-semibold text-xs text-slate-500 uppercase tracking-wider">Référence</th>
+                    <th className="p-4 px-6 font-semibold text-xs text-slate-500 uppercase tracking-wider">Date Paiement</th>
+                    <th className="p-4 px-6 font-semibold text-xs text-slate-500 uppercase tracking-wider">Montant TTC</th>
+                    <th className="p-4 px-6 font-semibold text-xs text-slate-500 uppercase tracking-wider text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/40">
+                <tbody className="divide-y divide-slate-100">
                   {completedOrders.map(order => (
-                    <tr key={order.id} className="hover:bg-white/50 transition-colors">
-                      <td className="p-5 font-black text-slate-900 text-sm tracking-tight">#{order.orderNumber}</td>
-                      <td className="p-5 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                    <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="p-4 px-6 font-bold text-slate-900 text-sm">#{order.orderNumber}</td>
+                      <td className="p-4 px-6 text-sm text-slate-500 font-medium">
                         {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : '-'}
                       </td>
-                      <td className="p-5 font-black text-slate-900 text-base">{order.total?.toLocaleString()}€</td>
-                      <td className="p-5 text-right">
+                      <td className="p-4 px-6 font-bold text-slate-900 text-sm">{order.total?.toLocaleString()}€</td>
+                      <td className="p-4 px-6 text-right">
                         <button
                           onClick={() => navigate(`/dashboard/payment/${order.id}`)}
-                          className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-white/60 text-slate-900 px-4 py-2 rounded-lg font-black text-[8px] uppercase tracking-widest hover:bg-slate-800 hover:text-white hover:border-[#FCA311] transition-all shadow-sm"
+                          className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold text-xs hover:bg-slate-50 transition-all shadow-sm"
                         >
-                          <FileText size={12} />
+                          <FileText size={14} />
                           Ouvrir le Reçu
                         </button>
                       </td>
@@ -205,17 +202,17 @@ const Billing = () => {
             </div>
 
             {/* Mobile Cards View */}
-            <div className="md:hidden flex flex-col divide-y divide-white/40">
+            <div className="md:hidden flex flex-col divide-y divide-slate-100">
               {completedOrders.map(order => (
-                <div key={order.id} className="p-5 flex flex-col gap-4 bg-white/20 hover:bg-white/50 transition-colors">
+                <div key={order.id} className="p-5 flex flex-col gap-4 bg-white hover:bg-slate-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Référence</p>
-                      <p className="font-black text-slate-900 text-sm tracking-tight">#{order.orderNumber}</p>
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Référence</p>
+                      <p className="font-bold text-slate-900 text-sm">#{order.orderNumber}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Date Paiement</p>
-                      <p className="text-[10px] font-black text-[#052659]">
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Date Paiement</p>
+                      <p className="text-sm font-medium text-slate-600">
                         {order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleDateString() : '-'}
                       </p>
                     </div>
@@ -223,14 +220,14 @@ const Billing = () => {
                   
                   <div className="flex items-end justify-between mt-2">
                     <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Montant TTC</p>
-                      <p className="font-black text-[#052659] text-base">{order.total?.toLocaleString()} €</p>
+                      <p className="text-xs font-semibold text-slate-500 mb-1">Montant TTC</p>
+                      <p className="font-bold text-slate-900 text-base">{order.total?.toLocaleString()} €</p>
                     </div>
                     <button
                       onClick={() => navigate(`/dashboard/payment/${order.id}`)}
-                      className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-white/60 text-[#052659] px-4 py-2 rounded-lg font-black text-[8px] uppercase tracking-widest hover:bg-[#052659] hover:text-white transition-all shadow-sm"
+                      className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-semibold text-xs hover:bg-slate-50 transition-all shadow-sm"
                     >
-                      <FileText size={12} />
+                      <FileText size={14} />
                       Ouvrir Reçu
                     </button>
                   </div>
@@ -241,22 +238,17 @@ const Billing = () => {
         )}
       </div>
 
-      {/* Info Banner - Grounded */}
       {/* Payment Policy Card */}
-      <div className="rounded-[2.5rem] p-10 text-white shadow-[0_30px_60px_rgba(0,0,0,0.2)] overflow-hidden relative group bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024] border border-[#FCA311]/30">
-        {/* Vivid Atmosphere */}
-        <div className="absolute -right-24 -top-24 w-96 h-96 bg-[#FCA311]/15 rounded-full blur-[100px] group-hover:bg-[#FCA311]/25 transition-all duration-1000" />
-        <div className="absolute -left-24 -bottom-24 w-96 h-96 bg-[#5483B3]/10 rounded-full blur-[100px] group-hover:bg-[#5483B3]/20 transition-all duration-1000" />
-        
-        <div className="relative z-10">
-          <h3 className="text-xl font-black tracking-tight mb-2 uppercase">Politique de Paiement</h3>
-          <p className="text-slate-400 font-bold text-[10px] mb-8 leading-relaxed max-w-2xl uppercase tracking-widest">
+      <div className="rounded-3xl p-8 bg-slate-50 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 mt-6">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 mb-1">Politique de Paiement</h3>
+          <p className="text-slate-500 text-sm font-medium max-w-xl">
             Transactions certifiées. Facturation automatique après confirmation bancaire (24h-48h).
           </p>
-          <button className="bg-white text-slate-900 px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all shadow-md flex items-center gap-2 hover:bg-slate-800 hover:text-white border border-white hover:border-[#FCA311]">
-            Contacter la comptabilité <AlertCircle size={14} />
-          </button>
         </div>
+        <button className="w-full sm:w-auto bg-white text-slate-700 px-6 py-3 rounded-full font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 hover:bg-slate-50 border border-slate-200 shrink-0">
+          Contacter la comptabilité <AlertCircle size={16} />
+        </button>
       </div>
     </div>
   );

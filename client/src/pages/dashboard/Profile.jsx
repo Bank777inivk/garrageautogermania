@@ -100,172 +100,166 @@ const Profile = () => {
   }
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
+    <div className="space-y-6 max-w-5xl mx-auto mt-2 pb-12">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none uppercase">Profil & Sécurité</h1>
-          <p className="text-slate-500 mt-4 font-bold text-[10px] uppercase tracking-[0.2em]">Gestion de votre identité et préférences</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Profil & Sécurité</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Gestion de votre identité et de vos préférences</p>
         </div>
-        <div className="flex items-center gap-3">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-            Depuis {user?.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '-'}
-          </p>
+        <div className="bg-slate-100 text-slate-600 px-4 py-2 rounded-full text-sm font-semibold">
+          Membre depuis {user?.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '-'}
         </div>
       </div>
 
-      <div className="max-w-5xl">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Profile Header - Grounded */}
-          <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 p-8 flex flex-col md:flex-row items-center gap-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-white shadow-lg overflow-hidden relative group/avatar border border-[#FCA311]/30 bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024]">
-              {/* Subtle Glow */}
-              <div className="absolute inset-0 bg-[#FCA311]/10 blur-xl group-hover/avatar:bg-[#FCA311]/20 transition-all duration-700" />
-              <User size={36} className="text-[#FCA311] relative z-10" />
+      <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Header - Flat */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-8 flex flex-col md:flex-row items-center gap-8 shadow-sm">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center text-blue-600 bg-blue-50 shrink-0">
+              <User size={32} />
             </div>
             <div className="text-center md:text-left">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none uppercase">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                 {formData.firstName || 'Client'} {formData.lastName || 'AutoImport'}
               </h2>
-              <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
-                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  <Mail size={12} />
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+                  <Mail size={16} />
                   {user?.email}
                 </div>
-                <div className="w-1 h-1 bg-slate-200 rounded-full my-auto hidden sm:block"></div>
-                <div className="text-[10px] font-black text-[#FCA311] uppercase tracking-widest flex items-center gap-1.5">
-                  <Award size={12} className="fill-current" />
+                <div className="w-1 h-1 bg-slate-300 rounded-full my-auto hidden sm:block"></div>
+                <div className="text-sm font-semibold text-emerald-600 flex items-center gap-1.5">
+                  <Award size={16} />
                   Compte Certifié
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Identity - Grounded */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 p-8 space-y-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-              <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
-                <User size={16} className="text-slate-400" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Identity - Flat */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-8 space-y-6 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 Identité
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Prénom</label>
+                  <label className="text-sm font-semibold text-slate-700">Prénom</label>
                   <input
                     type="text"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white transition-all outline-none text-sm"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nom</label>
+                  <label className="text-sm font-semibold text-slate-700">Nom</label>
                   <input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white transition-all outline-none text-sm"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
-                <div className="relative group/input">
-                  <Mail size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
+                <label className="text-sm font-semibold text-slate-700">Email</label>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-5 py-3 bg-slate-100/50 border border-slate-200/30 rounded-xl font-black text-slate-400 outline-none text-sm grayscale cursor-not-allowed"
+                    className="w-full pl-11 pr-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl font-medium text-slate-500 outline-none cursor-not-allowed"
                     disabled
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Téléphone mobile</label>
-                <div className="relative group/input">
-                  <Phone size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
+                <label className="text-sm font-semibold text-slate-700">Téléphone mobile</label>
+                <div className="relative">
+                  <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+33 6 00 00 00 00"
-                    className="w-full pl-12 pr-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
+                    className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Localization - Grounded */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl border border-slate-900/10 p-8 space-y-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-              <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
-                <MapPin size={16} className="text-slate-400" />
+            {/* Localization - Flat */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-8 space-y-6 shadow-sm">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                 Localisation
               </h3>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Société</label>
-                <div className="relative group/input">
-                  <Building2 size={14} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
+                <label className="text-sm font-semibold text-slate-700">Société</label>
+                <div className="relative">
+                  <Building2 size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="text"
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
                     placeholder="Optionnel"
-                    className="w-full pl-12 pr-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
+                    className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Adresse de livraison</label>
+                <label className="text-sm font-semibold text-slate-700">Adresse de livraison</label>
                 <input
                   type="text"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="N°, Rue, Appt..."
-                  className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Code Postal</label>
+                  <label className="text-sm font-semibold text-slate-700">Code Postal</label>
                   <input
                     type="text"
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Ville</label>
+                  <label className="text-sm font-semibold text-slate-700">Ville</label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Pays</label>
+                <label className="text-sm font-semibold text-slate-700">Pays</label>
                 <select
                   name="country"
                   value={formData.country}
                   onChange={handleChange}
-                  className="w-full px-5 py-3 bg-white/50 border border-slate-200/60 rounded-xl font-black text-slate-900 focus:bg-white focus:border-slate-900 transition-all outline-none text-sm appearance-none"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
                 >
                   <option value="France">France 🇫🇷</option>
                   <option value="Belgique">Belgique 🇧🇪</option>
@@ -280,22 +274,18 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-8 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] overflow-hidden relative group bg-gradient-to-br from-[#021024] via-[#052659] to-[#021024] border border-[#FCA311]/30">
-            {/* Vivid Atmosphere */}
-            <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#FCA311]/10 rounded-full blur-[80px] group-hover:bg-[#FCA311]/20 transition-all duration-1000" />
-            <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-[#5483B3]/5 rounded-full blur-[80px] group-hover:bg-[#5483B3]/15 transition-all duration-1000" />
-            
-            <div className="relative z-10 text-white text-center md:text-left">
-              <p className="font-black text-sm tracking-tight uppercase leading-none mb-2">Sécurité des données</p>
-              <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">Conformité RGPD & Chiffrement de bout en bout</p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6 md:px-8 bg-slate-50 rounded-3xl border border-slate-200 shadow-sm mt-6">
+            <div className="text-center md:text-left">
+              <p className="font-bold text-slate-900 mb-1">Sécurité des données</p>
+              <p className="text-slate-500 text-sm font-medium">Conformité RGPD & Chiffrement de bout en bout</p>
             </div>
             <button
               type="submit"
               disabled={saving}
-              className="w-full md:w-auto flex items-center justify-center bg-white text-slate-900 px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 disabled:opacity-70 group hover:bg-slate-800 hover:text-white border border-white hover:border-[#FCA311]"
+              className="w-full md:w-auto flex items-center justify-center bg-slate-900 text-white px-8 py-3 rounded-full font-semibold text-sm transition-all hover:bg-slate-800 disabled:opacity-70 shadow-sm"
             >
-              {saving ? <Loader2 className="animate-spin mr-3" size={14} /> : <Save className="mr-3 group-hover:scale-110 transition-transform" size={14} />}
-              {saving ? 'Synchronisation...' : 'Enregistrer'}
+              {saving ? <Loader2 className="animate-spin mr-2" size={16} /> : <Save className="mr-2" size={16} />}
+              {saving ? 'Sauvegarde...' : 'Enregistrer'}
             </button>
           </div>
         </form>

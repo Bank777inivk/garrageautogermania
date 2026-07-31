@@ -84,89 +84,89 @@ const History = () => {
     };
 
     return (
-        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-1000 pb-12">
+        <div className="space-y-6 max-w-7xl mx-auto mt-2 pb-12">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-none">
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
                         Historique Acquisitions
                     </h1>
-                    <p className="text-slate-500 mt-4 font-bold text-[10px] uppercase tracking-[0.2em]">
+                    <p className="text-sm font-medium text-slate-500 mt-1">
                         Archives complètes de vos anciens dossiers et transactions
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{orders.length} dossiers archivés</span>
-                    <HistoryIcon size={16} className="text-slate-300" />
+                <div className="flex items-center gap-3 bg-slate-100 px-4 py-2 rounded-full shadow-sm text-slate-600 font-semibold text-sm">
+                    {orders.length} dossiers archivés
+                    <HistoryIcon size={16} />
                 </div>
             </div>
 
             {orders.length === 0 ? (
-                <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-900/10 p-20 text-center">
-                    <div className="bg-white/50 shadow-sm border border-white/80 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
-                        <HistoryIcon size={32} />
+                <div className="bg-white rounded-3xl p-12 md:p-24 text-center border border-slate-200 shadow-sm flex flex-col items-center">
+                    <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center mx-auto text-slate-400 mb-6">
+                        <HistoryIcon size={28} />
                     </div>
-                    <h2 className="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">Historique vide</h2>
-                    <p className="text-slate-400 mb-8 max-w-md mx-auto font-medium text-sm text-[11px] uppercase tracking-widest">Vos dossiers terminés apparaîtront ici.</p>
+                    <h2 className="text-xl font-bold text-slate-900 mb-2">Historique vide</h2>
+                    <p className="text-slate-500 text-sm max-w-md mx-auto">Vos dossiers terminés apparaîtront ici.</p>
                 </div>
             ) : (
-                <div className="bg-white/70 backdrop-blur-xl rounded-[2.5rem] border border-slate-900/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(252,163,17,0.05)]">
+                <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                     {/* Desktop Table View */}
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-white/30 border-b border-white/20">
+                            <thead className="bg-slate-50 border-b border-slate-200">
                                 <tr>
-                                    <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Véhicule & Référence</th>
-                                    <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date Clôture</th>
-                                    <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Montant Total</th>
-                                    <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Statut Final</th>
-                                    <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Action</th>
+                                    <th className="p-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Véhicule & Référence</th>
+                                    <th className="p-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Clôture</th>
+                                    <th className="p-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Montant Total</th>
+                                    <th className="p-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider">Statut Final</th>
+                                    <th className="p-4 px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
+                            <tbody className="divide-y divide-slate-100">
                                 {orders.map((order) => {
                                     const mainItem = order.items?.[0];
                                     const config = getStatusConfig(order.status);
                                     const Icon = config.icon;
 
                                     return (
-                                        <tr key={order.id} className="hover:bg-white/50 transition-colors group">
-                                            <td className="p-6">
+                                        <tr key={order.id} className="hover:bg-slate-50 transition-colors group">
+                                            <td className="p-4 px-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-xl bg-white/50 overflow-hidden shrink-0 border border-slate-900/10 shadow-sm">
-                                                        <img src={mainItem?.image} alt="" className="w-full h-full object-cover" />
+                                                    <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200 shadow-sm">
+                                                        <img src={mainItem?.image || 'https://placehold.co/800x600'} alt="" className="w-full h-full object-cover" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-black text-slate-900 text-sm tracking-tight">{mainItem?.brand} {mainItem?.model}</p>
-                                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">#{order.orderNumber}</p>
+                                                        <p className="font-bold text-slate-900 text-sm tracking-tight">{mainItem?.brand} {mainItem?.model}</p>
+                                                        <p className="text-xs font-medium text-slate-500">#{order.orderNumber}</p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-6">
+                                            <td className="p-4 px-6">
                                                 <div className="flex flex-col gap-1">
-                                                    <p className="text-xs font-bold text-slate-700">
+                                                    <p className="text-sm font-semibold text-slate-700">
                                                         {order.updatedAt?.seconds ? new Date(order.updatedAt.seconds * 1000).toLocaleDateString('fr-FR') : '-'}
                                                     </p>
-                                                    <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-400 uppercase tracking-widest">
-                                                        <Clock size={8} /> Finalisé
+                                                    <div className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                                                        <Clock size={12} /> Finalisé
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-6 font-black text-slate-900 text-sm">
+                                            <td className="p-4 px-6 font-bold text-slate-900 text-base">
                                                 {order.total?.toLocaleString()}€
                                             </td>
-                                            <td className="p-6">
-                                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border ${config.color}`}>
-                                                    <Icon size={10} />
+                                            <td className="p-4 px-6">
+                                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${config.color}`}>
+                                                    <Icon size={14} />
                                                     {config.label}
                                                 </div>
                                             </td>
-                                             <td className="p-6 text-right">
+                                             <td className="p-4 px-6 text-right">
                                                 <button
                                                     onClick={() => navigate(`/dashboard/orders/${order.id}`)}
-                                                    className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-400 rounded-xl border border-white/60 shadow-sm hover:bg-slate-800 hover:text-white hover:border-[#FCA311] transition-all active:scale-90"
+                                                    className="p-2 bg-white text-slate-500 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-all active:scale-95 inline-flex"
                                                 >
-                                                    <ChevronRight size={16} />
+                                                    <ChevronRight size={18} />
                                                 </button>
                                             </td>
                                         </tr>
@@ -176,50 +176,50 @@ const History = () => {
                         </table>
                     </div>
 
-                    <div className="md:hidden flex flex-col divide-y divide-white/40">
+                    <div className="md:hidden flex flex-col divide-y divide-slate-100">
                         {orders.map((order) => {
                             const mainItem = order.items?.[0];
                             const config = getStatusConfig(order.status);
                             const Icon = config.icon;
 
                             return (
-                                <div key={order.id} className="p-6 flex flex-col gap-5 hover:bg-white/50 transition-colors bg-white/20">
+                                <div key={order.id} className="p-5 flex flex-col gap-5 hover:bg-slate-50 transition-colors bg-white">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-14 h-14 rounded-xl bg-white/50 overflow-hidden shrink-0 border border-slate-900/10 shadow-sm">
-                                            <img src={mainItem?.image} alt="" className="w-full h-full object-cover" />
+                                        <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200 shadow-sm">
+                                            <img src={mainItem?.image || 'https://placehold.co/800x600'} alt="" className="w-full h-full object-cover" />
                                         </div>
                                         <div>
-                                            <p className="font-black text-slate-900 text-sm tracking-tight leading-snug">{mainItem?.brand} {mainItem?.model}</p>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">#{order.orderNumber}</p>
+                                            <p className="font-bold text-slate-900 text-sm tracking-tight leading-snug">{mainItem?.brand} {mainItem?.model}</p>
+                                            <p className="text-xs font-medium text-slate-500 mt-0.5">#{order.orderNumber}</p>
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4 bg-white/40 p-4 rounded-2xl border border-slate-900/10 shadow-sm">
+                                    <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm">
                                         <div>
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Date</p>
-                                            <p className="text-[11px] font-black text-[#052659]">
+                                            <p className="text-xs font-semibold text-slate-500 mb-1">Date</p>
+                                            <p className="text-sm font-semibold text-slate-900">
                                                 {order.updatedAt?.seconds ? new Date(order.updatedAt.seconds * 1000).toLocaleDateString('fr-FR') : '-'}
                                             </p>
-                                            <div className="flex items-center gap-1.5 text-[8px] font-black text-slate-500 uppercase tracking-widest mt-1">
-                                                <Clock size={8} /> Finalisé
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 mt-1">
+                                                <Clock size={12} /> Finalisé
                                             </div>
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Montant Total</p>
-                                            <p className="font-black text-[#052659] text-[13px]">{order.total?.toLocaleString()} €</p>
+                                            <p className="text-xs font-semibold text-slate-500 mb-1">Montant Total</p>
+                                            <p className="font-bold text-slate-900 text-base">{order.total?.toLocaleString()} €</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-center justify-between pt-1">
-                                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[8.5px] font-black uppercase tracking-widest border ${config.color}`}>
-                                            <Icon size={10} />
+                                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${config.color}`}>
+                                            <Icon size={14} />
                                             {config.label}
                                         </div>
-                                             <button
+                                         <button
                                             onClick={() => navigate(`/dashboard/orders/${order.id}`)}
-                                            className="p-2.5 bg-white/80 backdrop-blur-sm text-slate-900 rounded-xl border border-slate-900/10 shadow-sm hover:bg-slate-800 hover:text-white hover:border-[#FCA311] transition-all active:scale-90"
+                                            className="p-2.5 bg-white text-slate-700 rounded-xl border border-slate-200 shadow-sm hover:bg-slate-50 transition-all active:scale-95"
                                         >
-                                            <ChevronRight size={14} />
+                                            <ChevronRight size={16} />
                                         </button>
                                     </div>
                                 </div>

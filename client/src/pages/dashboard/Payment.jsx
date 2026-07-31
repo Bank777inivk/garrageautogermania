@@ -180,7 +180,7 @@ const Payment = () => {
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={() => navigate('/dashboard/billing')}
-          className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white rounded-xl border border-slate-900/10 shadow-sm"
+          className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-bold text-xs tracking-normal px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm"
         >
           <ArrowLeft size={14} className="mr-3 group-hover:-translate-x-1 transition-transform" />
           Retour à la facturation
@@ -188,21 +188,21 @@ const Payment = () => {
       </div>
 
       {!order.allowPaymentAccess ? (
-        <div className="bg-white p-12 rounded-[2rem] border border-slate-900/10 text-center shadow-sm">
+        <div className="bg-white p-12 rounded-[2rem] border border-slate-200 text-center shadow-sm">
             <div className="w-20 h-20 bg-[#14213D] rounded-2xl mx-auto flex items-center justify-center mb-8 shadow-lg shadow-[#14213D]/10">
-                <Lock size={32} className="text-[#FCA311]" />
+                <Lock size={32} className="text-amber-500" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-[#14213D] uppercase tracking-tighter mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#14213D]  tracking-tight mb-4">
                 Votre véhicule vous attend !
             </h2>
-            <p className="text-slate-500 text-[11px] md:text-[12px] font-bold uppercase tracking-widest max-w-lg mx-auto leading-relaxed mb-8">
+            <p className="text-slate-500 text-[11px] md:text-[12px] font-bold  tracking-normal max-w-lg mx-auto leading-relaxed mb-8">
                 Sécurisez votre acquisition dès aujourd'hui. Contactez immédiatement votre conseiller pour obtenir vos modalités de paiement sécurisées et déclencher la livraison de votre nouveau véhicule.
             </p>
             <a 
                 href={`https://wa.me/4915214041724?text=${encodeURIComponent(`Bonjour, je souhaiterais obtenir les modalités de paiement pour finaliser mon dossier #${order.orderNumber}.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-[#14213D] text-[#FCA311] px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#052659] transition-all shadow-xl shadow-[#14213D]/20 active:scale-95 group"
+                className="inline-flex items-center gap-3 bg-[#14213D] text-amber-500 px-8 py-4 rounded-xl font-bold text-xs tracking-normal hover:bg-[#052659] transition-all shadow-xl shadow-[#14213D]/20 active:scale-95 group"
             >
                 <Info size={16} className="group-hover:scale-110 transition-transform" /> Obtenir les modalités de paiement
             </a>
@@ -210,20 +210,20 @@ const Payment = () => {
       ) : (
         <>
           {/* --- DOCUMENT PORTAL --- */}
-          <div className="bg-white rounded-[2rem] border border-slate-900/10 p-6 md:p-8 shadow-sm">
+          <div className="bg-white rounded-[2rem] border border-slate-200 p-6 md:p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#14213D] text-[#FCA311] rounded-xl flex items-center justify-center shadow-lg shadow-[#14213D]/10">
+            <div className="w-10 h-10 bg-[#14213D] text-amber-500 rounded-xl flex items-center justify-center shadow-lg shadow-[#14213D]/10">
               <FileText size={20} />
             </div>
             <div>
-              <h3 className="text-sm font-black text-[#14213D] uppercase tracking-tight">Documents Officiels</h3>
-              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Disponibles selon votre statut</p>
+              <h3 className="text-sm font-bold text-[#14213D]  tracking-tight">Documents Officiels</h3>
+              <p className="text-[9px] text-slate-400 font-bold  tracking-normal">Disponibles selon votre statut</p>
             </div>
           </div>
           <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-100 italic transition-all animate-pulse">
             <ShieldCheck size={12} />
-            <span className="text-[9px] font-black uppercase tracking-widest">Documents Certifiés</span>
+            <span className="text-[9px] font-bold  tracking-normal">Documents Certifiés</span>
           </div>
         </div>
 
@@ -235,16 +235,16 @@ const Payment = () => {
             className={`flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#FCA311] transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
                 <FileText size={16} />
               </div>
               <div className="text-left">
-                <p className="text-[9px] font-black text-slate-900 uppercase tracking-tighter">Facture Proforma</p>
-                <p className="text-[8px] text-slate-400 font-bold uppercase">Détaillée</p>
+                <p className="text-[9px] font-bold text-slate-900  tracking-tight">Facture Proforma</p>
+                <p className="text-[8px] text-slate-400 font-bold ">Détaillée</p>
               </div>
             </div>
             {generatingDoc === 'invoice' ? (
-              <Loader2 size={14} className="text-[#FCA311] animate-spin" />
+              <Loader2 size={14} className="text-amber-500 animate-spin" />
             ) : (
               <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
             )}
@@ -257,16 +257,16 @@ const Payment = () => {
             className={`flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#FCA311] transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
                 <FileCheck size={16} />
               </div>
               <div className="text-left">
-                <p className="text-[9px] font-black text-slate-900 uppercase tracking-tighter">Contrat de Vente</p>
-                <p className="text-[8px] text-slate-400 font-bold uppercase">Signature</p>
+                <p className="text-[9px] font-bold text-slate-900  tracking-tight">Contrat de Vente</p>
+                <p className="text-[8px] text-slate-400 font-bold ">Signature</p>
               </div>
             </div>
             {generatingDoc === 'contract' ? (
-              <Loader2 size={14} className="text-[#FCA311] animate-spin" />
+              <Loader2 size={14} className="text-amber-500 animate-spin" />
             ) : (
               <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
             )}
@@ -284,8 +284,8 @@ const Payment = () => {
                   <CheckCircle2 size={16} />
                 </div>
                 <div className="text-left">
-                  <p className="text-[9px] font-black text-emerald-600 uppercase">Reçu</p>
-                  <p className="text-[8px] text-emerald-400 font-bold uppercase">
+                  <p className="text-[9px] font-bold text-emerald-600 ">Reçu</p>
+                  <p className="text-[8px] text-emerald-400 font-bold ">
                     {order.paymentOption === 'deposit' ? 'Acompte' : 'Acquitté'}
                   </p>
                 </div>
@@ -303,8 +303,8 @@ const Payment = () => {
                   <CheckCircle2 size={16} />
                 </div>
                 <div className="text-left">
-                  <p className="text-[9px] font-black text-slate-400 uppercase">Reçu</p>
-                  <p className="text-[8px] text-slate-300 font-bold uppercase">En attente</p>
+                  <p className="text-[9px] font-bold text-slate-400 ">Reçu</p>
+                  <p className="text-[8px] text-slate-300 font-bold ">En attente</p>
                 </div>
               </div>
             </div>
@@ -318,16 +318,16 @@ const Payment = () => {
               className={`flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-[#FCA311] transition-all group shadow-sm active:scale-95 ${generatingDoc ? 'cursor-not-allowed opacity-80' : ''}`}
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#FCA311] transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
                   <Zap size={16} />
                 </div>
                 <div className="text-left">
-                  <p className="text-[9px] font-black text-slate-900 uppercase">Livraison</p>
-                  <p className="text-[8px] text-slate-400 font-bold uppercase">Bordereau</p>
+                  <p className="text-[9px] font-bold text-slate-900 ">Livraison</p>
+                  <p className="text-[8px] text-slate-400 font-bold ">Bordereau</p>
                 </div>
               </div>
               {generatingDoc === 'delivery' ? (
-                <Loader2 size={14} className="text-[#FCA311] animate-spin" />
+                <Loader2 size={14} className="text-amber-500 animate-spin" />
               ) : (
                 <Download size={14} className="text-slate-300 group-hover:text-[#14213D] group-hover:-translate-y-1 transition-transform" />
               )}
@@ -339,8 +339,8 @@ const Payment = () => {
                   <Zap size={16} />
                 </div>
                 <div className="text-left">
-                  <p className="text-[9px] font-black text-slate-400 uppercase">Livraison</p>
-                  <p className="text-[8px] text-slate-300 font-bold uppercase">Bientôt</p>
+                  <p className="text-[9px] font-bold text-slate-400 ">Livraison</p>
+                  <p className="text-[8px] text-slate-300 font-bold ">Bientôt</p>
                 </div>
               </div>
             </div>
@@ -359,16 +359,16 @@ const Payment = () => {
               <CheckCircle2 size={48} className="text-emerald-500" />
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight uppercase">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight ">
               {order.paymentOption === 'deposit' ? 'Acompte Validé' : 'Paiement Validé'}
             </h1>
-            <p className="text-slate-400 font-bold text-sm uppercase tracking-widest mb-6">
+            <p className="text-slate-400 font-bold text-sm  tracking-normal mb-6">
               Commande #{order.orderNumber} • {(order.paymentOption === 'deposit' ? order.amountToPayNow : order.total)?.toLocaleString()}€ 
-              {order.paymentOption === 'deposit' && <span className="text-[#FCA311] ml-2">(30%)</span>}
+              {order.paymentOption === 'deposit' && <span className="text-amber-500 ml-2">(30%)</span>}
             </p>
             
             {order.paymentOption === 'deposit' && (
-              <p className="text-slate-500 font-medium text-[10px] uppercase tracking-[0.2em] mb-12 max-w-lg mx-auto leading-relaxed">
+              <p className="text-slate-500 font-medium text-xs tracking-[0.2em] mb-12 max-w-lg mx-auto leading-relaxed">
                 Votre réservation est confirmée. La logistique se poursuit normalement et <span className="text-white">le solde restant sera à régler lors de la livraison</span> de votre véhicule.
               </p>
             )}
@@ -380,7 +380,7 @@ const Payment = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => navigate(`/dashboard/orders/track/${order.id}`)}
-                className="w-full sm:w-auto px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-500 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20"
+                className="w-full sm:w-auto px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold text-xs tracking-[0.2em] hover:bg-emerald-500 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20"
               >
                 Suivre ma livraison
               </button>
@@ -394,7 +394,7 @@ const Payment = () => {
                     toast.error("Erreur lors de la génération du reçu PDF");
                   }
                 }}
-                className="w-full sm:w-auto px-8 py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 group"
+                className="w-full sm:w-auto px-8 py-4 bg-white/5 text-white border border-white/10 rounded-2xl font-bold text-xs tracking-[0.2em] hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 group"
               >
                 <Download size={16} className="text-emerald-500 group-hover:-translate-y-1 transition-transform" />
                 Télécharger mon reçu PDF
@@ -404,14 +404,14 @@ const Payment = () => {
         </div>
       ) : (
         // --- PENDING PAYMENT SCREEN ---
-        <div className="bg-white rounded-[2rem] border border-slate-900/10 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
           {/* Header - Minimalist */}
           <div className="p-6 md:p-10 border-b border-slate-50 text-center">
             <div className="bg-slate-50 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-6 border border-slate-100">
               <Building2 size={24} className="text-slate-400" />
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">Virement Bancaire</h1>
-            <p className="text-slate-400 font-bold text-[10px] mt-4 uppercase tracking-[0.2em] max-w-sm mx-auto">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight  leading-none">Virement Bancaire</h1>
+            <p className="text-slate-400 font-bold text-[10px] mt-4  tracking-[0.2em] max-w-sm mx-auto">
               Coordonnées certifiées pour la validation de votre acquisition
             </p>
           </div>
@@ -419,51 +419,51 @@ const Payment = () => {
           <div className="p-4 md:p-12">
             {/* Acquisition Cycle Guide - MOVED TO TOP */}
             <div className="mb-12 pb-10 border-b border-slate-100">
-              <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center justify-center gap-3 mb-8">
+              <h4 className="text-[10px] font-bold text-slate-900  tracking-[0.2em] flex items-center justify-center gap-3 mb-8">
                 <Clock size={14} className="text-amber-500" />
                 Guide du Cycle d'Acquisition
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-3 p-6 bg-slate-50 rounded-2xl border border-slate-900/10">
-                  <div className="text-amber-600 font-black text-[9px] uppercase tracking-widest">Étape 1</div>
-                  <p className="text-[10px] text-slate-900 font-black uppercase tracking-tight">Réservation & Acompte</p>
+                <div className="space-y-3 p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                  <div className="text-amber-600 font-bold text-xs tracking-normal">Étape 1</div>
+                  <p className="text-[10px] text-slate-900 font-bold  tracking-tight">Réservation & Acompte</p>
                   <p className="text-[9px] text-slate-500 leading-relaxed font-medium">Validation administrative et blocage prioritaire du véhicule à votre nom.</p>
                 </div>
-                <div className="space-y-3 p-6 bg-slate-50 rounded-2xl border border-slate-900/10">
-                  <div className="text-slate-400 font-black text-[9px] uppercase tracking-widest">Étape 2</div>
-                  <p className="text-[10px] text-slate-900 font-black uppercase tracking-tight">Logistique & Transit</p>
+                <div className="space-y-3 p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                  <div className="text-slate-400 font-bold text-xs tracking-normal">Étape 2</div>
+                  <p className="text-[10px] text-slate-900 font-bold  tracking-tight">Logistique & Transit</p>
                   <p className="text-[9px] text-slate-500 leading-relaxed font-medium">Contrôles techniques, enlèvement et transport sécurisé vers la destination.</p>
                 </div>
                 <div className="space-y-3 p-6 bg-amber-600/5 rounded-2xl border border-amber-600/10">
-                  <div className="text-amber-600 font-black text-[9px] uppercase tracking-widest">Étape 3</div>
-                  <p className="text-[10px] text-slate-900 font-black uppercase tracking-tight">Solde & Livraison</p>
+                  <div className="text-amber-600 font-bold text-xs tracking-normal">Étape 3</div>
+                  <p className="text-[10px] text-slate-900 font-bold  tracking-tight">Solde & Livraison</p>
                   <p className="text-[9px] text-slate-500 leading-relaxed font-medium">Règlement final du solde requis avant l'immatriculation et la remise des clés.</p>
                 </div>
               </div>
             </div>
 
             {/* Financial Summary - Grounded */}
-            <div className="bg-slate-50 rounded-3xl border border-slate-900/10 p-6 md:p-10 mb-10 text-center relative group">
+            <div className="bg-slate-50 rounded-3xl border border-slate-200 p-6 md:p-10 mb-10 text-center relative group">
               <div className="absolute top-4 right-6 flex items-center gap-2">
-                <span className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${order.paymentOption === 'full' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}`}>
+                <span className={`px-3 py-1 rounded-lg text-[8px] font-bold  tracking-normal border ${order.paymentOption === 'full' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-amber-50 text-amber-700 border-amber-100'}`}>
                   {order.paymentOption === 'full' ? 'Paiement Intégral' : 'Acompte de 30%'}
                 </span>
               </div>
               
-              <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.3em] mb-4">Montant à régler immédiatement</p>
-              <p className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter mb-4">{(order.amountToPayNow || order.total)?.toLocaleString()}€</p>
+              <p className="text-[9px] text-slate-400  font-bold tracking-[0.3em] mb-4">Montant à régler immédiatement</p>
+              <p className="text-4xl sm:text-6xl font-bold text-slate-900 tracking-tight mb-4">{(order.amountToPayNow || order.total)?.toLocaleString()}€</p>
               
               {order.status === 'pending' && (
                 <div className="flex flex-col items-center gap-2">
                   {order.paymentOption === 'deposit' ? (
                     <>
-                      <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                      <p className="text-slate-400 text-[10px] font-bold  tracking-normal">
                         Solde restant : {(order.total - order.amountToPayNow).toLocaleString()}€
                       </p>
                       <button
                         onClick={handleSwitchToFullPayment}
                         disabled={isSwitchingMode}
-                        className="mt-4 flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                        className="mt-4 flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs tracking-normal transition-all shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                       >
                         <Zap size={14} className="fill-current" />
                         {isSwitchingMode ? 'Mise à jour...' : 'Activer remise -15% et Payer le Total'}
@@ -473,7 +473,7 @@ const Payment = () => {
                     <button
                       onClick={handleSwitchToDeposit}
                       disabled={isSwitchingMode}
-                      className="mt-4 flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-amber-500/20"
+                      className="mt-4 flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs tracking-normal transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-amber-500/20"
                     >
                       <Info size={14} />
                       {isSwitchingMode ? 'Mise à jour...' : 'Je laisse un acompte (30%)'}
@@ -482,45 +482,45 @@ const Payment = () => {
                 </div>
               )}
 
-              <div className="mt-8 pt-6 border-t border-slate-200/60 flex items-center justify-center gap-6 text-green-600 text-[10px] font-black uppercase tracking-widest">
+              <div className="mt-8 pt-6 border-t border-slate-200/60 flex items-center justify-center gap-6 text-green-600 text-[10px] font-bold  tracking-normal">
                 <span className="flex items-center gap-2"><CheckCircle size={10} /> Assurance Inclus</span>
                 <span className="flex items-center gap-2"><CheckCircle size={10} /> Livraison Certifiée</span>
               </div>
             </div>
 
             <div className="space-y-6">
-              <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Détails du compte bénéficiaire</h2>
+              <h2 className="text-[10px] font-bold text-slate-400  tracking-normal px-2">Détails du compte bénéficiaire</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-6 bg-white rounded-2xl border border-slate-900/10 hover:border-slate-200 transition-all shadow-sm">
+                <div className="p-6 bg-white rounded-2xl border border-slate-200 hover:border-slate-200 transition-all shadow-sm">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest">Bénéficiaire</p>
+                    <p className="text-[9px] text-slate-400  font-bold tracking-normal">Bénéficiaire</p>
                     <button onClick={() => copyToClipboard("Jennifer Suß")} className="text-slate-300 hover:text-slate-900 transition-colors">
                       <Copy size={14} />
                     </button>
                   </div>
-                  <p className="font-black text-slate-900 uppercase text-base">Jennifer Suß</p>
+                  <p className="font-bold text-slate-900  text-base">Jennifer Suß</p>
                 </div>
 
-                <div className="p-6 bg-white rounded-2xl border border-slate-900/10 hover:border-slate-200 transition-all shadow-sm">
+                <div className="p-6 bg-white rounded-2xl border border-slate-200 hover:border-slate-200 transition-all shadow-sm">
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest">BIC / SWIFT</p>
+                    <p className="text-[9px] text-slate-400  font-bold tracking-normal">BIC / SWIFT</p>
                     <button onClick={() => copyToClipboard("NTSBDEB1XXX")} className="text-slate-300 hover:text-slate-900 transition-colors">
                       <Copy size={14} />
                     </button>
                   </div>
-                  <p className="font-black text-slate-900 font-mono text-base tracking-wider">NTSBDEB1XXX</p>
+                  <p className="font-bold text-slate-900 font-mono text-base tracking-wider">NTSBDEB1XXX</p>
                 </div>
               </div>
 
-              <div className="p-7 bg-white rounded-2xl border border-slate-900/10 hover:border-slate-200 transition-all shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
+              <div className="p-7 bg-white rounded-2xl border border-slate-200 hover:border-slate-200 transition-all shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="w-full md:w-auto">
-                  <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-2">IBAN SEPA</p>
-                  <p className="font-black text-slate-900 font-mono text-xs sm:text-lg tracking-tight">DE56 1001 1001 2176 5100 26</p>
+                  <p className="text-[9px] text-slate-400  font-bold tracking-normal mb-2">IBAN SEPA</p>
+                  <p className="font-bold text-slate-900 font-mono text-xs sm:text-lg tracking-tight">DE56 1001 1001 2176 5100 26</p>
                 </div>
                 <button
                   onClick={() => copyToClipboard("DE56 1001 1001 2176 5100 26")}
-                  className="w-full md:w-auto flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-md hover:bg-[#052659]"
+                  className="w-full md:w-auto flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-xs tracking-normal transition-all active:scale-95 shadow-md hover:bg-[#052659]"
                 >
                   <Copy size={14} /> Copier l'IBAN
                 </button>
@@ -530,14 +530,14 @@ const Payment = () => {
               <div className="p-6 md:p-8 bg-slate-900 rounded-2xl md:rounded-3xl relative overflow-hidden shadow-lg border border-slate-800">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
                   <div className="text-white w-full md:w-auto">
-                    <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2 flex items-center gap-2">
+                    <p className="text-[9px] text-slate-400  font-bold tracking-[0.2em] mb-2 flex items-center gap-2">
                       <Info size={12} style={{ color: '#052659' }} /> Référence de Virement (Obligatoire)
                     </p>
-                    <p className="font-black text-3xl tracking-tighter uppercase">{order.orderNumber}</p>
+                    <p className="font-bold text-3xl tracking-tight ">{order.orderNumber}</p>
                   </div>
                   <button
                     onClick={() => copyToClipboard(order.orderNumber)}
-                    className="w-full md:w-auto bg-white text-slate-900 px-6 py-4 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all active:scale-95 flex items-center gap-2 justify-center shadow-md hover:bg-[#052659] hover:text-white"
+                    className="w-full md:w-auto bg-white text-slate-900 px-6 py-4 rounded-xl font-bold text-xs tracking-normal transition-all active:scale-95 flex items-center gap-2 justify-center shadow-md hover:bg-[#052659] hover:text-white"
                   >
                     <Copy size={14} /> Copier la référence
                   </button>
@@ -546,7 +546,7 @@ const Payment = () => {
             </div>
 
             <div className="mt-12 pt-8 border-t border-slate-50 text-center">
-              <p className="text-[11px] text-slate-400 font-bold max-w-md mx-auto leading-relaxed uppercase tracking-widest">
+              <p className="text-[11px] text-slate-400 font-bold max-w-md mx-auto leading-relaxed  tracking-normal">
                 Détection automatique sous 24-48h. Votre dossier passera en "Payé" dès réception des fonds.
               </p>
 
