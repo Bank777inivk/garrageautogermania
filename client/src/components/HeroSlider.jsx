@@ -122,8 +122,8 @@ const HeroSlider = () => {
                 </div>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-black font-montserrat leading-tight mb-5 animate-slideUp tracking-tight drop-shadow-lg">
                   {t(slide.title, 'Votre voiture de rêve,')} <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500">
-                    {t(slide.subtitle, "directement d'Allemagne")}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 text-2xl md:text-3xl lg:text-4xl block mt-2 leading-snug">
+                    {t(slide.subtitle, "directement d'Allemagne et sélectionnée un peu partout en Europe, notamment en France")}
                   </span>
                 </h2>
                 <p className="text-sm md:text-base text-gray-300 mb-8 max-w-md animate-slideUp delay-100 hidden md:block leading-relaxed drop-shadow-md">
