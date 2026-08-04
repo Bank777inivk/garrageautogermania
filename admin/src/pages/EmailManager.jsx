@@ -1025,18 +1025,6 @@ const EmailManager = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
-                    Titre de la signature (Poste/Département)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="ex: Service Commercial & Direction"
-                    value={smtpConfig.signatureTitle || ''}
-                    onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureTitle: e.target.value })}
-                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
                     Texte du lien de la signature (Site web / Email)
                   </label>
                   <input
@@ -1047,19 +1035,18 @@ const EmailManager = () => {
                     className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
                   />
                 </div>
-              </div>
-              
-              <div>
-                <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
-                  URL du lien de la signature (Doit commencer par http:// ou https://)
-                </label>
-                <input
-                  type="url"
-                  placeholder="ex: https://aps-trucks.ms-automobiledeutschland.de"
-                  value={smtpConfig.signatureWebsiteUrl || ''}
-                  onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureWebsiteUrl: e.target.value })}
-                  className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
-                />
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    URL du lien de la signature
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="ex: https://developer.apple.com"
+                    value={smtpConfig.signatureWebsiteUrl || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureWebsiteUrl: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
               </div>
             </div>
 
