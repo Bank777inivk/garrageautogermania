@@ -334,7 +334,7 @@ const EmailManager = () => {
           <tr>
             <td style="padding: 35px 40px 25px; border-bottom: 1px solid #f1f5f9; text-align: left;">
               <h1 style="margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 1px; color: #0f172a; text-transform: uppercase;">
-                ${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}
+                ${smtpConfig.headerTitle || smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}
               </h1>
               <p style="margin: 4px 0 0; font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase;">
                 ${smtpConfig.headerSubtitle || "Importation Automobile d'Exception • Allemagne"}
@@ -352,7 +352,7 @@ const EmailManager = () => {
             <td style="padding: 0 40px 35px;">
               <div style="padding-top: 25px; border-top: 1px solid #f1f5f9;">
                 <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">${smtpConfig.signatureTitle || 'Service Commercial & Direction'}</p>
-                <p style="margin: 4px 0 0; color: #475569; font-size: 13px;">${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}</p>
+                <p style="margin: 4px 0 0; color: #475569; font-size: 13px;">${smtpConfig.signatureCompany || smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}</p>
                 <p style="margin: 4px 0 0; font-size: 12px;"><a href="${smtpConfig.signatureWebsiteUrl || 'https://aps-trucks.ms-automobiledeutschland.de'}" style="color: #0f172a; text-decoration: underline; font-weight: 600;">${smtpConfig.signatureWebsite || 'aps-trucks.ms-automobiledeutschland.de'}</a></p>
               </div>
             </td>
@@ -968,17 +968,58 @@ const EmailManager = () => {
                 <FileText size={16} /> En-tête et Signature
               </h3>
 
-              <div>
-                <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
-                  Sous-titre de l'en-tête
-                </label>
-                <input
-                  type="text"
-                  placeholder="ex: Importation Automobile d'Exception • Allemagne"
-                  value={smtpConfig.headerSubtitle || ''}
-                  onChange={(e) => setSmtpConfig({ ...smtpConfig, headerSubtitle: e.target.value })}
-                  className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    Titre principal de l'en-tête
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: Apple ou Garage Pro"
+                    value={smtpConfig.headerTitle || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, headerTitle: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    Sous-titre de l'en-tête
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: Developer Program"
+                    value={smtpConfig.headerSubtitle || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, headerSubtitle: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    Titre de la signature (Poste/Département)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: Apple Developer Relations"
+                    value={smtpConfig.signatureTitle || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureTitle: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    Nom de l'entreprise (Signature)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: Apple Inc."
+                    value={smtpConfig.signatureCompany || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureCompany: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
