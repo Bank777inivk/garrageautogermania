@@ -53,7 +53,10 @@ export default async function handler(req, res) {
 
   try {
     const info = await transporter.sendMail({
-      from: `"${fromName}" <${user}>`,
+      from: {
+        name: fromName,
+        address: user
+      },
       to,
       subject,
       html,
