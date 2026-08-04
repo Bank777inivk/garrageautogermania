@@ -3,28 +3,28 @@ import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Truck, SearchCheck, Award } from 'lucide-react';
 
 const FeaturesSection = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['home', 'common']);
 
   const features = [
     {
       icon: SearchCheck,
-      title: t('features.inspection', 'Inspection Rigoureuse'),
-      description: t('features.inspectionDesc', 'Chaque véhicule est inspecté sur plus de 100 points de contrôle avant importation.')
+      title: t('home:features.inspection', 'Inspection Rigoureuse'),
+      description: t('home:features.inspectionDesc', 'Chaque véhicule est inspecté sur plus de 100 points de contrôle avant importation.')
     },
     {
       icon: ShieldCheck,
-      title: t('features.warranty', 'Garantie Premium'),
-      description: t('features.warrantyDesc', 'Roulez l\'esprit tranquille avec nos extensions de garantie jusqu\'à 24 mois.')
+      title: t('home:features.warranty', 'Garantie Premium'),
+      description: t('home:features.warrantyDesc', 'Roulez l\'esprit tranquille avec nos extensions de garantie jusqu\'à 24 mois.')
     },
     {
       icon: Truck,
-      title: t('features.delivery', 'Livraison Clé en Main'),
-      description: t('features.deliveryDesc', 'Nous gérons l\'importation, l\'immatriculation et la livraison à votre domicile.')
+      title: t('home:features.delivery', 'Livraison Clé en Main'),
+      description: t('home:features.deliveryDesc', 'Nous gérons l\'importation, l\'immatriculation et la livraison à votre domicile.')
     },
     {
       icon: Award,
-      title: t('features.experience', 'Expertise Reconnue'),
-      description: t('features.experienceDesc', 'Plus de 10 ans d\'expérience dans l\'importation de véhicules allemands.')
+      title: t('home:features.experience', 'Expertise Reconnue'),
+      description: t('home:features.experienceDesc', 'Plus de 10 ans d\'expérience dans l\'importation de véhicules allemands.')
     }
   ];
 
@@ -34,10 +34,10 @@ const FeaturesSection = () => {
         {/* Header */}
         <div className="text-center mb-14">
           <p className="text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">
-            Notre engagement
+            {t('home:features.commitment', 'Notre engagement')}
           </p>
           <h2 className="text-3xl font-bold font-montserrat mb-4">
-            {t('home.whyChooseUs', 'Pourquoi nous choisir ?')}
+            {t('home:features.whyChooseUs', 'Pourquoi nous choisir ?')}
           </h2>
           <span className="section-line" />
         </div>

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams, Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Toaster } from 'react-hot-toast';
 import useAuthStore from '@shared/store/useAuthStore';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
@@ -49,6 +50,30 @@ const WhatsAppRedirect = () => {
   );
 };
 
+const supportedLangs = ['fr', 'en', 'de', 'pt', 'es', 'it', 'ro', 'nl'];
+
+const LanguageWrapper = () => {
+  const { lang } = useParams();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    if (supportedLangs.includes(lang) && i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
+
+  if (!supportedLangs.includes(lang)) {
+    return <Navigate to="/fr" replace />;
+  }
+
+  return <Outlet />;
+};
+
+const LangRedirector = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  return <Navigate to={`/fr${path === '/' ? '' : path}`} replace />;
+};
 
 function App() {
   const { user, initializeAuth } = useAuthStore();
@@ -70,39 +95,43 @@ function App() {
       <ScrollToTop />
       <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="catalogue" element={<Catalogue />} />
-          <Route path="vehicule/:id" element={<VehicleDetails />} />
-          <Route path="panier" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="commande-confirmee/:orderId" element={<OrderSuccess />} />
-          <Route path="connexion" element={<Login />} />
-          <Route path="inscription" element={<Register />} />
-          <Route path="login" element={<Navigate to="/connexion" replace />} />
-          <Route path="register" element={<Navigate to="/inscription" replace />} />
-          <Route path="a-propos" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="suivi-livraison" element={<PublicTracking />} />
-          <Route path="mentions-legales" element={<MentionsLegales />} />
-          <Route path="confidentialite" element={<Confidentialite />} />
-          <Route path="whatsapp" element={<WhatsAppRedirect />} />
+        <Route path="/:lang" element={<LanguageWrapper />}>
+          <Route path="" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="catalogue" element={<Catalogue />} />
+            <Route path="vehicule/:id" element={<VehicleDetails />} />
+            <Route path="panier" element={<Cart />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="commande-confirmee/:orderId" element={<OrderSuccess />} />
+            <Route path="connexion" element={<Login />} />
+            <Route path="inscription" element={<Register />} />
+            <Route path="login" element={<Navigate to="../connexion" replace />} />
+            <Route path="register" element={<Navigate to="../inscription" replace />} />
+            <Route path="a-propos" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+            <Route path="suivi-livraison" element={<PublicTracking />} />
+            <Route path="mentions-legales" element={<MentionsLegales />} />
+            <Route path="confidentialite" element={<Confidentialite />} />
+            <Route path="whatsapp" element={<WhatsAppRedirect />} />
+          </Route>
+
+          {/* Dashboard Client Routes */}
+          <Route path="dashboard" element={<DashboardLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="orders" element={<DashboardOrders />} />
+            <Route path="orders/track/:orderId" element={<DashboardOrderTracking />} />
+            <Route path="orders/:orderId" element={<DashboardOrderDetails />} />
+            <Route path="tracking" element={<DashboardTrackingList />} />
+            <Route path="billing" element={<DashboardBilling />} />
+            <Route path="history" element={<DashboardHistory />} />
+            <Route path="support" element={<DashboardSupport />} />
+            <Route path="payment/:orderId" element={<DashboardPayment />} />
+            <Route path="profile" element={<DashboardProfile />} />
+            <Route path="favorites" element={<Favorites />} />
+          </Route>
         </Route>
 
-        {/* Dashboard Client Routes */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="orders" element={<DashboardOrders />} />
-          <Route path="orders/track/:orderId" element={<DashboardOrderTracking />} />
-          <Route path="orders/:orderId" element={<DashboardOrderDetails />} />
-          <Route path="tracking" element={<DashboardTrackingList />} />
-          <Route path="billing" element={<DashboardBilling />} />
-          <Route path="history" element={<DashboardHistory />} />
-          <Route path="support" element={<DashboardSupport />} />
-          <Route path="payment/:orderId" element={<DashboardPayment />} />
-          <Route path="profile" element={<DashboardProfile />} />
-          <Route path="favorites" element={<Favorites />} />
-        </Route>
+        <Route path="*" element={<LangRedirector />} />
       </Routes>
     </BrowserRouter>
   );

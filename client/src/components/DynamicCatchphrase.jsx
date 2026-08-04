@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const DynamicCatchphrase = () => {
-    const phrases = [
-        "L'excellence allemande à votre portée",
-        "Importation directe : le meilleur prix garanti",
-        "Votre futur véhicule premium clé en main",
-        "Expertise et transparence à chaque étape",
-        "Livraison sécurisée partout en France",
-        "Un catalogue exclusif de pépites sélectionnées",
-        "Garantie Premium sur tous nos véhicules",
-        "Service d'importation sur mesure et rapide",
-        "Des remises exceptionnelles toute l'année",
-        "Garrage Pro : La passion de l'automobile"
-    ];
+    const { t } = useTranslation(['home', 'common']);
+    const phrases = t('home:catchphrases', { returnObjects: true });
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(true);

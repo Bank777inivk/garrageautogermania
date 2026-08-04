@@ -42,6 +42,10 @@ const DEFAULT_SMTP_CONFIG = {
   user: 'contact@garrageautogermania.com',
   password: '',
   senderName: 'A.P.S. CARS & TRUCKS GMBH',
+  headerSubtitle: "Importation Automobile d'Exception • Allemagne",
+  signatureTitle: 'Service Commercial & Direction',
+  signatureWebsite: 'aps-trucks.ms-automobiledeutschland.de',
+  signatureWebsiteUrl: 'https://aps-trucks.ms-automobiledeutschland.de',
   headerBg: '#14213D',
   headerText: '#FFFFFF',
   accentColor: '#FCA311',
@@ -333,7 +337,7 @@ const EmailManager = () => {
                 ${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}
               </h1>
               <p style="margin: 4px 0 0; font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase;">
-                Importation Automobile d'Exception • Allemagne
+                ${smtpConfig.headerSubtitle || "Importation Automobile d'Exception • Allemagne"}
               </p>
             </td>
           </tr>
@@ -347,9 +351,9 @@ const EmailManager = () => {
           <tr>
             <td style="padding: 0 40px 35px;">
               <div style="padding-top: 25px; border-top: 1px solid #f1f5f9;">
-                <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">Service Commercial & Direction</p>
+                <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 14px;">${smtpConfig.signatureTitle || 'Service Commercial & Direction'}</p>
                 <p style="margin: 4px 0 0; color: #475569; font-size: 13px;">${smtpConfig.senderName || 'A.P.S. CARS & TRUCKS GMBH'}</p>
-                <p style="margin: 4px 0 0; font-size: 12px;"><a href="https://aps-trucks.ms-automobiledeutschland.de" style="color: #0f172a; text-decoration: underline; font-weight: 600;">aps-trucks.ms-automobiledeutschland.de</a></p>
+                <p style="margin: 4px 0 0; font-size: 12px;"><a href="${smtpConfig.signatureWebsiteUrl || 'https://aps-trucks.ms-automobiledeutschland.de'}" style="color: #0f172a; text-decoration: underline; font-weight: 600;">${smtpConfig.signatureWebsite || 'aps-trucks.ms-automobiledeutschland.de'}</a></p>
               </div>
             </td>
           </tr>
@@ -958,7 +962,67 @@ const EmailManager = () => {
               </div>
             </div>
 
-            {/* Section 3 : Footer Disclaimer */}
+            {/* Section 3 : En-tête & Signature */}
+            <div className="bg-[#050A19] p-6 rounded-[2rem] border border-[#1E294B]/60 space-y-6">
+              <h3 className="text-xs font-black uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                <FileText size={16} /> En-tête et Signature
+              </h3>
+
+              <div>
+                <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                  Sous-titre de l'en-tête
+                </label>
+                <input
+                  type="text"
+                  placeholder="ex: Importation Automobile d'Exception • Allemagne"
+                  value={smtpConfig.headerSubtitle || ''}
+                  onChange={(e) => setSmtpConfig({ ...smtpConfig, headerSubtitle: e.target.value })}
+                  className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    Titre de la signature (Poste/Département)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: Service Commercial & Direction"
+                    value={smtpConfig.signatureTitle || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureTitle: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                    Texte du lien de la signature (Site web / Email)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="ex: aps-trucks.ms-automobiledeutschland.de"
+                    value={smtpConfig.signatureWebsite || ''}
+                    onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureWebsite: e.target.value })}
+                    className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-xs font-black text-slate-300 uppercase tracking-widest mb-2">
+                  URL du lien de la signature (Doit commencer par http:// ou https://)
+                </label>
+                <input
+                  type="url"
+                  placeholder="ex: https://aps-trucks.ms-automobiledeutschland.de"
+                  value={smtpConfig.signatureWebsiteUrl || ''}
+                  onChange={(e) => setSmtpConfig({ ...smtpConfig, signatureWebsiteUrl: e.target.value })}
+                  className="w-full bg-[#0B132B] border border-[#1E294B] rounded-2xl px-5 py-3.5 text-sm text-white focus:outline-none focus:border-amber-400 transition-all font-semibold shadow-inner"
+                />
+              </div>
+            </div>
+
+            {/* Section 4 : Footer Disclaimer */}
             <div className="bg-[#050A19] p-6 rounded-[2rem] border border-[#1E294B]/60 space-y-6">
               <h3 className="text-xs font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
                 <FileText size={16} /> Pied de Page (Footer & Mention de Confidentialité)

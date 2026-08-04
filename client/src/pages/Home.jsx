@@ -25,7 +25,7 @@ function useScrollReveal() {
 }
 
 const Home = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['home', 'common']);
   const navigate = useNavigate();
   useScrollReveal();
 
@@ -45,12 +45,14 @@ const Home = () => {
             <div className="reveal-left bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
               <div className="p-6">
                 <p className="text-[10px] font-black text-red-700 uppercase tracking-[0.2em] mb-3">
-                  Sélection du moment
+                  {t('home:selection', 'Sélection du moment')}
                 </p>
-                <h2 className="text-2xl font-black font-montserrat text-slate-900 mb-4 leading-tight uppercase tracking-tight">
-                  Nos dernières <br />pépites
-                  <span className="block h-1.5 w-16 bg-red-700 mt-3 rounded-full"></span>
+                <h2 
+                  className="text-2xl font-black font-montserrat text-slate-900 mb-4 leading-tight uppercase tracking-tight"
+                  dangerouslySetInnerHTML={{ __html: t('home:latestGems', 'Nos dernières <br />pépites') }}
+                >
                 </h2>
+                <span className="block h-1.5 w-16 bg-red-700 mt-[-10px] mb-3 rounded-full"></span>
               </div>
 
               {/* Image Pub Générée */}
@@ -63,7 +65,7 @@ const Home = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 right-4 text-center">
-                  <span className="text-white font-black text-[10px] uppercase tracking-widest group-hover:text-amber-500 transition-colors">Découvrir l'offre</span>
+                  <span className="text-white font-black text-[10px] uppercase tracking-widest group-hover:text-amber-500 transition-colors">{t('home:discoverOffer', "Découvrir l'offre")}</span>
                 </div>
               </div>
             </div>
@@ -88,17 +90,17 @@ const Home = () => {
               <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                   <h3 className="text-white text-xl font-black font-montserrat uppercase tracking-tight mb-2">
-                    L'Excellence <span>Allemande</span> à votre portée
+                    {t('home:banner.title1', "L'Excellence")} <span>{t('home:banner.titleHighlight', "Allemande")}</span> {t('home:banner.title2', "à votre portée")}
                   </h3>
                   <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
-                    Importation directe • Garantie Premium • Livraison France entière
+                    {t('home:banner.subtitle', "Importation directe • Garantie Premium • Livraison France entière")}
                   </p>
                 </div>
                 <Link
                   to="/catalogue"
                   className="flex items-center gap-3 px-8 py-4 bg-amber-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg scale-100 hover:scale-105 active:scale-95 whitespace-nowrap"
                 >
-                  Explorer le stock
+                  {t('home:banner.cta', "Explorer le stock")}
                   <ArrowRight size={16} />
                 </Link>
               </div>

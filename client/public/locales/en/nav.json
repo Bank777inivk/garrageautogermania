@@ -1,0 +1,13 @@
+{
+  "home": "Home",
+  "catalogue": "Catalogue",
+  "tracking": "Tracking",
+  "about": "About us",
+  "contact": "Contact",
+  "dashboard": "My Space",
+  "account": "My Account",
+  "cart": {
+    "title": "Cart"
+  },
+  "search": "Find your ideal vehicle"
+}

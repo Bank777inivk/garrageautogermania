@@ -1,0 +1,35 @@
+{
+  "header": {
+    "subtitle": "Questions & Quotes",
+    "title": "Contact Us"
+  },
+  "info": {
+    "title": "Our Contact Details",
+    "phoneLabel": "Phone",
+    "phoneHours": "Mon - Sat: 9am - 7pm",
+    "emailLabel": "Email",
+    "addressLabel": "Address"
+  },
+  "expertise": {
+    "title": "German Expertise",
+    "desc": "Our advisors are at your disposal for any personalized import request. We manage the entire logistical and administrative process."
+  },
+  "form": {
+    "title": "Send us a message",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "E.g. John Doe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "john.doe@email.com",
+    "subjectLabel": "Subject",
+    "subjects": {
+      "quote": "Import quote request",
+      "tracking": "Existing order tracking",
+      "partnership": "Professional partnership",
+      "other": "Other information"
+    },
+    "messageLabel": "Your message",
+    "messagePlaceholder": "Describe your automotive project...",
+    "submit": "Send message",
+    "guarantee": "Quick reply guaranteed within 24h"
+  }
+}

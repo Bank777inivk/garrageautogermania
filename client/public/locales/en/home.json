@@ -1,0 +1,36 @@
+{
+  "selection": "Current Selection",
+  "latestGems": "Our latest <br />gems",
+  "discoverOffer": "Discover offer",
+  "banner": {
+    "title1": "German",
+    "titleHighlight": "Excellence",
+    "title2": "at your fingertips",
+    "subtitle": "Direct Import • Premium Warranty • Nationwide Delivery",
+    "cta": "Explore Stock"
+  },
+  "catchphrases": [
+    "German excellence at your fingertips",
+    "Direct import: the best price guaranteed",
+    "Your future premium vehicle turnkey",
+    "Expertise and transparency at every step",
+    "Secure delivery anywhere in France",
+    "An exclusive catalog of selected gems",
+    "Premium Warranty on all our vehicles",
+    "Tailor-made and fast import service",
+    "Exceptional discounts all year round",
+    "Garrage Pro: The passion for automobiles"
+  ],
+  "features": {
+    "commitment": "Our commitment",
+    "whyChooseUs": "Why choose us?",
+    "inspection": "Rigorous Inspection",
+    "inspectionDesc": "Each vehicle is inspected on more than 100 control points before import.",
+    "warranty": "Premium Warranty",
+    "warrantyDesc": "Drive with peace of mind with our warranty extensions up to 24 months.",
+    "delivery": "Turnkey Delivery",
+    "deliveryDesc": "We handle the import, registration, and delivery to your home.",
+    "experience": "Recognized Expertise",
+    "experienceDesc": "Over 10 years of experience in importing German vehicles."
+  }
+}

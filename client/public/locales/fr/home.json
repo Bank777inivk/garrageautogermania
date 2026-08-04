@@ -1,0 +1,36 @@
+{
+  "selection": "Sélection du moment",
+  "latestGems": "Nos dernières <br />pépites",
+  "discoverOffer": "Découvrir l'offre",
+  "banner": {
+    "title1": "L'Excellence",
+    "titleHighlight": "Allemande",
+    "title2": "à votre portée",
+    "subtitle": "Importation directe • Garantie Premium • Livraison France entière",
+    "cta": "Explorer le stock"
+  },
+  "catchphrases": [
+    "L'excellence allemande à votre portée",
+    "Importation directe : le meilleur prix garanti",
+    "Votre futur véhicule premium clé en main",
+    "Expertise et transparence à chaque étape",
+    "Livraison sécurisée partout en France",
+    "Un catalogue exclusif de pépites sélectionnées",
+    "Garantie Premium sur tous nos véhicules",
+    "Service d'importation sur mesure et rapide",
+    "Des remises exceptionnelles toute l'année",
+    "Garrage Pro : La passion de l'automobile"
+  ],
+  "features": {
+    "commitment": "Notre engagement",
+    "whyChooseUs": "Pourquoi nous choisir ?",
+    "inspection": "Inspection Rigoureuse",
+    "inspectionDesc": "Chaque véhicule est inspecté sur plus de 100 points de contrôle avant importation.",
+    "warranty": "Garantie Premium",
+    "warrantyDesc": "Roulez l'esprit tranquille avec nos extensions de garantie jusqu'à 24 mois.",
+    "delivery": "Livraison Clé en Main",
+    "deliveryDesc": "Nous gérons l'importation, l'immatriculation et la livraison à votre domicile.",
+    "experience": "Expertise Reconnue",
+    "experienceDesc": "Plus de 10 ans d'expérience dans l'importation de véhicules allemands."
+  }
+}

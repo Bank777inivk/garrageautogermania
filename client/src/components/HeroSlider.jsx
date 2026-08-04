@@ -9,28 +9,28 @@ const slides = [
   {
     id: 1,
     image: '/mercedes.webp',
-    title: 'hero.title1',
-    subtitle: 'hero.subtitle1',
-    badge: 'hero.badge'
+    title: 'hero:title1',
+    subtitle: 'hero:subtitle1',
+    badge: 'hero:badge'
   },
   {
     id: 2,
     image: '/bmw.webp',
-    title: 'hero.title2',
-    subtitle: 'hero.subtitle2',
-    badge: 'hero.badgeNew'
+    title: 'hero:title2',
+    subtitle: 'hero:subtitle2',
+    badge: 'hero:badgeNew'
   },
   {
     id: 3,
     image: '/audi.webp',
-    title: 'hero.title3',
-    subtitle: 'hero.subtitle3',
-    badge: 'hero.badgeEco'
+    title: 'hero:title3',
+    subtitle: 'hero:subtitle3',
+    badge: 'hero:badgeEco'
   }
 ];
 
 const HeroSlider = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['hero', 'common']);
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [brand, setBrand] = useState('');
@@ -127,14 +127,14 @@ const HeroSlider = () => {
                   </span>
                 </h2>
                 <p className="text-sm md:text-base text-gray-300 mb-8 max-w-md animate-slideUp delay-100 hidden md:block leading-relaxed drop-shadow-md">
-                  {t('hero.description', 'Nous sélectionnons, inspectons et importons pour vous les meilleurs véhicules premium. Transparence totale, garantie et livraison clé en main.')}
+                  {t('hero:description', 'Nous sélectionnons, inspectons et importons pour vous les meilleurs véhicules premium. Transparence totale, garantie et livraison clé en main.')}
                 </p>
 
                 <button
                   onClick={() => navigate('/catalogue')}
                   className="btn-amber-glow inline-flex items-center bg-white text-gray-900 hover:bg-gray-50 font-bold py-3.5 px-8 rounded-xl transition-all animate-slideUp delay-200 text-sm tracking-wide shadow-lg"
                 >
-                  {t('hero.cta', 'Voir les offres')}
+                  {t('hero:cta', 'Voir les offres')}
                   <ChevronRight size={20} className="ml-2" />
                 </button>
               </div>

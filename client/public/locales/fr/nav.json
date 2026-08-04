@@ -1,0 +1,13 @@
+{
+  "home": "Accueil",
+  "catalogue": "Catalogue",
+  "tracking": "Suivi",
+  "about": "À propos",
+  "contact": "Contact",
+  "dashboard": "Mon Espace",
+  "account": "Mon Compte",
+  "cart": {
+    "title": "Panier"
+  },
+  "search": "Trouvez votre véhicule idéal"
+}

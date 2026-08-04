@@ -1,0 +1,78 @@
+{
+  "stats": {
+    "delivered": "Vehicles Delivered",
+    "satisfied": "Satisfied Clients",
+    "partners": "European Partners",
+    "years": "Years of Excellence"
+  },
+  "process": {
+    "sourcingTitle": "Sourcing",
+    "sourcingDesc": "Daily analysis of European car fleets to uncover exclusive opportunities.",
+    "expertiseTitle": "Expertise",
+    "expertiseDesc": "Rigorous certified technical inspection before any acquisition to ensure quality.",
+    "logisticsTitle": "Logistics",
+    "logisticsDesc": "Secure transport and comprehensive insurance to your home with real-time tracking.",
+    "deliveryTitle": "Delivery",
+    "deliveryDesc": "Complete management of administrative formalities and registration."
+  },
+  "values": {
+    "reliabilityTitle": "Reliability",
+    "reliabilityDesc": "Full transparency on the history and actual condition of each imported vehicle.",
+    "excellenceTitle": "Excellence",
+    "excellenceDesc": "Specialization in premium German brands and luxury vehicles.",
+    "internationalTitle": "International",
+    "internationalDesc": "A strong network of partners throughout Europe for the best price.",
+    "supportTitle": "Support",
+    "supportDesc": "A dedicated advisor to guide you through every step of your purchase project."
+  },
+  "hero": {
+    "subtitle": "Since 2014 • AutoImport Pro",
+    "title1": "Trustworthy",
+    "title2": "Automotive",
+    "title3": "Import",
+    "desc": "Your broker specializing in the import of premium vehicles from Germany and across Europe."
+  },
+  "badges": {
+    "premium": "Premium Quality",
+    "certified": "Certified Expertise",
+    "warranty": "Premium Warranty",
+    "years": "10 Years",
+    "passion": "Of Passion"
+  },
+  "story": {
+    "p1": "<strong>AutoImport Pro</strong> was founded with a clear vision: to offer secure and transparent access to the best European car fleets. We are your trusted brokers.",
+    "p2": "Each vehicle benefits from complete traceability and certified technical inspection before delivery.",
+    "list1": "Total transparency",
+    "list2": "Technical expertise",
+    "list3": "Dedicated logistics",
+    "list4": "After-sales service"
+  },
+  "headers": {
+    "expertise": "Our Expertise",
+    "process": "Secure Delivery Process",
+    "commitments": "Commitments",
+    "whyChooseUs": "Why choose us?",
+    "testimonials": "Trust from Our Clients"
+  },
+  "testimonials": {
+    "t1": {
+      "quote": "\"A service of rare quality. My RS6 arrived in perfect condition and the formalities were handled with great professionalism.\"",
+      "author": "Jean-Marc T. — Audi RS6 Performance"
+    },
+    "t2": {
+      "quote": "\"First successful import experience thanks to the team. I highly recommend for any premium German vehicle purchase.\"",
+      "author": "Sarah L. — Mercedes G-Class 63"
+    }
+  },
+  "founder": {
+    "quote": "\"We don't just sell vehicles. We deliver dreams and secure your investments with the utmost rigor.\"",
+    "title": "General Manager",
+    "name": "AutoImport Pro"
+  },
+  "cta": {
+    "title": "Your project starts here.",
+    "subtitle": "Direct Import • Premium Warranty • Nationwide Delivery",
+    "primary": "Explore Stock",
+    "secondary": "Contact Us"
+  }
+}

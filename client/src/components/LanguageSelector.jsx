@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const languages = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
@@ -17,6 +18,8 @@ const LanguageSelector = () => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = React.useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -29,7 +32,15 @@ const LanguageSelector = () => {
   }, [isOpen]);
 
   const changeLanguage = (code) => {
-    i18n.changeLanguage(code);
+    const pathParts = location.pathname.split('/').filter(Boolean);
+    if (pathParts.length > 0 && languages.some(l => l.code === pathParts[0])) {
+      pathParts[0] = code;
+    } else {
+      pathParts.unshift(code);
+    }
+    const newPath = '/' + pathParts.join('/') + location.search + location.hash;
+    
+    navigate(newPath);
     setIsOpen(false);
   };
 

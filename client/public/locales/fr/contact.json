@@ -1,0 +1,35 @@
+{
+  "header": {
+    "subtitle": "Questions & Devis",
+    "title": "Contactez-nous"
+  },
+  "info": {
+    "title": "Nos coordonnées",
+    "phoneLabel": "Téléphone",
+    "phoneHours": "Lun - Sam : 9h - 19h",
+    "emailLabel": "Email",
+    "addressLabel": "Adresse"
+  },
+  "expertise": {
+    "title": "Expertise Allemande",
+    "desc": "Nos conseillers sont à votre disposition pour toute demande d'importation personnalisée. Nous gérons l'intégralité du processus logistique et administratif."
+  },
+  "form": {
+    "title": "Envoyez-nous un message",
+    "nameLabel": "Nom complet",
+    "namePlaceholder": "Ex: Jean Dupont",
+    "emailLabel": "Email",
+    "emailPlaceholder": "jean.dupont@email.com",
+    "subjectLabel": "Sujet",
+    "subjects": {
+      "quote": "Demande de devis d'importation",
+      "tracking": "Suivi de commande existante",
+      "partnership": "Partenariat professionnel",
+      "other": "Autre information"
+    },
+    "messageLabel": "Votre message",
+    "messagePlaceholder": "Décrivez votre projet automotive...",
+    "submit": "Envoyer le message",
+    "guarantee": "Réponse rapide garantie sous 24h"
+  }
+}

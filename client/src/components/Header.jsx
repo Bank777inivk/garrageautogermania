@@ -14,7 +14,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation(['nav', 'common']);
   const { getTotalItems, getTotalPrice, toggleCart } = useCartStore();
   const { user } = useAuthStore();
   const { settings, fetchSettings } = useClientVehicleStore();
@@ -50,11 +50,11 @@ const Header = () => {
   }, [isMobileMenuOpen, isSearchOpen]);
 
   const navigation = [
-    { name: t('nav.home', 'Accueil'), href: '/' },
-    { name: t('nav.catalogue', 'Catalogue'), href: '/catalogue' },
-    { name: t('nav.tracking', 'Suivi'), href: '/suivi-livraison' },
-    { name: t('nav.about', 'À propos'), href: '/a-propos' },
-    { name: t('nav.contact', 'Contact'), href: '/contact' },
+    { name: t('nav:home', 'Accueil'), href: `/${i18n.language}` },
+    { name: t('nav:catalogue', 'Catalogue'), href: `/${i18n.language}/catalogue` },
+    { name: t('nav:tracking', 'Suivi'), href: `/${i18n.language}/suivi-livraison` },
+    { name: t('nav:about', 'À propos'), href: `/${i18n.language}/a-propos` },
+    { name: t('nav:contact', 'Contact'), href: `/${i18n.language}/contact` },
   ];
 
   return (
@@ -106,7 +106,7 @@ const Header = () => {
       <div className={`lg:hidden bg-slate-900/95 backdrop-blur-md border-b border-gray-800 overflow-hidden transition-all duration-500 ease-in-out ${isSearchOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-white font-black text-sm uppercase tracking-[0.2em]">Trouvez votre véhicule idéal</h3>
+            <h3 className="text-white font-black text-sm uppercase tracking-[0.2em]">{t('nav:search', 'Trouvez votre véhicule idéal')}</h3>
             <button onClick={() => setIsSearchOpen(false)} className="text-gray-400 hover:text-white transition-colors">
               <X size={20} />
             </button>
@@ -120,7 +120,7 @@ const Header = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-center">
 
-            <Link to="/" className="flex items-center group min-w-[120px] min-h-[64px] md:min-h-[112px]">
+            <Link to={`/${i18n.language}`} className="flex items-center group min-w-[120px] min-h-[64px] md:min-h-[112px]">
               {settings ? (
                 <img
                   src={settings.logoUrl || "/logo.webp"}
@@ -152,12 +152,12 @@ const Header = () => {
             {/* Right Actions: Account & Cart */}
             <div className="flex items-center space-x-2 md:space-x-6">
 
-              <Link to={user ? "/dashboard" : "/connexion"} className="hidden md:flex items-center text-gray-700 hover:text-gray-900 transition-all duration-300 group">
+              <Link to={user ? `/${i18n.language}/dashboard` : `/${i18n.language}/connexion`} className="hidden md:flex items-center text-gray-700 hover:text-gray-900 transition-all duration-300 group">
                 <div className="p-2.5 bg-gray-50 rounded-xl group-hover:bg-gray-900 group-hover:text-white transition-all duration-300 shadow-sm">
                   <User size={18} />
                 </div>
                 <span className="ml-3 text-[11px] font-black uppercase tracking-widest hidden xl:block">
-                  {user ? t('nav.dashboard', 'Mon Espace') : t('nav.account', 'Compte')}
+                  {user ? t('nav:dashboard', 'Mon Espace') : t('nav:account', 'Compte')}
                 </span>
               </Link>
 
@@ -165,7 +165,7 @@ const Header = () => {
               <button
                 onClick={toggleCart}
                 className="relative flex items-center group cursor-pointer"
-                aria-label={t('cart.title', 'Panier')}
+                aria-label={t('nav:cart.title', 'Panier')}
               >
                 <div className="p-2.5 bg-gray-50 rounded-xl group-hover:bg-gray-900 group-hover:text-white transition-all duration-300 shadow-sm text-gray-700">
                   <ShoppingCart size={18} />
@@ -217,12 +217,12 @@ const Header = () => {
 
             <div className="border-t border-gray-100 pt-4 mt-4 space-y-3">
               <Link
-                to={user ? "/dashboard" : "/connexion"}
+                to={user ? `/${i18n.language}/dashboard` : `/${i18n.language}/connexion`}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center px-4 py-3 text-gray-700 hover:text-amber-600 hover:bg-gray-50 rounded-lg font-medium"
               >
                 <User size={20} className="mr-3" />
-                {user ? t('nav.dashboard', 'Mon Espace') : t('nav.account', 'Mon Compte')}
+                {user ? t('nav:dashboard', 'Mon Espace') : t('nav:account', 'Mon Compte')}
               </Link>
             </div>
           </div>

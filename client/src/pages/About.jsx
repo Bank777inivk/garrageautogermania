@@ -35,58 +35,58 @@ const StatItem = ({ label, value, suffix }) => {
 };
 
 const About = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['about', 'common']);
 
   const stats = [
-    { label: "Véhicules Livrés", value: 1250, suffix: "+" },
-    { label: "Clients Satisfaits", value: 98, suffix: "%" },
-    { label: "Partenaires Europe", value: 45, suffix: "" },
-    { label: "Années d'Excellence", value: 10, suffix: "+" }
+    { label: t('about:stats.delivered', "Véhicules Livrés"), value: 1250, suffix: "+" },
+    { label: t('about:stats.satisfied', "Clients Satisfaits"), value: 98, suffix: "%" },
+    { label: t('about:stats.partners', "Partenaires Europe"), value: 45, suffix: "" },
+    { label: t('about:stats.years', "Années d'Excellence"), value: 10, suffix: "+" }
   ];
 
   const processSteps = [
     {
       icon: <Search size={20} />,
-      title: "Sourcing",
-      desc: "Analyse quotidienne des parcs automobiles européens pour dénicher des opportunités exclusives."
+      title: t('about:process.sourcingTitle', "Sourcing"),
+      desc: t('about:process.sourcingDesc', "Analyse quotidienne des parcs automobiles européens pour dénicher des opportunités exclusives.")
     },
     {
       icon: <Wrench size={20} />,
-      title: "Expertise",
-      desc: "Inspection technique rigoureuse certifiée avant toute acquisition pour garantir la qualité."
+      title: t('about:process.expertiseTitle', "Expertise"),
+      desc: t('about:process.expertiseDesc', "Inspection technique rigoureuse certifiée avant toute acquisition pour garantir la qualité.")
     },
     {
       icon: <Truck size={20} />,
-      title: "Logistique",
-      desc: "Transport sécurisé et assurance tous risques jusqu'à votre domicile avec suivi temps réel."
+      title: t('about:process.logisticsTitle', "Logistique"),
+      desc: t('about:process.logisticsDesc', "Transport sécurisé et assurance tous risques jusqu'à votre domicile avec suivi temps réel.")
     },
     {
       icon: <Key size={20} />,
-      title: "Livraison",
-      desc: "Gestion complète des formalités administratives et de l'immatriculation française."
+      title: t('about:process.deliveryTitle', "Livraison"),
+      desc: t('about:process.deliveryDesc', "Gestion complète des formalités administratives et de l'immatriculation française.")
     }
   ];
 
   const values = [
     {
       icon: <Shield className="text-amber-600" size={24} />,
-      title: "Fiabilité",
-      description: "Transparence totale sur l'historique et l'état réel de chaque véhicule importé."
+      title: t('about:values.reliabilityTitle', "Fiabilité"),
+      description: t('about:values.reliabilityDesc', "Transparence totale sur l'historique et l'état réel de chaque véhicule importé.")
     },
     {
       icon: <Award className="text-amber-600" size={24} />,
-      title: "Excellence",
-      description: "Spécialisation dans les marques premium allemandes et les véhicules de luxe."
+      title: t('about:values.excellenceTitle', "Excellence"),
+      description: t('about:values.excellenceDesc', "Spécialisation dans les marques premium allemandes et les véhicules de luxe.")
     },
     {
       icon: <Globe className="text-amber-600" size={24} />,
-      title: "International",
-      description: "Un réseau de partenaires solides dans toute l'Europe pour le meilleur prix."
+      title: t('about:values.internationalTitle', "International"),
+      description: t('about:values.internationalDesc', "Un réseau de partenaires solides dans toute l'Europe pour le meilleur prix.")
     },
     {
       icon: <Users className="text-amber-600" size={24} />,
-      title: "Accompagnement",
-      description: "Un conseiller dédié pour vous accompagner à chaque étape de votre projet d'achat."
+      title: t('about:values.supportTitle', "Accompagnement"),
+      description: t('about:values.supportDesc', "Un conseiller dédié pour vous accompagner à chaque étape de votre projet d'achat.")
     }
   ];
 
@@ -105,15 +105,15 @@ const About = () => {
 
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
           <p className="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-4">
-            Depuis 2014 • AutoImport Pro
+            {t('about:hero.subtitle', "Depuis 2014 • AutoImport Pro")}
           </p>
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold font-montserrat uppercase tracking-tight mb-6 leading-tight">
-            <span className="text-white">L'Importation</span> <br className="sm:hidden" />
-            <span className="text-amber-600">Automobile</span> <br className="sm:hidden" />
-            <span className="text-amber-500">de Confiance</span>
+            <span className="text-white">{t('about:hero.title1', "L'Importation")}</span> <br className="sm:hidden" />
+            <span className="text-amber-600">{t('about:hero.title2', "Automobile")}</span> <br className="sm:hidden" />
+            <span className="text-amber-500">{t('about:hero.title3', "de Confiance")}</span>
           </h1>
           <p className="text-gray-300 text-sm md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-            Votre courtier spécialisé dans l'importation de véhicules premium depuis l'Allemagne et l'Europe entière.
+            {t('about:hero.desc', "Votre courtier spécialisé dans l'importation de véhicules premium depuis l'Allemagne et l'Europe entière.")}
           </p>
         </div>
       </section>
@@ -146,15 +146,15 @@ const About = () => {
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                   <div className="bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 shadow-xl">
                     <Shield size={14} className="text-amber-600" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Premium Quality</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{t('about:badges.premium', 'Premium Quality')}</span>
                   </div>
                   <div className="bg-white/90 backdrop-blur-sm text-slate-900 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center gap-2 shadow-xl">
                     <CheckCircle size={14} className="text-amber-600" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-800">Expertise Certifiée</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-800">{t('about:badges.certified', 'Expertise Certifiée')}</span>
                   </div>
                   <div className="bg-slate-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2 shadow-xl">
                     <Shield size={14} className="text-amber-600" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Garantie Premium</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{t('about:badges.warranty', 'Garantie Premium')}</span>
                   </div>
                   <div className="flex gap-0.5 px-1 mt-1">
                     {[1, 2, 3, 4, 5].map(s => (
@@ -163,26 +163,24 @@ const About = () => {
                   </div>
                 </div>
                 <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 bg-amber-600 text-white px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-md border border-amber-700">
-                  <p className="text-xl sm:text-2xl font-bold font-montserrat leading-none">10 Ans</p>
-                  <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest mt-1 opacity-90">De Passion</p>
+                  <p className="text-xl sm:text-2xl font-bold font-montserrat leading-none">{t('about:badges.years', '10 Ans')}</p>
+                  <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest mt-1 opacity-90">{t('about:badges.passion', 'De Passion')}</p>
                 </div>
               </div>
             </div>
 
             <div className="w-full lg:w-1/2 order-1 lg:order-2">
               <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
+                <p dangerouslySetInnerHTML={{ __html: t('about:story.p1', "<strong>AutoImport Pro</strong> a été fondé avec une vision claire : offrir un accès sécurisé et transparent aux meilleurs parcs automobiles européens. Nous sommes vos courtiers de confiance.") }} />
                 <p>
-                  <strong>AutoImport Pro</strong> a été fondé avec une vision claire : offrir un accès sécurisé et transparent aux meilleurs parcs automobiles européens. Nous sommes vos courtiers de confiance.
-                </p>
-                <p>
-                  Chaque véhicule bénéficie d'une traçabilité complète et d'une inspection technique certifiée avant livraison.
+                  {t('about:story.p2', "Chaque véhicule bénéficie d'une traçabilité complète et d'une inspection technique certifiée avant livraison.")}
                 </p>
                 <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {[
-                    "Transparence totale",
-                    "Expertise technique",
-                    "Logistique dédiée",
-                    "Service après-vente"
+                    t('about:story.list1', "Transparence totale"),
+                    t('about:story.list2', "Expertise technique"),
+                    t('about:story.list3', "Logistique dédiée"),
+                    t('about:story.list4', "Service après-vente")
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-gray-800 font-bold uppercase text-[8px] sm:text-[9px] tracking-widest leading-none">
                       <div className="h-4 w-4 rounded-full bg-amber-600/10 flex-shrink-0 flex items-center justify-center">
@@ -202,9 +200,9 @@ const About = () => {
       <section className="py-16 md:py-24 bg-gray-50 border-y border-gray-100">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 sm:mb-16">
-            <p className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">Notre Expertise</p>
+            <p className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">{t('about:headers.expertise', 'Notre Expertise')}</p>
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
-              Processus de Livraison Sécurisé
+              {t('about:headers.process', 'Processus de Livraison Sécurisé')}
             </h2>
           </div>
 
@@ -229,9 +227,9 @@ const About = () => {
       {/* CORE VALUES */}
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 text-center mb-12 sm:mb-16">
-          <p className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">Engagements</p>
+          <p className="text-[10px] sm:text-xs font-bold text-amber-600 uppercase tracking-[0.2em] mb-2">{t('about:headers.commitments', 'Engagements')}</p>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
-            Pourquoi nous choisir ?
+            {t('about:headers.whyChooseUs', 'Pourquoi nous choisir ?')}
           </h2>
         </div>
 
@@ -260,7 +258,7 @@ const About = () => {
           <div className="text-center mb-12 sm:mb-16">
             <Quote className="text-amber-600 mx-auto mb-4" size={32} />
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-montserrat text-slate-900 uppercase tracking-tight">
-              Confiance de nos Clients
+              {t('about:headers.testimonials', 'Confiance de nos Clients')}
             </h2>
           </div>
 
@@ -270,9 +268,9 @@ const About = () => {
                 {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill="currentColor" />)}
               </div>
               <p className="text-gray-700 font-medium text-sm sm:text-base mb-6 leading-relaxed italic">
-                "Un service d'une qualité rare. Ma RS6 est arrivée en parfait état et les formalités ont été gérées avec un grand professionnalisme."
+                {t('about:testimonials.t1.quote', "\"Un service d'une qualité rare. Ma RS6 est arrivée en parfait état et les formalités ont été gérées avec un grand professionnalisme.\"")}
               </p>
-              <p className="text-gray-900 font-bold text-[8px] sm:text-[9px] uppercase tracking-widest border-t border-gray-100 pt-4 leading-none">Jean-Marc T. — Audi RS6 Performance</p>
+              <p className="text-gray-900 font-bold text-[8px] sm:text-[9px] uppercase tracking-widest border-t border-gray-100 pt-4 leading-none">{t('about:testimonials.t1.author', "Jean-Marc T. — Audi RS6 Performance")}</p>
             </div>
 
             <div className="bg-white p-6 sm:p-10 rounded-xl shadow-sm border border-gray-100">
@@ -280,9 +278,9 @@ const About = () => {
                 {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill="currentColor" />)}
               </div>
               <p className="text-gray-700 font-medium text-sm sm:text-base mb-6 leading-relaxed italic">
-                "Première expérience d'import réussie grâce à l'équipe. Je recommande vivement pour tout achat de véhicule premium allemand."
+                {t('about:testimonials.t2.quote', "\"Première expérience d'import réussie grâce à l'équipe. Je recommande vivement pour tout achat de véhicule premium allemand.\"")}
               </p>
-              <p className="text-gray-900 font-bold text-[8px] sm:text-[9px] uppercase tracking-widest border-t border-gray-100 pt-4 leading-none">Sarah L. — Mercedes Classe G63</p>
+              <p className="text-gray-900 font-bold text-[8px] sm:text-[9px] uppercase tracking-widest border-t border-gray-100 pt-4 leading-none">{t('about:testimonials.t2.author', "Sarah L. — Mercedes Classe G63")}</p>
             </div>
           </div>
         </div>
@@ -292,15 +290,15 @@ const About = () => {
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-4 max-w-2xl text-center">
           <p className="text-lg md:text-xl font-medium text-gray-800 leading-relaxed mb-8 md:mb-12 italic">
-            "Nous ne vendons pas simplement des véhicules. Nous livrons des rêves et sécurisons vos investissements avec la plus grande rigueur."
+            {t('about:founder.quote', "\"Nous ne vendons pas simplement des véhicules. Nous livrons des rêves et sécurisons vos investissements avec la plus grande rigueur.\"")}
           </p>
           <div className="flex flex-col items-center">
             <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-white mb-4 border border-slate-800 shadow-sm">
               <User size={18} />
             </div>
-            <h4 className="text-gray-900 font-bold uppercase tracking-widest text-[9px] sm:text-[10px]">Directeur Général</h4>
+            <h4 className="text-gray-900 font-bold uppercase tracking-widest text-[9px] sm:text-[10px]">{t('about:founder.title', "Directeur Général")}</h4>
             <p className="text-amber-600 font-montserrat font-bold text-lg sm:text-xl mt-1 tracking-tighter">
-              AutoImport Pro
+              {t('about:founder.name', "AutoImport Pro")}
             </p>
           </div>
         </div>
@@ -312,24 +310,24 @@ const About = () => {
           <div className="bg-slate-900 rounded-2xl p-8 sm:p-12 md:p-20 text-center border border-amber-600/20 shadow-xl overflow-hidden relative">
             <div className="relative z-10">
               <h2 className="text-white text-xl sm:text-2xl md:text-4xl font-bold font-montserrat uppercase tracking-tight mb-4 leading-tight">
-                Votre projet commence ici.
+                {t('about:cta.title', "Votre projet commence ici.")}
               </h2>
               <p className="text-gray-400 text-[10px] sm:text-xs max-w-xl mx-auto mb-8 leading-relaxed uppercase tracking-[0.1em] font-bold">
-                Importation directe • Garantie Premium • Livraison France entière
+                {t('about:cta.subtitle', "Importation directe • Garantie Premium • Livraison France entière")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/catalogue"
                   className="px-8 py-4 bg-amber-600 text-white font-bold text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg flex items-center justify-center gap-2 active:scale-95 group"
                 >
-                  Découvrir le stock
+                  {t('about:cta.primary', "Découvrir le stock")}
                   <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/contact"
                   className="px-8 py-4 border border-slate-700 text-white font-bold text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-slate-800 transition-all active:scale-95"
                 >
-                  Nous contacter
+                  {t('about:cta.secondary', "Nous contacter")}
                 </Link>
               </div>
             </div>
