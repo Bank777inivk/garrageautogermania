@@ -27,7 +27,7 @@ function useScrollReveal() {
 
 const Home = () => {
   const { t } = useTranslation(['home', 'common']);
-  const { langPath } = useLangNavigate();
+  const { langPath, langNavigate } = useLangNavigate();
   const navigate = useNavigate();
   useScrollReveal();
 
@@ -58,7 +58,7 @@ const Home = () => {
               </div>
 
               {/* Image Pub Générée */}
-              <div className="relative group overflow-hidden cursor-pointer" onClick={() => navigate('/catalogue')}>
+              <div className="relative group overflow-hidden cursor-pointer" onClick={() => langNavigate('/catalogue')}>
                 <DynamicCatchphrase />
                 <img
                   src="/premium_car_ad_v2_1772795850000_1772805918746.webp"

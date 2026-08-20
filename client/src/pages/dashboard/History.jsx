@@ -5,15 +5,17 @@ import { db } from '@shared/firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Package, ChevronRight, Loader2, CheckCircle, XCircle, History as HistoryIcon, Clock } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const History = () => {
     const navigate = useNavigate();
+  const { langNavigate } = useLangNavigate();
     const { user, loading: authLoading } = useAuthStore();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!authLoading && !user) navigate('/connexion');
+        if (!authLoading && !user) langNavigate('/connexion');
     }, [user, authLoading, navigate]);
 
     useEffect(() => {

@@ -4,9 +4,11 @@ import { Menu, User } from 'lucide-react';
 import useAuthStore from '@shared/store/useAuthStore';
 import { db } from '@shared/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const DashboardHeader = ({ toggleSidebar }) => {
   const navigate = useNavigate();
+  const { langPath } = useLangNavigate();
   const { user } = useAuthStore();
   const [profile, setProfile] = useState(null);
 
@@ -51,7 +53,7 @@ const DashboardHeader = ({ toggleSidebar }) => {
       {/* Right */}
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-3">
-          <Link to="/dashboard/profile" className="text-right hidden md:block group">
+          <Link to={langPath('/dashboard/profile')} className="text-right hidden md:block group">
             <p className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">{displayName}</p>
             <p className="text-[11px] font-medium text-slate-500">Membre Premium</p>
           </Link>

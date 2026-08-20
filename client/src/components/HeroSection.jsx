@@ -2,11 +2,13 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import SearchBar from './SearchBar';
 
 const HeroSection = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { langNavigate } = useLangNavigate();
 
   return (
     <div className="relative h-[600px] md:h-[700px] flex items-center justify-center">
@@ -41,7 +43,7 @@ const HeroSection = () => {
           {/* Quick Search Bar */}
           <SearchBar />
 
-          <div className="mt-8 flex items-center space-x-2 text-white/80 text-sm font-medium cursor-pointer hover:text-white transition-colors" onClick={() => navigate('/catalogue')}>
+          <div className="mt-8 flex items-center space-x-2 text-white/80 text-sm font-medium cursor-pointer hover:text-white transition-colors" onClick={() => langNavigate('/catalogue')}>
             <span>{t('hero.viewAll', 'Voir tout le catalogue')}</span>
             <ChevronRight size={16} />
           </div>

@@ -17,9 +17,11 @@ import { doc, onSnapshot, getDoc } from 'firebase/firestore';
 import { db } from '@shared/firebase/config';
 import toast from 'react-hot-toast';
 import { generateContractPDF, generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const OrderTracking = () => {
     const { orderId } = useParams();
+  const { langPath } = useLangNavigate();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [settings, setSettings] = useState(null);
@@ -114,7 +116,7 @@ const OrderTracking = () => {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 md:mb-16">
                     <div className="flex items-center gap-6 w-full md:w-auto">
-                        <Link to="/dashboard/orders" className="p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-200 transition-all shadow-sm">
+                        <Link to={langPath('/dashboard/orders')} className="p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-200 transition-all shadow-sm">
                             <ArrowLeft className="text-slate-500" size={20} />
                         </Link>
                         <div>
@@ -327,7 +329,7 @@ const OrderTracking = () => {
                                 <span className="text-base font-bold text-slate-900">{stages[activeIndex]?.desc || "En attente"}</span>
                             </div>
                         </div>
-                        <Link to="/contact" className="bg-slate-900 text-white rounded-3xl font-bold text-sm transition-all hover:bg-slate-800 flex items-center justify-center p-6 md:py-0 shadow-sm">
+                        <Link to={langPath('/contact')} className="bg-slate-900 text-white rounded-3xl font-bold text-sm transition-all hover:bg-slate-800 flex items-center justify-center p-6 md:py-0 shadow-sm">
                             Assistance Directe
                         </Link>
                     </div>

@@ -7,9 +7,11 @@ import { toast } from 'react-hot-toast';
 import { Building2, ArrowLeft, CheckCircle, Copy, Loader2, ShieldCheck, Zap, Info, Download, CheckCircle2, Clock, FileText, FileCheck, Lock } from 'lucide-react';
 import { generatePaymentReceiptPDF, generateContractPDF, generateInvoicePDF, generateDeliverySlipPDF } from '@shared/utils/generateAdminDocuments';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const Payment = () => {
   const { orderId } = useParams();
+  const { langNavigate } = useLangNavigate();
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [order, setOrder] = useState(null);
@@ -66,7 +68,7 @@ const Payment = () => {
       if (docSnap.exists()) {
         const orderData = { id: docSnap.id, ...docSnap.data() };
         if (user && orderData.userId !== user.uid) {
-          navigate('/dashboard');
+          langNavigate('/dashboard');
           return;
         }
         setOrder(orderData);
@@ -179,7 +181,7 @@ const Payment = () => {
       
       <div className="flex justify-between items-center mb-4">
         <button
-          onClick={() => navigate('/dashboard/billing')}
+          onClick={() => langNavigate('/dashboard/billing')}
           className="group flex items-center text-slate-500 hover:text-slate-900 transition-all font-bold text-xs tracking-normal px-5 py-3 bg-white rounded-xl border border-slate-200 shadow-sm"
         >
           <ArrowLeft size={14} className="mr-3 group-hover:-translate-x-1 transition-transform" />

@@ -6,9 +6,11 @@ import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/fire
 import { FileText, Download, AlertCircle, CheckCircle, Clock, CreditCard } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { generateOrderPDF, generatePaymentReceiptPDF } from '@shared/utils/generateAdminDocuments';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const Billing = () => {
   const navigate = useNavigate();
+  const { langNavigate } = useLangNavigate();
   const { user, loading: authLoading } = useAuthStore();
   const [orders, setOrders] = useState([]);
   const [settings, setSettings] = useState(null);
@@ -16,7 +18,7 @@ const Billing = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/connexion');
+      langNavigate('/connexion');
     }
   }, [user, authLoading, navigate]);
 

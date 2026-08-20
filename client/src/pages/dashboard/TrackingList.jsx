@@ -5,9 +5,11 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import useAuthStore from '@shared/store/useAuthStore';
 import { Compass, Package, ChevronRight, Clock, MapPin, Truck } from 'lucide-react';
 import toast from 'react-hot-toast';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const TrackingList = () => {
     const { user } = useAuthStore();
+  const { langPath } = useLangNavigate();
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -69,7 +71,7 @@ const TrackingList = () => {
                     <p className="text-slate-500 text-sm mt-2 max-w-md mx-auto font-medium">
                         Vous n'avez pas encore de commande active. Explorez notre catalogue pour trouver votre futur véhicule.
                     </p>
-                    <Link to="/catalogue" className="inline-flex mt-8 px-8 py-3 bg-blue-600 text-white rounded-full font-semibold text-sm transition-all hover:bg-blue-700 shadow-sm">
+                    <Link to={langPath('/catalogue')} className="inline-flex mt-8 px-8 py-3 bg-blue-600 text-white rounded-full font-semibold text-sm transition-all hover:bg-blue-700 shadow-sm">
                         Explorer le catalogue
                     </Link>
                 </div>

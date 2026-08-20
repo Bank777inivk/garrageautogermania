@@ -22,7 +22,7 @@ import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { lang } = useLangNavigate();
+  const { lang, langPath, langNavigate } = useLangNavigate();
   const { user, loading: authLoading } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
@@ -36,7 +36,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/connexion');
+      langNavigate('/connexion');
     }
   }, [user, authLoading, navigate]);
 
@@ -182,7 +182,7 @@ const Dashboard = () => {
         </div>
 
         {/* Favorites */}
-        <Link to="/dashboard/favorites" className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-colors cursor-pointer group">
+        <Link to={langPath('/dashboard/favorites')} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between hover:border-slate-300 transition-colors cursor-pointer group">
           <div className="flex justify-between items-start mb-6">
             <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
               <Heart size={18} fill={favorites.length > 0 ? "currentColor" : "none"} />
@@ -203,7 +203,7 @@ const Dashboard = () => {
             <h2 className="text-base font-bold text-slate-900">
               Dernières Activités
             </h2>
-            <Link to="/dashboard/orders" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1">
+            <Link to={langPath('/dashboard/orders')} className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors flex items-center gap-1">
               Voir tout <ChevronRight size={14} />
             </Link>
           </div>

@@ -6,9 +6,11 @@ import useFavoriteStore from '@shared/store/useFavoriteStore';
 import { db } from '@shared/firebase/config';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { langNavigate } = useLangNavigate();
   const { signup } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -74,7 +76,7 @@ const Register = () => {
       const { syncWithUser } = useFavoriteStore.getState();
       await syncWithUser(user.uid);
 
-      navigate('/dashboard');
+      langNavigate('/dashboard');
     } catch (error) {
       console.error("Registration error:", error);
       if (error.code === 'auth/email-already-in-use') {

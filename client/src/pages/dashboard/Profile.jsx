@@ -5,9 +5,11 @@ import { db } from '@shared/firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { User, MapPin, Calendar, Loader2, Phone, Mail, Building2, Save, Award } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { langNavigate } = useLangNavigate();
   const { user, loading: authLoading } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -26,7 +28,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/connexion');
+      langNavigate('/connexion');
     }
   }, [user, authLoading, navigate]);
 

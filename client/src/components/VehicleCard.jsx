@@ -12,9 +12,11 @@ import useAuthStore from '@shared/store/useAuthStore';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 import { toast } from 'react-hot-toast';
 import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const VehicleCard = ({ vehicle, layout = 'grid' }) => {
     useTranslation();
+  const { langPath } = useLangNavigate();
     const { addToCart, items: cartItems } = useCartStore();
     const { toggleFavorite, favorites } = useFavoriteStore();
     const { user } = useAuthStore();
@@ -131,7 +133,7 @@ const VehicleCard = ({ vehicle, layout = 'grid' }) => {
                     </div>
                 </div>
                 <div className="mt-5 flex gap-2 relative z-10">
-                    <Link to="/connexion" className="flex-1 bg-slate-900 text-white py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.stopPropagation(); setShowPopup(false); }}>
+                    <Link to={langPath('/connexion')} className="flex-1 bg-slate-900 text-white py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2" onClick={(e) => { e.stopPropagation(); setShowPopup(false); }}>
                         <LogIn size={12} /> Se connecter
                     </Link>
                     <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowPopup(false); }} className="p-2.5 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 hover:text-slate-600 transition-all active:scale-95 flex items-center justify-center">

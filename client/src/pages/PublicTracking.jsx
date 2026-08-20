@@ -17,9 +17,11 @@ import {
 import { collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { db } from '@shared/firebase/config';
 import toast from 'react-hot-toast';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const PublicTracking = () => {
     const { t } = useTranslation();
+  const { langPath } = useLangNavigate();
     const [orderNumberInput, setOrderNumberInput] = useState('');
     const [order, setOrder] = useState(null);
     const [searched, setSearched] = useState(false);
@@ -336,7 +338,7 @@ const PublicTracking = () => {
                                     <span className="text-base md:text-xl font-black uppercase text-white tracking-tight leading-none">{stages[activeIndex]?.desc || "En attente"}</span>
                                 </div>
                             </div>
-                            <Link to="/contact" className="px-10 md:px-14 py-6 md:py-8 bg-red-700 text-white rounded-2xl font-black text-xs md:text-sm uppercase tracking-[0.3em] hover:bg-red-800 transition-all hover:scale-[1.05] active:scale-95 text-center flex items-center justify-center">
+                            <Link to={langPath('/contact')} className="px-10 md:px-14 py-6 md:py-8 bg-red-700 text-white rounded-2xl font-black text-xs md:text-sm uppercase tracking-[0.3em] hover:bg-red-800 transition-all hover:scale-[1.05] active:scale-95 text-center flex items-center justify-center">
                                 Assistance Directe
                             </Link>
                         </div>

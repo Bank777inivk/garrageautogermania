@@ -12,9 +12,11 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { applyWatermark, getPublicIdFromUrl } from '@shared/utils/cloudinary';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const VehicleDetails = () => {
   const { id } = useParams();
+  const { langPath } = useLangNavigate();
   useTranslation();
   const { currentVehicle, loading, error, fetchVehicleById, pendingVehicleIds, settings, fetchSettings } = useClientVehicleStore();
   const { addToCart, items: cartItems } = useCartStore();
@@ -85,7 +87,7 @@ const VehicleDetails = () => {
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">Oups !</h2>
           <p className="text-slate-500 font-medium mb-8">Ce véhicule n'est plus disponible ou l'adresse est incorrecte.</p>
-          <Link to="/catalogue" className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-600 transition-all shadow-xl shadow-slate-900/10 active:scale-95">
+          <Link to={langPath('/catalogue')} className="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-amber-600 transition-all shadow-xl shadow-slate-900/10 active:scale-95">
             <ChevronLeft size={16} /> Retour au catalogue
           </Link>
         </div>
@@ -139,7 +141,7 @@ const VehicleDetails = () => {
           </div>
         </div>
         <div className="mt-6 flex gap-2 relative z-10">
-          <Link to="/connexion" className="flex-1 bg-slate-900 text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2">
+          <Link to={langPath('/connexion')} className="flex-1 bg-slate-900 text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 transition-all text-center shadow-lg active:scale-95 flex items-center justify-center gap-2">
             <LogIn size={14} /> Connexion
           </Link>
           <button onClick={() => setShowLoginPopup(false)} className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 hover:text-slate-600 transition-all active:scale-95">
@@ -314,7 +316,7 @@ const VehicleDetails = () => {
       {/* ── TOP HEADER / BREADCRUMB ── */}
       <div className="bg-white border-b border-slate-100 sticky top-[72px] z-30">
         <div className="container mx-auto px-4 py-2">
-          <Link to="/catalogue" className="inline-flex items-center gap-1.5 text-amber-600 hover:text-amber-700 transition-all font-black text-[10px] uppercase tracking-widest">
+          <Link to={langPath('/catalogue')} className="inline-flex items-center gap-1.5 text-amber-600 hover:text-amber-700 transition-all font-black text-[10px] uppercase tracking-widest">
             <ChevronLeft size={14} />
             Retour au catalogue
           </Link>

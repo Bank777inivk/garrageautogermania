@@ -6,9 +6,11 @@ import useFavoriteStore from '@shared/store/useFavoriteStore';
 import { db } from '@shared/firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { langNavigate } = useLangNavigate();
   const { login } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,7 +44,7 @@ const Login = () => {
       await syncWithUser(loggedUser.uid);
 
       toast.success("Connexion réussie !");
-      navigate('/dashboard');
+      langNavigate('/dashboard');
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Erreur de connexion : Vérifiez vos identifiants");

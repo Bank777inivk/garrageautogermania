@@ -31,9 +31,11 @@ import useAuthStore from '@shared/store/useAuthStore';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import { generateOrderPDF, generateContractPDF, generatePaymentReceiptPDF, generateDeliverySlipPDF, generateInvoicePDF } from '@shared/utils/generateAdminDocuments';
 import { toast } from 'react-hot-toast';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const OrderDetails = () => {
     const { orderId } = useParams();
+  const { langPath, langNavigate } = useLangNavigate();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { user } = useAuthStore();
@@ -62,7 +64,7 @@ const OrderDetails = () => {
 
                 // Security check
                 if (user && orderData.userId !== user.uid) {
-                    navigate('/dashboard');
+                    langNavigate('/dashboard');
                     return;
                 }
 
@@ -118,7 +120,7 @@ const OrderDetails = () => {
                 <Package size={64} className="mx-auto text-gray-200 mb-4" />
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Commande introuvable</h2>
                 <p className="text-gray-500 mb-6">Désolé, nous ne parvenons pas à trouver cette commande.</p>
-                <Link to="/dashboard/orders" className="inline-flex items-center font-bold hover:gap-2 transition-all  text-[10px] tracking-normal" style={{ color: '#052659' }}>
+                <Link to={langPath('/dashboard/orders')} className="inline-flex items-center font-bold hover:gap-2 transition-all  text-[10px] tracking-normal" style={{ color: '#052659' }}>
                     <ArrowLeft size={20} className="mr-2" /> Retour à mes commandes
                 </Link>
             </div>
@@ -221,7 +223,7 @@ const OrderDetails = () => {
             {/* Header - White Luxury Card */}
             <div className="bg-white  p-8 md:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-8 animate-in fade-in duration-700 relative overflow-hidden">
                 <div className="flex items-center gap-6 relative z-10">
-                    <Link to="/dashboard/orders" className="p-3 bg-slate-50 hover:bg-white rounded-2xl border border-slate-200 shadow-sm transition-all group shrink-0">
+                    <Link to={langPath('/dashboard/orders')} className="p-3 bg-slate-50 hover:bg-white rounded-2xl border border-slate-200 shadow-sm transition-all group shrink-0">
                         <ArrowLeft size={20} className="text-slate-500 group-hover:text-slate-900" />
                     </Link>
                     <div className="space-y-3">

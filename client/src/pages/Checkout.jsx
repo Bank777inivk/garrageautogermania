@@ -12,6 +12,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Loader2, CheckCircle, CreditCard, Building2, User, MapPin, PackageCheck, ArrowLeft, ArrowRight, ShieldCheck, Info, Zap } from 'lucide-react';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const checkoutSchema = z.object({
   firstName: z.string().optional(),
@@ -31,6 +32,7 @@ const checkoutSchema = z.object({
 
 const Checkout = () => {
   const { t } = useTranslation();
+  const { langPath } = useLangNavigate();
   const navigate = useNavigate();
   const { items, getTotalPrice, getShippingCost, getFinalTotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
@@ -546,7 +548,7 @@ const Checkout = () => {
               </div>
             </div>
 
-            <Link to="/panier" className="inline-flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] hover:text-amber-600 transition-colors gap-2 ml-4">
+            <Link to={langPath('/panier')} className="inline-flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] hover:text-amber-600 transition-colors gap-2 ml-4">
               <ArrowLeft size={14} />
               Modifier ma sélection
             </Link>
