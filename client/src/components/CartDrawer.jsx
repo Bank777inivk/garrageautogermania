@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { X, Trash2, ShoppingBag } from 'lucide-react';
 import useCartStore from '@shared/store/useCartStore';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 const CartDrawer = () => {
   const { items, removeFromCart, getTotalPrice, isOpen, closeCart, clearCart } = useCartStore();
   const { t } = useTranslation();
+  const { lang = 'fr' } = useParams();
 
   // Lock scroll when cart is open
   useEffect(() => {
@@ -111,14 +112,14 @@ const CartDrawer = () => {
 
               <div className="flex flex-col gap-2">
                 <Link
-                  to="/checkout"
+                  to={`/${lang}/checkout`}
                   onClick={closeCart}
                   className="w-full py-3 text-center bg-slate-900 text-white font-bold text-[9px] uppercase tracking-[0.2em] rounded-xl hover:bg-amber-600 shadow-lg transition-all active:scale-[0.98]"
                 >
                   Commander
                 </Link>
                 <Link
-                  to="/panier"
+                  to={`/${lang}/panier`}
                   onClick={closeCart}
                   className="w-full py-2.5 text-center bg-white border border-gray-200 text-slate-900 font-bold text-[8px] uppercase tracking-[0.2em] rounded-xl hover:bg-gray-50 transition-all active:scale-[0.98]"
                 >
