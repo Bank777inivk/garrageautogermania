@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import HeroSlider from '../components/HeroSlider';
 import SidebarCategories from '../components/SidebarCategories';
 import FeaturedVehicles from '../components/FeaturedVehicles';
@@ -26,6 +27,7 @@ function useScrollReveal() {
 
 const Home = () => {
   const { t } = useTranslation(['home', 'common']);
+  const { langPath } = useLangNavigate();
   const navigate = useNavigate();
   useScrollReveal();
 
@@ -97,7 +99,7 @@ const Home = () => {
                   </p>
                 </div>
                 <Link
-                  to="/catalogue"
+                  to={langPath('/catalogue')}
                   className="flex items-center gap-3 px-8 py-4 bg-amber-600 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-slate-900 transition-all shadow-lg scale-100 hover:scale-105 active:scale-95 whitespace-nowrap"
                 >
                   {t('home:banner.cta', "Explorer le stock")}

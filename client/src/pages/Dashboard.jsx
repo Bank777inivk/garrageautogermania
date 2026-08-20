@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import useAuthStore from '@shared/store/useAuthStore';
 import { db } from '@shared/firebase/config';
 import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
@@ -21,6 +22,7 @@ import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { lang } = useLangNavigate();
   const { user, loading: authLoading } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
@@ -130,7 +132,7 @@ const Dashboard = () => {
         </div>
         
         <Link
-          to="/catalogue"
+          to={`/${lang}/catalogue`}
           className="bg-slate-900 text-white px-5 py-2.5 rounded-full font-semibold text-sm transition-all flex items-center justify-center gap-2 hover:bg-slate-800 shrink-0 shadow-sm"
         >
           Parcourir le catalogue

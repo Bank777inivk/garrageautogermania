@@ -145,8 +145,8 @@ const Footer = () => {
         <div className="border-t border-slate-800/60 pt-8 mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[11px] font-bold uppercase tracking-widest text-gray-500">
           <p>&copy; {currentYear} Garrage Pro. {t('footer.rights', 'Tous droits réservés.')}</p>
           <div className="flex gap-6">
-            <Link to="/mentions-legales" className="hover:text-white transition-colors">Mentions Légales</Link>
-            <Link to="/confidentialite" className="hover:text-white transition-colors">Confidentialité</Link>
+            <Link to={langPath('/mentions-legales')} className="hover:text-white transition-colors">Mentions Légales</Link>
+            <Link to={langPath('/confidentialite')} className="hover:text-white transition-colors">Confidentialité</Link>
           </div>
         </div>
       </div>
