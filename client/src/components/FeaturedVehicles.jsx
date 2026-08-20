@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 import useCartStore from '@shared/store/useCartStore';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +9,7 @@ import VehicleCard from './VehicleCard';
 
 const FeaturedVehicles = ({ gridOnly = false }) => {
   const { t } = useTranslation();
+  const { langPath } = useLangNavigate();
   const { featuredVehicles, loading, fetchFeaturedVehicles, fetchSettings, settings } = useClientVehicleStore();
   const { addToCart } = useCartStore();
 
@@ -46,7 +48,7 @@ const FeaturedVehicles = ({ gridOnly = false }) => {
             <span className="section-line" />
           </div>
           <Link
-            to="/catalogue"
+            to={langPath('/catalogue')}
             className="hidden md:flex items-center gap-2 text-sm font-semibold text-red-700 hover:text-red-900 transition-colors group"
           >
             {t('home.viewAllVehicles', 'Voir tous les véhicules')}
@@ -69,7 +71,7 @@ const FeaturedVehicles = ({ gridOnly = false }) => {
 
           <div className="mt-16 flex justify-center">
             <Link
-              to="/catalogue"
+              to={langPath('/catalogue')}
               className="px-12 py-5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-700 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-3 group active:scale-95"
             >
               Voir le catalogue complet

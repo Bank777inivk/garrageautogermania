@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LayoutGrid } from 'lucide-react';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const topBrands = [
     { name: 'Audi', slug: 'Audi', icon: '🚗' },
@@ -16,6 +17,7 @@ const topBrands = [
 
 const MobileCategories = () => {
     const { t } = useTranslation();
+    const { langPath } = useLangNavigate();
 
     return (
         <div className="lg:hidden w-full bg-white/80 backdrop-blur-md py-4 border-b border-slate-100 sticky top-16 z-40 overflow-hidden">
@@ -32,7 +34,7 @@ const MobileCategories = () => {
                 {topBrands.map((brand) => (
                     <Link
                         key={brand.slug}
-                        to={`/catalogue?brand=${brand.slug}`}
+                        to={langPath(`/catalogue?brand=${brand.slug}`)}
                         className="flex-shrink-0 flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-red-700/30 transition-all active:scale-95"
                     >
                         <span className="text-sm">{brand.icon}</span>
@@ -40,7 +42,7 @@ const MobileCategories = () => {
                     </Link>
                 ))}
                 <Link
-                    to="/catalogue"
+                    to={langPath('/catalogue')}
                     className="flex-shrink-0 flex items-center gap-2 bg-slate-900 px-4 py-2.5 rounded-xl text-white shadow-lg shadow-slate-900/10 active:scale-95 transition-all"
                 >
                     <span className="text-xs font-black uppercase tracking-widest whitespace-nowrap">Voir tout</span>

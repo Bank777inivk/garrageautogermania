@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import useBrands from '@shared/hooks/useBrands';
 import BrandSelect from '@shared/components/BrandSelect';
 
 const SearchBar = ({ className = "" }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { langNavigate } = useLangNavigate();
     const [brand, setBrand] = useState('');
     const [model, setModel] = useState('');
     const [type, setType] = useState('');
@@ -19,7 +21,7 @@ const SearchBar = ({ className = "" }) => {
         if (brand) params.append('brand', brand);
         if (model) params.append('model', model);
         if (type) params.append('type', type);
-        navigate(`/catalogue?${params.toString()}`);
+        langNavigate(`/catalogue?${params.toString()}`);
     };
 
     return (

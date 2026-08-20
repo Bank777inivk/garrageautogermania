@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Phone, Mail, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const Footer = () => {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
   const { settings, fetchSettings } = useClientVehicleStore();
+  const { langPath } = useLangNavigate();
 
   useEffect(() => {
     if (!settings) {
@@ -68,11 +70,11 @@ const Footer = () => {
               </div>
             </button>
             <ul className={`space-y-3 text-[12px] text-gray-400 font-medium mt-6 transition-all duration-300 overflow-hidden ${openSections.links ? 'max-h-60 opacity-100' : 'max-h-0 sm:max-h-none opacity-0 sm:opacity-100'}`}>
-              <li><Link to="/" className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.home', 'Accueil')}</Link></li>
-              <li><Link to="/catalogue" className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.catalogue', 'Catalogue')}</Link></li>
-              <li><Link to="/a-propos" className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.about', 'À propos')}</Link></li>
-              <li><Link to="/contact" className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.contact', 'Contact')}</Link></li>
-              <li><Link to="/suivi-livraison" className="hover:text-amber-500 transition-colors inline-block py-1">Suivi</Link></li>
+              <li><Link to={langPath('/')} className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.home', 'Accueil')}</Link></li>
+              <li><Link to={langPath('/catalogue')} className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.catalogue', 'Catalogue')}</Link></li>
+              <li><Link to={langPath('/a-propos')} className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.about', 'À propos')}</Link></li>
+              <li><Link to={langPath('/contact')} className="hover:text-amber-500 transition-colors inline-block py-1">{t('nav.contact', 'Contact')}</Link></li>
+              <li><Link to={langPath('/suivi-livraison')} className="hover:text-amber-500 transition-colors inline-block py-1">Suivi</Link></li>
             </ul>
           </div>
 
@@ -90,11 +92,11 @@ const Footer = () => {
               </div>
             </button>
             <ul className={`space-y-3 text-[12px] text-gray-400 font-medium mt-6 transition-all duration-300 overflow-hidden ${openSections.brands ? 'max-h-60 opacity-100' : 'max-h-0 sm:max-h-none opacity-0 sm:opacity-100'}`}>
-              <li><Link to="/catalogue?brand=Mercedes-Benz" className="hover:text-amber-500 transition-colors inline-block py-1">Mercedes</Link></li>
-              <li><Link to="/catalogue?brand=BMW" className="hover:text-amber-500 transition-colors inline-block py-1">BMW</Link></li>
-              <li><Link to="/catalogue?brand=Audi" className="hover:text-amber-500 transition-colors inline-block py-1">Audi</Link></li>
-              <li><Link to="/catalogue?brand=Porsche" className="hover:text-amber-500 transition-colors inline-block py-1">Porsche</Link></li>
-              <li><Link to="/catalogue?brand=Volkswagen" className="hover:text-amber-500 transition-colors inline-block py-1">VW</Link></li>
+              <li><Link to={langPath('/catalogue?brand=Mercedes-Benz')} className="hover:text-amber-500 transition-colors inline-block py-1">Mercedes</Link></li>
+              <li><Link to={langPath('/catalogue?brand=BMW')} className="hover:text-amber-500 transition-colors inline-block py-1">BMW</Link></li>
+              <li><Link to={langPath('/catalogue?brand=Audi')} className="hover:text-amber-500 transition-colors inline-block py-1">Audi</Link></li>
+              <li><Link to={langPath('/catalogue?brand=Porsche')} className="hover:text-amber-500 transition-colors inline-block py-1">Porsche</Link></li>
+              <li><Link to={langPath('/catalogue?brand=Volkswagen')} className="hover:text-amber-500 transition-colors inline-block py-1">VW</Link></li>
             </ul>
           </div>
 

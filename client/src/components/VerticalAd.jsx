@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import { ChevronRight } from 'lucide-react';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
 
 const VerticalAd = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { langNavigate } = useLangNavigate();
     const [currentCarIndex, setCurrentCarIndex] = useState(0);
     const { featuredVehicles, fetchFeaturedVehicles, loading } = useClientVehicleStore();
 
@@ -31,7 +33,7 @@ const VerticalAd = () => {
     return (
         <div
             className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 group cursor-pointer flex flex-col h-[550px] relative"
-            onClick={() => navigate('/catalogue')}
+            onClick={() => langNavigate('/catalogue')}
         >
             {/* Top Banner: Emerald Green */}
             <div className="bg-[#009966] p-8 pb-12 relative overflow-hidden flex-shrink-0 z-20">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const categories = [
   { name: 'Abarth', image: 'https://images.unsplash.com/photo-1555215695-3004980adade?q=80&w=1000&auto=format&fit=crop', slug: 'Abarth' },
@@ -59,6 +60,7 @@ const categories = [
 
 const CategoryGrid = () => {
   const { t } = useTranslation();
+  const { langPath } = useLangNavigate();
 
   return (
     <section className="py-16 bg-white">
@@ -76,7 +78,7 @@ const CategoryGrid = () => {
           {categories.map((cat) => (
             <Link 
               key={cat.name} 
-              to={`/catalogue?brand=${cat.slug}`}
+            to={langPath(`/catalogue?brand=${cat.slug}`)}
               className="group relative h-40 rounded-lg overflow-hidden cursor-pointer"
             >
               <div 

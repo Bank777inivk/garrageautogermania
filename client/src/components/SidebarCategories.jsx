@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useBrands from '@shared/hooks/useBrands';
+import useLangNavigate from '../hooks/useLangNavigate';
 import BrandSelect from '@shared/components/BrandSelect';
 import {
   ChevronRight, LayoutGrid, Car, Search, Filter,
@@ -11,6 +12,7 @@ import {
 const SidebarCategories = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { langNavigate, langPath } = useLangNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const { brands, brandCounts } = useBrands();
@@ -91,8 +93,8 @@ const SidebarCategories = () => {
     });
 
     // Si on est déjà sur le catalogue, on met à jour l'URL, sinon on y va
-    navigate(`/catalogue?${params.toString()}`);
-    if (location.pathname === '/catalogue') {
+    langNavigate(`/catalogue?${params.toString()}`);
+    if (location.pathname.includes('/catalogue')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };

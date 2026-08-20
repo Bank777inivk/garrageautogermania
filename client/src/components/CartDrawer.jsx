@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import { X, Trash2, ShoppingBag } from 'lucide-react';
 import useCartStore from '@shared/store/useCartStore';
 import { useTranslation } from 'react-i18next';
@@ -137,7 +138,7 @@ const CartDrawer = () => {
             </>
           ) : (
             <Link
-              to="/catalogue"
+              to={`/${lang}/catalogue`}
               onClick={closeCart}
               className="block w-full py-4 text-center bg-slate-900 text-white font-bold text-[9px] uppercase tracking-[0.2em] rounded-xl hover:bg-amber-600 transition-all shadow-lg active:scale-[0.98]"
             >

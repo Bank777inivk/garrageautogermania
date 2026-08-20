@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 import useBrands from '@shared/hooks/useBrands';
 import BrandSelect from '@shared/components/BrandSelect';
 
@@ -32,6 +33,7 @@ const slides = [
 const HeroSlider = () => {
   const { t } = useTranslation(['hero', 'common']);
   const navigate = useNavigate();
+  const { langNavigate, lang } = useLangNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
@@ -49,7 +51,7 @@ const HeroSlider = () => {
     const params = new URLSearchParams();
     if (brand) params.append('brand', brand);
     if (model) params.append('model', model);
-    navigate(`/catalogue?${params.toString()}`);
+    langNavigate(`/catalogue?${params.toString()}`);
   };
 
   const nextSlide = () => {
@@ -131,7 +133,7 @@ const HeroSlider = () => {
                 </p>
 
                 <button
-                  onClick={() => navigate('/catalogue')}
+                  onClick={() => langNavigate('/catalogue')}
                   className="btn-amber-glow inline-flex items-center bg-white text-gray-900 hover:bg-gray-50 font-bold py-3.5 px-8 rounded-xl transition-all animate-slideUp delay-200 text-sm tracking-wide shadow-lg"
                 >
                   {t('hero:cta', 'Voir les offres')}

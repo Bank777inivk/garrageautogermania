@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useLangNavigate from '../hooks/useLangNavigate';
 
 const SecondaryAd = () => {
     const navigate = useNavigate();
+    const { langNavigate } = useLangNavigate();
     const [currentCar, setCurrentCar] = useState(0);
 
     const showcaseImages = [
@@ -38,7 +40,7 @@ const SecondaryAd = () => {
     return (
         <div
             className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 group cursor-pointer relative h-[500px]"
-            onClick={() => navigate('/catalogue')}
+            onClick={() => langNavigate('/catalogue')}
         >
             {/* Slider Images */}
             {showcaseImages.map((car, index) => (
