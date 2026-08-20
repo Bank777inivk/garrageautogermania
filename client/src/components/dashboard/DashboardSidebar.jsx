@@ -5,10 +5,12 @@ import useAuthStore from '@shared/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import useClientVehicleStore from '@shared/store/useClientVehicleStore';
+import useLangNavigate from '../../hooks/useLangNavigate';
 
 const DashboardSidebar = ({ className = "", onItemClick }) => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+  const { langPath, langNavigate } = useLangNavigate();
   const { settings, fetchSettings } = useClientVehicleStore();
 
   React.useEffect(() => {
@@ -19,19 +21,19 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/');
+    langNavigate('/');
     toast.success("Déconnexion réussie");
   };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Tableau de bord', path: '/dashboard' },
-    { icon: Package, label: 'Mes Commandes', path: '/dashboard/orders' },
-    { icon: History, label: 'Historique', path: '/dashboard/history' },
-    { icon: Compass, label: 'Suivi Livraison', path: '/dashboard/tracking' },
-    { icon: FileText, label: 'Facturation', path: '/dashboard/billing' },
-    { icon: User, label: 'Mon Profil', path: '/dashboard/profile' },
-    { icon: Heart, label: 'Mes Favoris', path: '/dashboard/favorites' },
-    { icon: Headphones, label: 'Support Client', path: '/dashboard/support' },
+    { icon: LayoutDashboard, label: 'Tableau de bord', path: langPath('/dashboard') },
+    { icon: Package, label: 'Mes Commandes', path: langPath('/dashboard/orders') },
+    { icon: History, label: 'Historique', path: langPath('/dashboard/history') },
+    { icon: Compass, label: 'Suivi Livraison', path: langPath('/dashboard/tracking') },
+    { icon: FileText, label: 'Facturation', path: langPath('/dashboard/billing') },
+    { icon: User, label: 'Mon Profil', path: langPath('/dashboard/profile') },
+    { icon: Heart, label: 'Mes Favoris', path: langPath('/dashboard/favorites') },
+    { icon: Headphones, label: 'Support Client', path: langPath('/dashboard/support') },
   ];
 
   return (
@@ -40,7 +42,7 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
 
       {/* Logo Area */}
       <div className="px-6 py-5 md:py-8 flex items-center justify-start bg-white">
-        <Link to="/" onClick={onItemClick} className="flex items-center justify-start group">
+        <Link to={langPath('/')} onClick={onItemClick} className="flex items-center justify-start group">
           <img src={settings?.logoUrl || "/logo.webp"} alt="Garage" className="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" />
         </Link>
       </div>
@@ -79,7 +81,7 @@ const DashboardSidebar = ({ className = "", onItemClick }) => {
         <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-3 md:mb-4 mt-2">Paramètres</p>
         <div className="space-y-1">
           <Link
-            to="/dashboard/profile"
+            to={langPath('/dashboard/profile')}
             onClick={onItemClick}
             className="flex items-center px-4 py-3 rounded-full transition-all group text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium"
           >
