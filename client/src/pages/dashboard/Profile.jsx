@@ -15,9 +15,9 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
+    firstName: user?.displayName ? user.displayName.split(' ')[0] : '',
+    lastName: user?.displayName ? user.displayName.split(' ').slice(1).join(' ') : '',
+    email: user?.email || '',
     phone: '',
     company: '',
     address: '',
@@ -54,7 +54,15 @@ const Profile = () => {
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
-        toast.error("Impossible de charger votre profil");
+        toast.error("Données locales chargées (connexion Firestore bloquée).");
+        if (user) {
+          setFormData(prev => ({
+            ...prev,
+            email: user.email || prev.email,
+            firstName: user.displayName ? user.displayName.split(' ')[0] : prev.firstName,
+            lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : prev.lastName
+          }));
+        }
       } finally {
         setLoading(false);
       }
